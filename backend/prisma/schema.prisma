@@ -1,0 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Book {
+  id              Int      @id @default(autoincrement())
+  sku             String   @unique // Codice identificativo univoco [cite: 14]
+  title           String   // Titolo [cite: 22]
+  subtitle        String?  // Sottotitolo [cite: 22]
+  authors         String[] // Autore/i [cite: 22]
+  isbn10          String?  @unique // ISBN-10 [cite: 23]
+  isbn13          String   @unique // ISBN-13 [cite: 23]
+  price           Decimal  // Prezzo [cite: 25]
+  discountPrice   Decimal? // Prezzo barrato in caso di sconto [cite: 25]
+  stock           Int      @default(0) // Disponibilità a magazzino [cite: 26]
+  format          String   // cartaceo, e-book, audiolibro [cite: 24]
+  coverUrl        String   // Copertina ad alta risoluzione [cite: 27]
+  description     String   @db.Text // Descrizione/trama [cite: 29]
+  createdAt       DateTime @default(now())
+}
