@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: bookstore-db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=bookstore
+    ports:
+      - "5432:5432"
+
+  api:
+    build: ./backend
+    container_name: bookstore-spring-api
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend/src:/app/src          # Mappa il codice sorgente per hot reload
+      - ./backend/pom.xml:/app/pom.xml  # Mappa il pom per nuove dipendenze
+      - ./backend/src/main/resources/books.csv:/app/src/main/resources/books.csv # Per il tuo CSV
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/bookstore
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_DEVTOOLS_RESTART_ENABLED=true # Forza l'attivazione dei DevTools
+    # Usiamo mvn direttamente per permettere a DevTools di monitorare i file
+    command: mvn spring-boot:run
+
+  frontend:
+    build: ./frontend
+    container_name: bookstore-frontend
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev -- --webpack
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api:8080/api
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+      
