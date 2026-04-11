@@ -1,81 +1,48 @@
 services:
-  # Database Relazionale - PostgreSQL (Specifiche 4.1)
   db:
     image: postgres:16-alpine
     container_name: bookstore-db
-    restart: always
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: bookstore
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=bookstore
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
-  # Cache e Rate Limiting - Redis (Specifiche 4.1, 4.2)
-  cache:
-    image: redis:7-alpine
-    container_name: bookstore-cache
-    ports:
-      - "6379:6379"
-
-  # Motore di Ricerca - Typesense (Specifiche 4.1, 5.2)
-  # Gestisce i filtri avanzati e l'autocomplete richiesti
-  search:
-    image: typesense/typesense:0.25.1
-    container_name: bookstore-search
-    restart: on-failure
-    ports:
-      - "8108:8108"
-    volumes:
-      - typesense_data:/data
-    command: --data-dir /data --api-key=secret-key-123 --enable-cors
-
-  # Backend - NestJS (Specifiche 4.1, 8)
   api:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: bookstore-api
-    restart: always
+    build: ./backend
+    container_name: bookstore-spring-api
     depends_on:
       - db
-      - cache
-      - search
     ports:
-      - "3001:3001"
-    environment:
-      DATABASE_URL: "postgresql://user:password@db:5432/bookstore?schema=public"
-      REDIS_HOST: cache
-      REDIS_PORT: 6379
-      TYPESENSE_API_KEY: secret-key-123
-      TYPESENSE_HOST: search
-      JWT_SECRET: "cambiami-in-produzione-123" # Requisito 4.2
+      - "8080:8080"
     volumes:
-      - ./backend:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./backend/src:/app/src          # Mappa il codice sorgente per hot reload
+      - ./backend/pom.xml:/app/pom.xml  # Mappa il pom per nuove dipendenze
+      - ./backend/src/main/resources/books.csv:/app/src/main/resources/books.csv # Per il tuo CSV
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/bookstore
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_DEVTOOLS_RESTART_ENABLED=true # Forza l'attivazione dei DevTools
+    # Usiamo mvn direttamente per permettere a DevTools di monitorare i file
+    command: mvn spring-boot:run
 
-  # Frontend - Next.js 14 (Specifiche 4.1, 5.1)
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    build: ./frontend
     container_name: bookstore-frontend
-    restart: always
     depends_on:
       - api
     ports:
       - "3000:3000"
-    environment:
-      NEXT_PUBLIC_API_URL: http://localhost:3001
-      NEXTAUTH_URL: http://localhost:3000
-      NEXTAUTH_SECRET: "secret-session-key-456" # Requisito 4.1 (Auth)
     volumes:
-      - ./frontend:/usr/src/app
-      - /usr/src/app/node_modules
-
-volumes:
-  postgres_data:
-  typesense_data:
-  
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev -- --webpack
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api:8080/api
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+      

@@ -1,20 +1,16 @@
-# Usa Node.js 20 su Alpine Linux per leggerezza
-FROM node:20-alpine
+# Usa un'immagine con Maven e JDK già pronti
+FROM maven:3.9.6-eclipse-temurin-21-jammy
 
-# Crea la directory di lavoro
-WORKDIR /usr/src/app
+# Cartella di lavoro nel container
+WORKDIR /app
 
-# Copia i file di configurazione delle dipendenze
-COPY package*.json ./
+# Copiamo il pom.xml per scaricare le dipendenze (ottimizza la cache)
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
-# Installa le dipendenze
-RUN npm install
+# Copiamo il codice sorgente
+COPY src ./src
 
-# Copia il resto del codice
-COPY . .
-
-# Espone la porta definita nelle specifiche (3001) 
-EXPOSE 3001
-
-# Avvia l'applicazione in modalità sviluppo (watch mode)
-CMD ["npm", "run", "start:dev"]
+# Comando per avviare Spring Boot direttamente dal codice
+# Questo evita il problema del jarfile mancante
+CMD ["mvn", "spring-boot:run"]
