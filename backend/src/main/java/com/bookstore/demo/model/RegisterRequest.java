@@ -1,12 +1,20 @@
 package com.bookstore.demo.model;
-public class LoginRequest {
+
+public class RegisterRequest {
+    private String nome;
+    private String cognome;
     private String email;
     private String password;
 
-    // Costruttore vuoto (necessario per Jackson)
-    public LoginRequest() {}
+    public RegisterRequest() {}
 
     // Getter e Setter
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getCognome() { return cognome; }
+    public void setCognome(String cognome) { this.cognome = cognome; }
+
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 

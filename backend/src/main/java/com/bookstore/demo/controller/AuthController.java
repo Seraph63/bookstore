@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bookstore.demo.repository.UserRepository;
 import com.bookstore.demo.model.User;
 import com.bookstore.demo.model.LoginRequest;
+import com.bookstore.demo.model.RegisterRequest;
+
 import java.util.Map;
 
 @RestController
@@ -23,19 +25,31 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Email già presente"));
+    public ResponseEntity<?> register(@RequestBody RegisterRequest regRequest) {
+        // Verifica se l'email esiste già
+        if (userRepository.findByEmail(regRequest.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email già registrata"));
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User savedUser = userRepository.save(user);
-        return ResponseEntity.ok(savedUser);
+
+        // Crea il nuovo utente dai dati della richiesta
+        User newUser = new User();
+        newUser.setNome(regRequest.getNome());
+        newUser.setCognome(regRequest.getCognome());
+        newUser.setEmail(regRequest.getEmail());
+
+        // Cripta la password prima di salvare!
+        newUser.setPassword(passwordEncoder.encode(regRequest.getPassword()));
+
+        userRepository.save(newUser);
+
+        return ResponseEntity.ok(newUser);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
-        String email = credentials.get("email");
-        String password = credentials.get("password");
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        // Ora puoi usare i getter della classe invece di .get("email")
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
 
         return userRepository.findByEmail(email)
                 .map(user -> {
