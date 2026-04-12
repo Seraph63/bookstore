@@ -48,7 +48,7 @@ public class Book {
     private Integer stock;
 
     // Copertina ad alta risoluzione (URL dell'immagine)
-    @Column(length = 500)
+    @Column(length = 500, name = "cover_url")
     private String coverUrl;
 
     // Valutazione media e numero di recensioni

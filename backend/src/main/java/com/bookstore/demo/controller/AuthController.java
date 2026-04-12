@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bookstore.demo.repository.UserRepository;
 import com.bookstore.demo.model.User;
 import com.bookstore.demo.model.LoginRequest;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
