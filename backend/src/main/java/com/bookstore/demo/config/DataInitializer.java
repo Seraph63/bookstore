@@ -2,7 +2,11 @@ package com.bookstore.demo.config;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import com.bookstore.demo.model.User;
+import com.bookstore.demo.repository.UserRepository;
 
 import com.bookstore.demo.model.Book;
 import com.bookstore.demo.repository.BookRepository;
@@ -10,20 +14,28 @@ import com.bookstore.demo.repository.BookRepository;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
 
-    private final BookRepository repository;
+    private final BookRepository bookRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public DataInitializer(BookRepository repository) {
-        this.repository = repository;
+    public DataInitializer(BookRepository bookRepository, UserRepository userRepository,
+            PasswordEncoder passwordEncoder) {
+        this.bookRepository = bookRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) throws Exception {
+        // 1. CREAZIONE UTENTI DI TEST
+        initUsers();
         // Popola il DB solo se è vuoto
-        if (repository.count() == 0) {
+        if (bookRepository.count() == 0) {
             System.out.println("⏳ Avvio importazione CSV...");
 
             var resource = new ClassPathResource("books.csv");
@@ -44,9 +56,7 @@ public class DataInitializer implements CommandLineRunner {
                     if (v.length >= 17) {
                         Book b = new Book();
 
-                        
                         String isbn10 = clean(v[5]);
-                        
 
                         b.setTitle(clean(v[0]));
                         b.setSku("SKU-" + b.getIsbn10());
@@ -74,13 +84,34 @@ public class DataInitializer implements CommandLineRunner {
                             b.setSku("SKU-" + System.nanoTime()); // Fallback unico se l'ISBN manca
                         }
 
-                        repository.save(b);
+                        bookRepository.save(b);
                     }
                 }
             }
             System.out.println("✅ Importazione completata con successo!");
         } else {
             System.out.println("ℹ️ Il database contiene già dei dati. Salto l'importazione.");
+        }
+    }
+
+    private void initUsers() {
+        if (userRepository.count() == 0) {
+            System.out.println("⏳ Creazione utenti di test...");
+
+            User user1 = new User();
+            user1.setNome("Mario");
+            user1.setCognome("Rossi");
+            user1.setEmail("mario.rossi@email.it");
+            user1.setPassword(passwordEncoder.encode("password123"));
+
+            User user2 = new User();
+            user2.setNome("Luigi");
+            user2.setCognome("Verdi");
+            user2.setEmail("luigi.verdi@email.it");
+            user2.setPassword(passwordEncoder.encode("password123"));
+
+            userRepository.saveAll(List.of(user1, user2));
+            System.out.println("✅ Utenti di test creati: mario.rossi@email.it e luigi.verdi@email.it");
         }
     }
 

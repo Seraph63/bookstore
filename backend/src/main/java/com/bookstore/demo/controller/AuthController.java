@@ -24,20 +24,26 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Username già occupato"));
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email già presente"));
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
-        return ResponseEntity.ok(savedUser); 
+        return ResponseEntity.ok(savedUser);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest req) {
-        // Qui Spring Security gestisce la sessione.
-        // Per ora restituiamo i dati utente per il frontend.
-        return userRepository.findByUsername(req.getUsername())
-                .map(user -> ResponseEntity.ok(user))
-                .orElse(ResponseEntity.status(401).build());
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+        String email = credentials.get("email");
+        String password = credentials.get("password");
+
+        return userRepository.findByEmail(email)
+                .map(user -> {
+                    if (passwordEncoder.matches(password, user.getPassword())) {
+                        return ResponseEntity.ok(user);
+                    }
+                    return ResponseEntity.status(401).body(Map.of("error", "Password errata"));
+                })
+                .orElse(ResponseEntity.status(401).body(Map.of("error", "Account non trovato")));
     }
 }

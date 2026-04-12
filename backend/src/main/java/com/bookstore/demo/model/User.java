@@ -14,14 +14,14 @@ public class User {
     private Long id;
     
     @Column(unique = true, nullable = false)
-    private String username;
+    private String email;
     
     @Column(nullable = false)
     private String password;
     
     private String nome;
     private String cognome;
-    private String email;
+    private String username;
     private String ruolo; // Esempio: "USER", "ADMIN"
 
 }
