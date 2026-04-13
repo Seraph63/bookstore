@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.lang.NonNull;
 
 @RestController
 @RequestMapping("/api/books")
@@ -23,7 +24,7 @@ public class BookController {
 
     // GET /api/books/:id - Dettaglio singolo libro
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+    public ResponseEntity<Book> getBookById(@PathVariable @NonNull Long id) {
         return bookRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

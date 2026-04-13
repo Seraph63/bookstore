@@ -12,8 +12,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     
     // Ricerca per titolo o autore (case-insensitive)
     @Query("SELECT b FROM Book b WHERE " +
-           "LOWER(b.title) LIKE LOWER(concat('%', :query, '%')) OR " +
-           "LOWER(b.authors) LIKE LOWER(concat('%', :query, '%')) OR " +
+           "LOWER(b.titolo) LIKE LOWER(concat('%', :query, '%')) OR " +
+           "LOWER(b.autore) LIKE LOWER(concat('%', :query, '%')) OR " +
            "LOWER(b.isbn13) LIKE LOWER(concat('%', :query, '%'))")
     List<Book> searchBooks(@Param("query") String query);
 

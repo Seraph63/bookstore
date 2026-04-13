@@ -18,16 +18,17 @@ public class Book {
 
     // Titolo e Sottotitolo
     @Column(nullable = false)
-    private String title;
+    private String titolo;
     
-    private String subtitle;
+    private String sottotitolo;
 
     // Autore/i, Editore, Anno di pubblicazione
-    private String authors;
+    private String autore;
     
-    private String publisher;
+    private String editore;
     
-    private Integer pubYear;
+    @Column(name = "anno_pubblicazione")
+    private Integer annoPubblicazione;
 
     // Codici ISBN
     @Column(name = "isbn_10")
@@ -37,33 +38,32 @@ public class Book {
     private String isbn13;
 
     // Formato disponibile: cartaceo, e-book, audiolibro (salvati come stringa separata da virgole o pipe)
-    private String formats;
+    private String formati;
 
     // Prezzo (Prezzo attuale e Prezzo originale/barrato)
-    private Double price;
+    private Double prezzo;
     
-    private Double oldPrice;
+    private Double prezzo_originale;
 
     // Disponibilità a magazzino
     private Integer stock;
 
     // Copertina ad alta risoluzione (URL dell'immagine)
     @Column(length = 500, name = "cover_url")
-    private String coverUrl;
+    private String copertina_url;
 
     // Valutazione media e numero di recensioni
-    private Double rating;
+    private Double valutazione_media;
     
-    private Integer reviewsCount;
+    private Integer numero_recensioni;
 
     // Categorie e Tag tematici
-    private String categories;
+    private String categoria;
     
     private String tags;
 
-    private String Sku;
 
     // Descrizione/Trama (usiamo TEXT perché può essere molto lunga)
     @Column(columnDefinition = "TEXT")
-    private String description;
+    private String descrizione;
 }

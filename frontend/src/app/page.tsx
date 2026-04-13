@@ -1,49 +1,42 @@
 "use client";
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
-import AuthScreen from '@/components/auth/AuthScreen';
 import BookCard from '@/components/catalog/BookCard';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 export default function HomePage() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [books, setBooks] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      fetch('http://localhost:8080/api/books')
-        .then(res => res.json())
-        .then(data => setBooks(data))
-        .catch(err => console.error(err));
+    // Recupera l'utente salvato
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
     }
-  }, [isLoggedIn]);
 
-  if (!isLoggedIn) {
-    return (
-      <AuthScreen
-        onLoginSuccess={(userData) => { setUser(userData); setIsLoggedIn(true); }}
-        onGuestLogin={() => { setUser({ nome: "Ospite", email: "guest@example.com", isGuest: true }); setIsLoggedIn(true); }}
-      />
-    );
-  }
-
-  const filteredBooks = books.filter(book =>
-    book.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    book.authors?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    // Carica i libri dal backend
+    fetch('http://localhost:8080/api/books')
+      .then(res => res.json())
+      .then(data => setBooks(data))
+      .catch(err => console.error("Errore caricamento libri:", err));
+  }, []);
 
   const handleLogout = () => {
-    setUser(null);
-    setIsLoggedIn(false);
-    setShowDropdown(false);
+    // Rimuove cookie e dati locali
+    document.cookie = "auth_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    localStorage.removeItem('user');
+    window.location.href = "/login";
   };
+
+  const filteredBooks = books.filter(book =>
+    book.titolo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    book.autore?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navbar separata */}
       <Navbar user={user} onLogout={handleLogout} />
 
       <main className="max-w-7xl mx-auto p-8">
@@ -53,8 +46,8 @@ export default function HomePage() {
             <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Cerca..."
-              className="w-full pl-12 pr-4 py-3 border rounded-2xl outline-none"
+              placeholder="Cerca titolo o autore..."
+              className="w-full pl-12 pr-4 py-3 border rounded-2xl outline-none focus:ring-2 focus:ring-blue-500"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>

@@ -1,4 +1,4 @@
-Title,Subtitle,Authors,Publisher,PubYear,ISBN10,ISBN13,Formats,Price,OldPrice,Stock,CoverUrl,Rating,Reviews,Categories,Tags,Description
+titolo,sottotitolo,autore,editore,anno_pubblicazione,ISBN10,ISBN13,formati,prezzo,prezzo_originale,stock,copertina_url,valutazione_media,numero_recensioni,categoria,tags,Descrizione
 "Il Nome della Rosa","Edizione Speciale","Umberto Eco","Bompiani",1980,"8845207056","978-8845207051","Cartaceo|E-book",12.75,15.00,45,"https://picsum.photos/seed/1/400/600",4.8,1250,"Narrativa","Storico|Mistero","Un giallo medievale in un'abbazia isolata."
 "1984","Edizione Integrale","George Orwell","Mondadori",1949,"8804668233","978-8804668237","Cartaceo|E-book|Audiobook",10.20,12.00,120,"https://picsum.photos/seed/2/400/600",4.9,3500,"Distopia","Politica|Classico","Il capolavoro sul controllo totale."
 "Il Signore degli Anelli","La Compagnia dell'Anello","J.R.R. Tolkien","Bompiani",1954,"8845292614","978-8845292613","Cartaceo|Audiobook",21.25,25.00,30,"https://picsum.photos/seed/3/400/600",5.0,5000,"Fantasy","Epico|Avventura","L'inizio del viaggio di Frodo."
