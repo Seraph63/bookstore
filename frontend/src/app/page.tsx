@@ -37,7 +37,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar user={user} onLogout={handleLogout} />
+
+      <Navbar user={user} onLogout={handleLogout}/>
 
       <main className="max-w-7xl mx-auto p-8">
         <div className="flex flex-col md:flex-row justify-between mb-10 gap-6">

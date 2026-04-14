@@ -34,15 +34,16 @@ public class UserRepositoryTest {
         // 3. Assert: Verifica dei risultati
         // Verifichiamo che l'ID sia stato generato dal database
         assertThat(savedUser.getId()).isNotNull();
-        
+
         // Verifichiamo che l'email salvata sia corretta
         assertThat(savedUser.getEmail()).isEqualTo("mario.rossi@test.it");
-        
+
         // Verifichiamo che l'utente sia effettivamente presente nel database
         User foundUser = userRepository.findByEmail("mario.rossi@test.it").orElse(null);
         assertThat(foundUser).isNotNull();
         assertThat(foundUser.getNome()).isEqualTo("Mario");
     }
+
     @Test
     void testFindByEmail() {
         // 1. Arrange: Prepariamo un utente e salviamolo
@@ -58,7 +59,7 @@ public class UserRepositoryTest {
 
         // 3. Assert: Verifichiamo i risultati
         assertThat(foundUserOptional).isPresent(); // Deve trovare qualcosa
-        
+
         User foundUser = foundUserOptional.get();
         assertThat(foundUser.getEmail()).isEqualTo("luigi.verdi@test.it");
         assertThat(foundUser.getNome()).isEqualTo("Luigi");
@@ -69,9 +70,10 @@ public class UserRepositoryTest {
     void testFindByEmailNotFound() {
         // Test di "negativo": cosa succede se l'email non esiste?
         Optional<User> foundUser = userRepository.findByEmail("non.esisto@test.it");
-        
+
         assertThat(foundUser).isNotPresent(); // Deve essere vuoto
     }
+
     @Test
     void testEmailUniqueness() {
         // 1. Arrange: Salviamo il primo utente

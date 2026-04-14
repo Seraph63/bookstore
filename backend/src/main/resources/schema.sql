@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS books (
     cover_url VARCHAR(500),
     valutazione_media DOUBLE PRECISION,
     numero_recensioni INT,
-    categorie VARCHAR(255),
+    categoria VARCHAR(255),
     tags VARCHAR(255),
     descrizione TEXT
 );

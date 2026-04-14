@@ -1,4 +1,5 @@
 package com.bookstore.demo.service;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,8 @@ public class UserImportService implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserImportService(UserRepository userRepository, BookRepository bookRepository, PasswordEncoder passwordEncoder) {
+    public UserImportService(UserRepository userRepository, BookRepository bookRepository,
+            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -28,16 +30,18 @@ public class UserImportService implements CommandLineRunner {
             System.out.println("⏳ Creazione utenti di test...");
 
             User user1 = new User();
-            user1.setNome("Mario");
-            user1.setCognome("Rossi");
-            user1.setEmail("mario.rossi@email.it");
+            user1.setNome("Serafino");
+            user1.setCognome("Corriero");
+            user1.setEmail("sercorrie@email.it");
             user1.setPassword(passwordEncoder.encode("password123"));
+            user1.setRuolo("ADMIN");
 
             User user2 = new User();
             user2.setNome("Luigi");
             user2.setCognome("Verdi");
             user2.setEmail("luigi.verdi@email.it");
             user2.setPassword(passwordEncoder.encode("password123"));
+            user2.setRuolo("USER");
 
             userRepository.saveAll(List.of(user1, user2));
             System.out.println("✅ Utenti di test creati: mario.rossi@email.it e luigi.verdi@email.it");

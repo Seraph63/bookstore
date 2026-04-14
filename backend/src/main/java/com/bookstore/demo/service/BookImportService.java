@@ -1,6 +1,8 @@
 package com.bookstore.demo.service;
 
 import com.bookstore.demo.model.Book;
+import com.bookstore.demo.repository.BookRepository;
+
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -11,12 +13,26 @@ import java.util.List;
 @Service
 public class BookImportService {
 
+    List<Book> books = new ArrayList<>();
+    private final BookRepository bookRepository;
+
+    // Iniettiamo il repository
+    public BookImportService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
+    public void importFromCsv(InputStream inputStream) {
+        List<Book> books = parseCsv(inputStream);
+        if (!books.isEmpty()) {
+            bookRepository.saveAll(books); // Fondamentale per il test!
+        }
+    }
+
     public List<Book> parseCsv(InputStream inputStream) {
-        List<Book> books = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
             boolean firstLine = true;
-            
+
             while ((line = br.readLine()) != null) {
                 line = line.trim();
                 if (firstLine || line.isEmpty()) {
@@ -30,7 +46,7 @@ public class BookImportService {
                 // Verifichiamo di avere abbastanza colonne (almeno fino alla descrizione)
                 if (v.length >= 17) {
                     Book book = new Book();
-                    
+
                     // titolo,sottotitolo,autore,editore,anno_pubblicazione,
                     // ISBN10,ISBN13,formati,prezzo,prezzo_originale,stock,copertina_url,
                     // valutazione_media,numero_recensioni,categoria,tags,Descrizione

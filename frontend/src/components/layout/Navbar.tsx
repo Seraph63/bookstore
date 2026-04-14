@@ -3,8 +3,14 @@ import Link from 'next/link';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 
+interface User {
+  nome: string;
+  cognome: string;
+  isGuest: boolean;
+}
+
 interface NavbarProps {
-  user: any;
+  user: User | null;
   onLogout: () => void;
 }
 
@@ -33,15 +39,21 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
               <div className="px-4 py-3 border-b bg-gray-50">
                 <p className="text-sm font-bold text-gray-900">{user?.nome} {user?.cognome}</p>
               </div>
-              <Link href="/profile">
-                <button
-                  disabled={user?.isGuest}
-                  className={`w-full text-left px-4 py-3 text-sm flex items-center ${user?.isGuest ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                >
-                  <span className="mr-3">👤</span> Profilo Utente {user?.isGuest && "(Registrati)"}
-                </button>
-              </Link>
+              <button
+                disabled={user?.isGuest}
+                onClick={() => {
+                  if (!user?.isGuest) {
+                    window.location.href = "/profile";
+                  }
+                }}
+                className={`w-full text-left px-4 py-3 text-sm flex items-center ${user?.isGuest
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+              >
+                <span className="mr-3">👤</span>
+                Profilo Utente {user?.isGuest && "(Registrati per accedere)"}
+              </button>
               <button
                 onClick={onLogout}
                 className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center font-bold"

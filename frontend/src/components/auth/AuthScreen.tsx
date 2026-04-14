@@ -15,6 +15,10 @@ export default function AuthScreen({ onLoginSuccess, onGuestLogin }: AuthProps) 
   const [cognome, setCognome] = useState("");
   const [error, setError] = useState("");
 
+  const isInvalid = isRegistering 
+    ? !nome || !cognome || !email || !password 
+    : !email || !password;
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -49,9 +53,11 @@ export default function AuthScreen({ onLoginSuccess, onGuestLogin }: AuthProps) 
               <input type="text" placeholder="Cognome" value={cognome} onChange={(e) => setCognome(e.target.value)} className="p-3 border rounded-xl" required />
             </div>
           )}
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 border rounded-xl" required />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 border rounded-xl" required />
-          <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">{isRegistering ? "Registrati" : "Accedi"}</button>
+          <label htmlFor="email" className="sr-only">Email</label>
+          <input id="email" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 border rounded-xl" required />
+          <label htmlFor="password" className="sr-only">Password</label>
+          <input id="password" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 border rounded-xl" required />
+          <button disabled={isInvalid} type="submit" className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">{isRegistering ? "Registrati" : "Accedi"}</button>
           <button type="button" onClick={onGuestLogin} className="w-full flex justify-center space-x-2 border py-3 rounded-xl text-gray-600"><UserIcon className="w-5 h-5"/><span>Ospite</span></button>
         </form>
         <button onClick={() => setIsRegistering(!isRegistering)} className="w-full mt-4 text-blue-600">
