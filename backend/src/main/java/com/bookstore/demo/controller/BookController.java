@@ -11,7 +11,7 @@ import org.springframework.lang.NonNull;
 
 @RestController
 @RequestMapping("/api/books")
-@CrossOrigin(origins = "*") // Permette al frontend Next.js di chiamare l'API
+@CrossOrigin(origins = "*")
 public class BookController {
 
     @Autowired

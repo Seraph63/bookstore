@@ -1,28 +1,44 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/layout/Navbar';
-import { 
-  UserCircleIcon, 
-  EnvelopeIcon, 
+import { useSearchParams, useRouter } from 'next/navigation';
+import {
+  UserCircleIcon,
+  EnvelopeIcon,
   IdentificationIcon,
-  ArrowLeftIcon 
+  ArrowLeftIcon
 } from '@heroicons/react/24/outline';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const hasShownToast = useRef(false);
 
   useEffect(() => {
+    // 1. CARICAMENTO UTENTE
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     } else {
       router.push('/');
+      return;
     }
-  }, [router]);
 
-  // FUNZIONE PER TORNARE AL CATALOGO
+    // 2. LOGICA TOAST CORRETTA
+    if (searchParams.get('updated') === 'true' && !hasShownToast.current) {
+      // Segniamo che il messaggio è stato mostrato per questo caricamento
+      hasShownToast.current = true;
+
+      toast.success("Profilo aggiornato con successo! ✨");
+
+      // Pulizia URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [router, searchParams]);
+
   const handleBackToCatalog = () => {
     router.push('/');
   };
@@ -31,16 +47,19 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar user={user} onLogout={() => {
-        localStorage.removeItem('user');
-        router.push('/');
-      }} />
+      <Navbar
+        user={user}
+        onLogout={() => {
+          localStorage.removeItem('user');
+          router.push('/');
+        }}
+      />
 
       <main className="max-w-3xl mx-auto p-8 animate-in fade-in zoom-in duration-300">
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-          {/* Header con tasto rapido Torna al Catalogo */}
+          {/* Header */}
           <div className="bg-blue-600 h-32 relative">
-            <button 
+            <button
               onClick={handleBackToCatalog}
               className="absolute top-4 left-4 flex items-center space-x-2 bg-white/20 hover:bg-white/40 text-white px-4 py-2 rounded-xl transition backdrop-blur-md"
             >
@@ -48,7 +67,7 @@ export default function ProfilePage() {
               <span className="text-sm font-bold">Torna al Catalogo</span>
             </button>
           </div>
-          
+
           <div className="px-8 pb-8">
             <div className="relative -top-12 flex items-end space-x-6">
               <div className="bg-white p-2 rounded-3xl shadow-lg">
@@ -82,18 +101,19 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* BARRA AZIONI INFERIORE */}
             <div className="mt-8 pt-8 border-t flex justify-end items-center space-x-4">
-              <button 
+              <button
                 onClick={handleBackToCatalog}
                 className="text-gray-500 hover:text-red-500 font-bold px-6 py-3 transition-colors rounded-xl hover:bg-red-50"
               >
                 Annulla
               </button>
-              
-              <button className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg active:scale-95">
-                Modifica Profilo
-              </button>
+
+              <Link href="/profile/edit">
+                <button className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200">
+                  Modifica Profilo
+                </button>
+              </Link>
             </div>
           </div>
         </div>

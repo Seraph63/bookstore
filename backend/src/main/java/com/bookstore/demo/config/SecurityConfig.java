@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/books/**").permitAll() // Libri pubblici
                         .requestMatchers("/api/auth/**").permitAll() // Login/Register pubblici
+                        .requestMatchers("/api/users/**").permitAll() // Utenti pubblici
                         .anyRequest().authenticated() // Tutto il resto protetto
                 )
                 .httpBasic(Customizer.withDefaults()); // Permette test rapidi
