@@ -1,50 +1,84 @@
 package com.bookstore.demo.service;
 
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import com.bookstore.demo.model.User;
 import com.bookstore.demo.repository.UserRepository;
-import com.bookstore.demo.repository.BookRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class UserImportService implements CommandLineRunner {
+@Service
+public class UserImportService {
+
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public UserImportService(UserRepository userRepository, BookRepository bookRepository,
-            PasswordEncoder passwordEncoder) {
+    // Iniettiamo il repository per gli utenti
+    public UserImportService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        initUsers();
+    public String hashPassword(String rawPassword) {
+        return passwordEncoder.encode(rawPassword);
     }
 
-    @SuppressWarnings("null")
-    public void initUsers() {
-        if (userRepository.count() == 0) {
-            System.out.println("⏳ Creazione utenti di test...");
+    public void importFromCsv(InputStream inputStream) {
+        List<User> users = parseCsv(inputStream);
+        if (!users.isEmpty()) {
+            userRepository.saveAll(users);
+        }
+    }
 
-            User user1 = new User();
-            user1.setNome("Serafino");
-            user1.setCognome("Corriero");
-            user1.setEmail("sercorrie@email.it");
-            user1.setPassword(passwordEncoder.encode("password123"));
-            user1.setRuolo("ADMIN");
+    private List<User> parseCsv(InputStream inputStream) {
+        List<User> users = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            boolean firstLine = true;
 
-            User user2 = new User();
-            user2.setNome("Luigi");
-            user2.setCognome("Verdi");
-            user2.setEmail("luigi.verdi@email.it");
-            user2.setPassword(passwordEncoder.encode("password123"));
-            user2.setRuolo("USER");
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (firstLine || line.isEmpty()) {
+                    firstLine = false;
+                    continue;
+                }
 
-            userRepository.saveAll(List.of(user1, user2));
-            System.out.println("✅ Utenti di test creati: mario.rossi@email.it e luigi.verdi@email.it");
+                // Regex per gestire virgole dentro le virgolette (come negli altri servizi)
+                String[] v = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+
+                if (v.length >= 3) { // Assumiamo almeno Nome, Cognome, Email
+                    User user = new User();
+                    user.setNome(clean(v[0]));
+                    user.setCognome(clean(v[1]));
+                    user.setUsername(clean(v[2]));
+                    user.setEmail(clean(v[3]));
+                    user.setPassword(hashPassword(clean(v[4])));
+                    user.setRuolo(clean(v[5]));
+
+                    // Evitiamo duplicati basandoci sull'email (campo unique solitamente)
+                    if (!userRepository.existsByEmail(user.getEmail())) {
+                        users.add(user);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante l'importazione Utenti: " + e.getMessage());
+        }
+        return users;
+    }
+
+    // Metodi di utility coerenti con il tuo esempio
+    private String clean(String value) {
+        return (value == null) ? "" : value.replace("\"", "").trim();
+    }
+
+    private int parseToInt(String value) {
+        try {
+            return Integer.parseInt(clean(value));
+        } catch (Exception e) {
+            return 0;
         }
     }
 }

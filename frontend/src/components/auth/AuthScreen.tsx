@@ -14,6 +14,7 @@ export default function AuthScreen({ onLoginSuccess, onGuestLogin }: AuthProps) 
   const [nome, setNome] = useState("");
   const [cognome, setCognome] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Inizializza SEMPRE con false, non null
 
   const isInvalid = isRegistering 
     ? !nome || !cognome || !email || !password 
@@ -57,7 +58,9 @@ export default function AuthScreen({ onLoginSuccess, onGuestLogin }: AuthProps) 
           <input id="email" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 border rounded-xl" required />
           <label htmlFor="password" className="sr-only">Password</label>
           <input id="password" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 border rounded-xl" required />
-          <button disabled={isInvalid} type="submit" className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">{isRegistering ? "Registrati" : "Accedi"}</button>
+          <button disabled={isLoading || false} type="submit" className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">{isRegistering ? "Registrati" : "Accedi"}
+
+          </button>
           <button type="button" onClick={onGuestLogin} className="w-full flex justify-center space-x-2 border py-3 rounded-xl text-gray-600"><UserIcon className="w-5 h-5"/><span>Ospite</span></button>
         </form>
         <button onClick={() => setIsRegistering(!isRegistering)} className="w-full mt-4 text-blue-600">

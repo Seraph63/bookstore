@@ -1,48 +1,59 @@
 package com.bookstore.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "books")
+@Table(name = "libri")
 @Data // Genera automaticamente Getter, Setter, toString, equals e hashCode
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Book {
+
+    // RELAZIONI NORMALIZZATE
+    @ManyToOne(fetch = FetchType.EAGER)
+    @NotNull(message = "L'autore è obbligatorio")
+    @JoinColumn(name = "autore_id", nullable = false)
+    private Author autore;
+
+    @NotNull(message = "L'editore è obbligatorio")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "editore_id", nullable = false)
+    private Publisher editore;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Titolo e Sottotitolo
+    @NotBlank(message = "Il titolo è obbligatorio")
     @Column(nullable = false)
     private String titolo;
-    
+
     private String sottotitolo;
 
-    // Autore/i, Editore, Anno di pubblicazione
-    private String autore;
-    
-    private String editore;
-    
-    @Column(name = "anno_pubblicazione")
-    private Integer annoPubblicazione;
+    private Integer anno_pubblicazione;
 
-    // Codici ISBN
-    @Column(name = "isbn_10")
+    @NotBlank(message = "L'ISBN10 è obbligatorio")
+    @Column(nullable = false, unique = true) // L'ISBN deve essere unico
     private String isbn10;
-    
-    @Column(name = "isbn_13")
+
     private String isbn13;
 
-    // Formato disponibile: cartaceo, e-book, audiolibro (salvati come stringa separata da virgole o pipe)
+    // Formato disponibile: cartaceo, e-book, audiolibro (salvati come stringa
+    // separata da virgole o pipe)
     private String formati;
 
-    // Prezzo (Prezzo attuale e Prezzo originale/barrato)
+    @NotNull(message = "Il prezzo è obbligatorio")
+    @DecimalMin(value = "0.01", message = "Il prezzo deve essere maggiore di zero")
+    @Column(nullable = false)
     private Double prezzo;
-    
+
     private Double prezzo_originale;
 
     // Disponibilità a magazzino
@@ -54,16 +65,14 @@ public class Book {
 
     // Valutazione media e numero di recensioni
     private Double valutazione_media;
-    
+
     private Integer numero_recensioni;
 
     // Categorie e Tag tematici
     private String categoria;
-    
+
     private String tags;
 
-
-    // Descrizione/Trama (usiamo TEXT perché può essere molto lunga)
     @Column(columnDefinition = "TEXT")
     private String descrizione;
 }

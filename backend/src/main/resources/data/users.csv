@@ -1,0 +1,5 @@
+nome, cognome,username,email,password_hash,ruolo
+Serafino,Corriero,sercorrie,sercorrie@email.it, admin123,ADMIN
+Luca,Rossi,gio_rossi,luca.rossi@email.it, user123,USER
+Francesca,Bianchi,fra_bianchi,francesca.bianchi@email.it, user123,USER
+Luigi,Verdi,lu_verdi,luigi.verdi@email.it, user123,USER

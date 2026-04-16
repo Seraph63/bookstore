@@ -10,13 +10,9 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Recupera l'utente salvato
     const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+    if (savedUser) setUser(JSON.parse(savedUser));
 
-    // Carica i libri dal backend
     fetch('http://localhost:8080/api/books')
       .then(res => res.json())
       .then(data => setBooks(data))
@@ -24,22 +20,25 @@ export default function HomePage() {
   }, []);
 
   const handleLogout = () => {
-    // Rimuove cookie e dati locali
     document.cookie = "auth_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     localStorage.removeItem('user');
     window.location.href = "/login";
   };
 
-  const filteredBooks = books.filter(book =>
-    book.titolo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    book.autore?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // LOGICA DI FILTRO CORRETTA (Naviga nell'oggetto autore)
+  const filteredBooks = books.filter(book => {
+    const search = searchTerm.toLowerCase();
+    const matchTitolo = book.titolo?.toLowerCase().includes(search);
+    const matchAutore = 
+      book.autore?.nome?.toLowerCase().includes(search) ||
+      book.autore?.cognome?.toLowerCase().includes(search);
+    
+    return matchTitolo || matchAutore;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
-
       <Navbar user={user} onLogout={handleLogout}/>
-
       <main className="max-w-7xl mx-auto p-8">
         <div className="flex flex-col md:flex-row justify-between mb-10 gap-6">
           <h2 className="text-4xl font-extrabold text-gray-900">Catalogo Libri</h2>
@@ -48,14 +47,15 @@ export default function HomePage() {
             <input
               type="text"
               placeholder="Cerca titolo o autore..."
-              className="w-full pl-12 pr-4 py-3 border rounded-2xl outline-none focus:ring-2 focus:ring-blue-500"
+              value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 border rounded-2xl outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {filteredBooks.map(book => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {filteredBooks.map((book) => (
             <BookCard key={book.id} book={book} />
           ))}
         </div>

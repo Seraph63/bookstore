@@ -4,9 +4,9 @@ export default function BookCard({ book }: { book: any }) {
   return (
     <div className="group bg-white border border-gray-100 rounded-3xl p-4 shadow-sm hover:shadow-2xl transition-all flex flex-col">
       <div className="aspect-[3/4] mb-5 bg-gray-100 rounded-2xl overflow-hidden relative">
-        <img 
-          src={book.copertina_url || "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"} 
-          alt={book.titolo} 
+        <img
+          src={book.copertina_url || "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"}
+          alt={book.titolo}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"; }}
         />
@@ -18,7 +18,11 @@ export default function BookCard({ book }: { book: any }) {
       </div>
       <div className="flex-grow">
         <h3 className="font-bold text-gray-900 text-lg line-clamp-2">{book.titolo}</h3>
-        <p className="text-sm text-gray-400">di <span className="text-gray-600">{book.autore}</span></p>
+        <p className="text-sm text-gray-400">
+          di <span className="text-gray-600">
+            {book.autore?.nome ? `${book.autore?.nome} ${book.autore?.cognome}` : 'Autore Sconosciuto'}
+          </span>
+        </p>
       </div>
       <div className="mt-6 flex items-center justify-between pt-4 border-t">
         <span className="text-2xl font-black text-gray-900">€{book.prezzo?.toFixed(2)}</span>
