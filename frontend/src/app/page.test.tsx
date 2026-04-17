@@ -10,6 +10,22 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => ({ get: jest.fn() }),
 }));
 
+jest.mock('@/context/CartContext', () => ({
+  useCart: () => ({
+    items: [],
+    itemCount: 0,
+    total: 0,
+    loading: false,
+    fetchCart: jest.fn(),
+    addItem: jest.fn(),
+    updateQuantity: jest.fn(),
+    removeItem: jest.fn(),
+    clearCart: jest.fn(),
+    checkout: jest.fn(),
+  }),
+  CartProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 const mockBooks = [
   {
     id: 1,
@@ -46,7 +62,15 @@ describe('HomePage', () => {
     (global.fetch as jest.Mock) = jest.fn(() =>
       Promise.resolve({
         ok: true,
-        json: () => Promise.resolve(mockBooks),
+        json: () => Promise.resolve({
+          content: mockBooks,
+          totalPages: 1,
+          totalElements: mockBooks.length,
+          number: 0,
+          size: 12,
+          first: true,
+          last: true,
+        }),
       })
     );
   });
@@ -98,5 +122,33 @@ describe('HomePage', () => {
     render(<HomePage />);
 
     expect(screen.getByText('Catalogo Libri')).toBeInTheDocument();
+  });
+
+  test('utente admin vede icona modifica sulle schede libro', async () => {
+    const adminUser = { id: 1, nome: 'Admin', cognome: 'Test', email: 'admin@test.it', isGuest: false, ruolo: 'ADMIN' };
+    Storage.prototype.getItem = jest.fn((key) => {
+      if (key === 'user') return JSON.stringify(adminUser);
+      return null;
+    });
+
+    render(<HomePage />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Il Piccolo Principe')).toBeInTheDocument();
+    });
+
+    expect(screen.getAllByLabelText('Modifica libro')).toHaveLength(2);
+    expect(screen.getAllByLabelText('Aggiungi al carrello')).toHaveLength(2);
+  });
+
+  test('utente non admin non vede icona modifica', async () => {
+    render(<HomePage />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Il Piccolo Principe')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByLabelText('Modifica libro')).not.toBeInTheDocument();
+    expect(screen.getAllByLabelText('Aggiungi al carrello')).toHaveLength(2);
   });
 });

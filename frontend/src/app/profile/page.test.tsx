@@ -13,6 +13,22 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => mockSearchParams,
 }));
 
+jest.mock('@/context/CartContext', () => ({
+  useCart: () => ({
+    items: [],
+    itemCount: 0,
+    total: 0,
+    loading: false,
+    fetchCart: jest.fn(),
+    addItem: jest.fn(),
+    updateQuantity: jest.fn(),
+    removeItem: jest.fn(),
+    clearCart: jest.fn(),
+    checkout: jest.fn(),
+  }),
+  CartProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('sonner', () => ({
   toast: {
     success: jest.fn(),

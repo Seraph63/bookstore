@@ -23,5 +23,5 @@ export function middleware(request: NextRequest) {
 
 // Definiamo su quali rotte deve agire il middleware
 export const config = {
-  matcher: ['/', '/profile/:path*', '/login'],
+  matcher: ['/', '/profile/:path*', '/login', '/cart', '/orders'],
 };

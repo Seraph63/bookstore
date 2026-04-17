@@ -1,23 +1,39 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import BookCard from '@/components/catalog/BookCard';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+
+const PAGE_SIZE = 12;
 
 export default function HomePage() {
   const [user, setUser] = useState<any>(null);
   const [books, setBooks] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const fetchBooks = useCallback((page: number) => {
+    setLoading(true);
+    fetch(`http://localhost:8080/api/books?page=${page}&size=${PAGE_SIZE}`)
+      .then(res => res.json())
+      .then(data => {
+        setBooks(data.content);
+        setTotalPages(data.totalPages);
+        setTotalElements(data.totalElements);
+        setCurrentPage(data.number);
+      })
+      .catch(err => console.error("Errore caricamento libri:", err))
+      .finally(() => setLoading(false));
+  }, []);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) setUser(JSON.parse(savedUser));
-
-    fetch('http://localhost:8080/api/books')
-      .then(res => res.json())
-      .then(data => setBooks(data))
-      .catch(err => console.error("Errore caricamento libri:", err));
-  }, []);
+    fetchBooks(0);
+  }, [fetchBooks]);
 
   const handleLogout = () => {
     document.cookie = "auth_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
@@ -25,8 +41,16 @@ export default function HomePage() {
     window.location.href = "/login";
   };
 
-  // LOGICA DI FILTRO CORRETTA (Naviga nell'oggetto autore)
+  const goToPage = (page: number) => {
+    if (page >= 0 && page < totalPages) {
+      fetchBooks(page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Filtro client-side sulla pagina corrente
   const filteredBooks = books.filter(book => {
+    if (!searchTerm) return true;
     const search = searchTerm.toLowerCase();
     const matchTitolo = book.titolo?.toLowerCase().includes(search);
     const matchAutore = 
@@ -35,6 +59,17 @@ export default function HomePage() {
     
     return matchTitolo || matchAutore;
   });
+
+  // Genera i numeri di pagina da mostrare
+  const getPageNumbers = () => {
+    const pages: number[] = [];
+    const maxVisible = 5;
+    let start = Math.max(0, currentPage - Math.floor(maxVisible / 2));
+    const end = Math.min(totalPages, start + maxVisible);
+    start = Math.max(0, end - maxVisible);
+    for (let i = start; i < end; i++) pages.push(i);
+    return pages;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -54,11 +89,60 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {filteredBooks.map((book) => (
-            <BookCard key={book.id} book={book} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {filteredBooks.map((book) => (
+                <BookCard key={book.id} book={book} isAdmin={user?.ruolo === 'ADMIN'} isGuest={!!user?.isGuest} />
+              ))}
+            </div>
+
+            {/* Paginazione */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-12">
+                <button
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 0}
+                  className="p-2 rounded-xl border border-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 transition"
+                  aria-label="Pagina precedente"
+                >
+                  <ChevronLeftIcon className="w-5 h-5" />
+                </button>
+
+                {getPageNumbers().map((pageNum) => (
+                  <button
+                    key={pageNum}
+                    onClick={() => goToPage(pageNum)}
+                    className={`w-10 h-10 rounded-xl text-sm font-semibold transition ${
+                      pageNum === currentPage
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'border border-gray-200 text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {pageNum + 1}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages - 1}
+                  className="p-2 rounded-xl border border-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 transition"
+                  aria-label="Pagina successiva"
+                >
+                  <ChevronRightIcon className="w-5 h-5" />
+                </button>
+
+                <span className="ml-4 text-sm text-gray-500">
+                  {totalElements} libri totali
+                </span>
+              </div>
+            )}
+          </>
+        )}
       </main>
     </div>
   );

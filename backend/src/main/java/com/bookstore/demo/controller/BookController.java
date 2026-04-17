@@ -6,6 +6,9 @@ import com.bookstore.demo.repository.BookRepository;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +24,12 @@ public class BookController {
     private BookRepository bookRepository;
 
     @GetMapping
-    public List<Book> getAllBooks() {
-        return bookRepository.findAllWithDetails(); // Invece di findAll(), usiamo il metodo personalizzato per evitare
-
+    public Page<Book> getAllBooks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size) {
+        size = Math.min(size, 100);
+        return bookRepository.findAllWithDetails(
+                PageRequest.of(page, size, Sort.by("titolo").ascending()));
     }
 
     // GET /api/books/:id - Dettaglio singolo libro

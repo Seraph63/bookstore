@@ -3,6 +3,8 @@ package com.bookstore.demo.repository;
 import com.bookstore.demo.model.Book;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,5 +22,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query("SELECT b FROM Book b JOIN FETCH b.autore JOIN FETCH b.editore")
     List<Book> findAllWithDetails();
+
+    @Query(value = "SELECT b FROM Book b JOIN FETCH b.autore JOIN FETCH b.editore", countQuery = "SELECT COUNT(b) FROM Book b")
+    Page<Book> findAllWithDetails(Pageable pageable);
 
 }

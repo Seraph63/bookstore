@@ -8,6 +8,8 @@ services:
       - POSTGRES_DB=bookstore
     ports:
       - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   api:
     build: ./backend
@@ -45,4 +47,6 @@ services:
       - NEXT_PUBLIC_API_URL=http://api:8080/api
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
-      
+
+volumes:
+  pgdata:

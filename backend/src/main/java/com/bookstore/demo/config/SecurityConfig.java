@@ -28,6 +28,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/books/**").permitAll() // Libri pubblici
                         .requestMatchers("/api/auth/**").permitAll() // Login/Register pubblici
                         .requestMatchers("/api/users/**").permitAll() // Utenti pubblici
+                        .requestMatchers("/api/cart/**").permitAll() // Carrello pubblico
+                        .requestMatchers("/api/orders/**").permitAll() // Ordini pubblici
                         .anyRequest().authenticated() // Tutto il resto protetto
                 )
                 .httpBasic(Customizer.withDefaults()); // Permette test rapidi

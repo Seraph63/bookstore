@@ -2,6 +2,22 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import BookCard from './BookCard';
 import '@testing-library/jest-dom';
 
+jest.mock('@/context/CartContext', () => ({
+  useCart: () => ({
+    items: [],
+    itemCount: 0,
+    total: 0,
+    loading: false,
+    fetchCart: jest.fn(),
+    addItem: jest.fn(),
+    updateQuantity: jest.fn(),
+    removeItem: jest.fn(),
+    clearCart: jest.fn(),
+    checkout: jest.fn(),
+  }),
+  CartProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 describe('BookCard', () => {
   const mockBook = {
     titolo: "Il Piccolo Principe",
@@ -11,7 +27,8 @@ describe('BookCard', () => {
     },
     prezzo: 7.65,
     categoria: "Ragazzi",
-    copertina_url: "https://picsum.photos/seed/9/400/600"
+    copertina_url: "https://picsum.photos/seed/9/400/600",
+    stock: 5
   };
 
   test('visualizza correttamente titolo, autore, prezzo e copertina', () => {
@@ -61,5 +78,49 @@ describe('BookCard', () => {
 
     const img = screen.getByAltText(mockBook.titolo) as HTMLImageElement;
     expect(img.src).toContain('unsplash.com');
+  });
+
+  test('mostra quantità disponibile quando stock > 0', () => {
+    render(<BookCard book={mockBook} />);
+
+    expect(screen.getByText('Disponibili: 5')).toBeInTheDocument();
+  });
+
+  test('mostra "Non disponibile" quando stock è 0', () => {
+    const bookEsaurito = { ...mockBook, stock: 0 };
+    render(<BookCard book={bookEsaurito} />);
+
+    expect(screen.getByText('Non disponibile')).toBeInTheDocument();
+  });
+
+  test('mostra icona carrello per utente registrato', () => {
+    render(<BookCard book={mockBook} />);
+
+    expect(screen.getByLabelText('Aggiungi al carrello')).toBeInTheDocument();
+  });
+
+  test('non mostra icona carrello per utente guest', () => {
+    render(<BookCard book={mockBook} isGuest={true} />);
+
+    expect(screen.queryByLabelText('Aggiungi al carrello')).not.toBeInTheDocument();
+  });
+
+  test('non mostra icona modifica per utente non admin', () => {
+    render(<BookCard book={mockBook} />);
+
+    expect(screen.queryByLabelText('Modifica libro')).not.toBeInTheDocument();
+  });
+
+  test('mostra icona modifica per utente admin', () => {
+    render(<BookCard book={mockBook} isAdmin={true} />);
+
+    expect(screen.getByLabelText('Modifica libro')).toBeInTheDocument();
+  });
+
+  test('admin vede sia icona carrello che icona modifica', () => {
+    render(<BookCard book={mockBook} isAdmin={true} />);
+
+    expect(screen.getByLabelText('Aggiungi al carrello')).toBeInTheDocument();
+    expect(screen.getByLabelText('Modifica libro')).toBeInTheDocument();
   });
 });
