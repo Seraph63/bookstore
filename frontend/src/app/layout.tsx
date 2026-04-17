@@ -31,7 +31,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <CartProvider>
-          <Toaster position="top-right" richColors />
+          <Toaster position="top-center" richColors />
           {children}
         </CartProvider>
       </body>

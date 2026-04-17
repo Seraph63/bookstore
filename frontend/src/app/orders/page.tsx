@@ -1,8 +1,9 @@
 "use client";
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
-import { ArrowLeftIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, ShoppingBagIcon, PlusIcon, MinusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 interface OrderItem {
   id: number;
@@ -66,6 +67,51 @@ export default function OrdersPage() {
       hour: '2-digit',
       minute: '2-digit',
     });
+  };
+
+  const updateQuantity = async (itemId: number, newQuantity: number) => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/orders/items/${itemId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantita: newQuantity }),
+      });
+      if (res.ok) {
+        const updatedOrder: Order = await res.json();
+        setOrders(prev => prev.map(o => o.id === updatedOrder.id ? updatedOrder : o));
+        toast.success('Quantità aggiornata');
+      } else {
+        const err = await res.json();
+        toast.error(err.message || 'Errore aggiornamento quantità');
+      }
+    } catch {
+      toast.error('Errore di connessione');
+    }
+  };
+
+  const deleteItem = async (itemId: number, orderId: number) => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/orders/items/${itemId}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.deleted) {
+          // Ordine eliminato perché vuoto
+          setOrders(prev => prev.filter(o => o.id !== orderId));
+          toast.success('Articolo rimosso e ordine eliminato');
+        } else {
+          // Ordine aggiornato
+          setOrders(prev => prev.map(o => o.id === orderId ? data : o));
+          toast.success('Articolo rimosso');
+        }
+      } else {
+        const err = await res.json();
+        toast.error(err.message || 'Errore nella rimozione');
+      }
+    } catch {
+      toast.error('Errore di connessione');
+    }
   };
 
   return (
@@ -140,10 +186,35 @@ export default function OrdersPage() {
                       <div className="flex-1">
                         <p className="font-semibold text-gray-900">{item.book.titolo}</p>
                         <p className="text-sm text-gray-500">
-                          Quantità: {item.quantita} × €{item.prezzoUnitario.toFixed(2)}
+                          €{item.prezzoUnitario.toFixed(2)} cad.
                         </p>
                       </div>
-                      <p className="font-bold text-gray-900">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantita - 1)}
+                          disabled={item.quantita <= 1}
+                          className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                          aria-label="Diminuisci quantità"
+                        >
+                          <MinusIcon className="w-4 h-4" />
+                        </button>
+                        <span className="w-8 text-center font-bold text-gray-900">{item.quantita}</span>
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantita + 1)}
+                          className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 transition"
+                          aria-label="Aumenta quantità"
+                        >
+                          <PlusIcon className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => deleteItem(item.id, order.id)}
+                          className="w-8 h-8 flex items-center justify-center rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition ml-2"
+                          aria-label="Rimuovi articolo"
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <p className="font-bold text-gray-900 w-24 text-right">
                         €{(item.quantita * item.prezzoUnitario).toFixed(2)}
                       </p>
                     </div>

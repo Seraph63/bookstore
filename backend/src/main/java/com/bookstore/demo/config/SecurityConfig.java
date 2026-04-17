@@ -30,6 +30,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/**").permitAll() // Utenti pubblici
                         .requestMatchers("/api/cart/**").permitAll() // Carrello pubblico
                         .requestMatchers("/api/orders/**").permitAll() // Ordini pubblici
+                        .requestMatchers("/api/orders/items/**").permitAll() // Aggiornamento quantità ordini
                         .anyRequest().authenticated() // Tutto il resto protetto
                 )
                 .httpBasic(Customizer.withDefaults()); // Permette test rapidi

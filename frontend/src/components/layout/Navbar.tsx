@@ -30,7 +30,9 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
   return (
     <>
     <nav className="bg-white border-b px-6 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
-      <h1 className="text-2xl font-bold text-blue-600 italic tracking-tight">BookStore</h1>
+      <Link href="/">
+        <h1 className="text-2xl font-bold text-blue-600 italic tracking-tight">BookStore</h1>
+      </Link>
 
       <div className="flex items-center gap-4">
         {/* Icona Carrello (solo utenti registrati) */}
