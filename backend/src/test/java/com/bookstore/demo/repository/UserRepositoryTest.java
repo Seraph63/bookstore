@@ -26,6 +26,7 @@ public class UserRepositoryTest {
         user.setNome("Mario");
         user.setCognome("Rossi");
         user.setEmail("mario.rossi@test.it");
+        user.setUsername("mario.rossi@test.it");
         user.setPassword("password_sicura_123");
 
         // 2. Act: Azione da testare
@@ -51,6 +52,7 @@ public class UserRepositoryTest {
         user.setNome("Luigi");
         user.setCognome("Verdi");
         user.setEmail("luigi.verdi@test.it");
+        user.setUsername("luigi.verdi@test.it");
         user.setPassword("secret123");
         userRepository.save(user);
 
@@ -81,6 +83,7 @@ public class UserRepositoryTest {
         user1.setNome("Mario");
         user1.setCognome("Rossi");
         user1.setEmail("mario.rossi@test.it");
+        user1.setUsername("mario.rossi@test.it");
         user1.setPassword("pass1");
         userRepository.save(user1);
 
@@ -89,6 +92,7 @@ public class UserRepositoryTest {
         user2.setNome("Luigi");
         user2.setCognome("Verdi");
         user2.setEmail("mario.rossi@test.it"); // Email duplicata!
+        user2.setUsername("luigi.verdi@test.it");
         user2.setPassword("pass2");
 
         // 3. Act & Assert: Verifichiamo che il salvataggio scateni un'eccezione

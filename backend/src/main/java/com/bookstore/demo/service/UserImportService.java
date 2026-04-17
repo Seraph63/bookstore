@@ -73,12 +73,4 @@ public class UserImportService {
     private String clean(String value) {
         return (value == null) ? "" : value.replace("\"", "").trim();
     }
-
-    private int parseToInt(String value) {
-        try {
-            return Integer.parseInt(clean(value));
-        } catch (Exception e) {
-            return 0;
-        }
-    }
 }

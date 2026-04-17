@@ -36,6 +36,7 @@ public class AuthController {
         newUser.setNome(regRequest.getNome());
         newUser.setCognome(regRequest.getCognome());
         newUser.setEmail(regRequest.getEmail());
+        newUser.setUsername(regRequest.getEmail());
 
         // Cripta la password prima di salvare!
         newUser.setPassword(passwordEncoder.encode(regRequest.getPassword()));

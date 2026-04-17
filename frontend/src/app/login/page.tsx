@@ -1,6 +1,8 @@
 "use client";
 import { useState } from 'react';
-import AuthScreen from '@/components/auth/AuthScreen';
+import dynamic from 'next/dynamic';
+
+const AuthScreen = dynamic(() => import('@/components/auth/AuthScreen'), { ssr: false });
 
 export default function LoginPage() {
   const [error, setError] = useState("");

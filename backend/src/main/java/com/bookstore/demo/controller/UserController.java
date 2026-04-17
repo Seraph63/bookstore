@@ -1,6 +1,5 @@
 package com.bookstore.demo.controller;
 
-import com.bookstore.demo.model.Book;
 import com.bookstore.demo.model.User;
 import com.bookstore.demo.repository.UserRepository;
 

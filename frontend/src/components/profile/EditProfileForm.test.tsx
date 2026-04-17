@@ -1,11 +1,14 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import EditProfilePage from '../../app/profile/edit/page';
+import EditProfileForm from './EditProfileForm';
+import '@testing-library/jest-dom';
+import { toast } from 'sonner';
 
-// 1. Mock completo di next/navigation
+const mockPush = jest.fn();
+
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: jest.fn(),
+    push: mockPush,
     back: jest.fn(),
   }),
   useSearchParams: () => ({
@@ -13,34 +16,34 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-describe('Pagina Modifica Profilo', () => {
+jest.mock('sonner', () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
+}));
+
+describe('EditProfileForm', () => {
+  const mockUser = {
+    id: 1,
+    nome: 'Mario',
+    cognome: 'Rossi',
+    email: 'mario@test.it'
+  };
+
   beforeEach(() => {
-    // 2. Mock del localStorage per evitare il loop di caricamento
-    const mockUser = {
-      id: 1,
-      nome: 'Mario',
-      cognome: 'Rossi',
-      email: 'mario@test.it'
-    };
-    Object.defineProperty(window, 'localStorage', {
-      value: {
-        getItem: jest.fn(() => JSON.stringify(mockUser)),
-        setItem: jest.fn(),
-      },
-      writable: true,
-    });
+    jest.clearAllMocks();
+    Storage.prototype.setItem = jest.fn();
   });
 
   test('permette di modificare il nome, cognome e email', async () => {
-    render(<EditProfilePage />);
+    render(<EditProfileForm initialData={mockUser} />);
     const user = userEvent.setup();
 
-    // 3. Usiamo findBy invece di getBy per aspettare che sparisca la scritta "Caricamento"
-    const nomeInput = await screen.findByRole('textbox', { name: /^nome$/i });
-    const cognomeInput = await screen.findByRole('textbox', { name: /^cognome$/i });
-    const emailInput = await screen.findByRole('textbox', { name: /^email$/i });
+    const nomeInput = screen.getByRole('textbox', { name: /^nome$/i });
+    const cognomeInput = screen.getByRole('textbox', { name: /^cognome$/i });
+    const emailInput = screen.getByRole('textbox', { name: /^email$/i });
 
-    // Puliamo e scriviamo nuovi dati
     await user.clear(nomeInput);
     await user.type(nomeInput, 'Giovanni');
 
@@ -50,9 +53,76 @@ describe('Pagina Modifica Profilo', () => {
     await user.clear(emailInput);
     await user.type(emailInput, 'g.verdi@email.it');
 
-    // 4. Assert corretti
     expect(nomeInput).toHaveValue('Giovanni');
     expect(cognomeInput).toHaveValue('Verdi');
     expect(emailInput).toHaveValue('g.verdi@email.it');
+  });
+
+  test('submit con successo aggiorna localStorage e fa redirect', async () => {
+    const updatedUser = { ...mockUser, nome: 'Giovanni' };
+    (global.fetch as jest.Mock) = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(updatedUser),
+      })
+    );
+
+    render(<EditProfileForm initialData={mockUser} />);
+    const user = userEvent.setup();
+
+    await user.click(screen.getByRole('button', { name: /salva modifiche/i }));
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        `http://localhost:8080/api/users/${mockUser.id}`,
+        expect.objectContaining({ method: 'PUT' })
+      );
+    });
+
+    await waitFor(() => {
+      expect(Storage.prototype.setItem).toHaveBeenCalledWith('user', JSON.stringify(updatedUser));
+      expect(mockPush).toHaveBeenCalledWith('/profile?updated=true');
+    });
+  });
+
+  test('mostra toast di errore quando il server risponde con errore', async () => {
+    (global.fetch as jest.Mock) = jest.fn(() =>
+      Promise.resolve({
+        ok: false,
+        status: 500,
+      })
+    );
+
+    render(<EditProfileForm initialData={mockUser} />);
+    const user = userEvent.setup();
+
+    await user.click(screen.getByRole('button', { name: /salva modifiche/i }));
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith('Errore durante il salvataggio. Riprova.');
+    });
+  });
+
+  test('mostra toast di errore quando la rete fallisce', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    (global.fetch as jest.Mock) = jest.fn(() => Promise.reject(new Error('Network error')));
+
+    render(<EditProfileForm initialData={mockUser} />);
+    const user = userEvent.setup();
+
+    await user.click(screen.getByRole('button', { name: /salva modifiche/i }));
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith('Impossibile raggiungere il server.');
+    });
+    consoleErrorSpy.mockRestore();
+  });
+
+  test('renderizza i campi con i dati iniziali', () => {
+    render(<EditProfileForm initialData={mockUser} />);
+
+    expect(screen.getByRole('textbox', { name: /^nome$/i })).toHaveValue('Mario');
+    expect(screen.getByRole('textbox', { name: /^cognome$/i })).toHaveValue('Rossi');
+    expect(screen.getByRole('textbox', { name: /^email$/i })).toHaveValue('mario@test.it');
   });
 });
