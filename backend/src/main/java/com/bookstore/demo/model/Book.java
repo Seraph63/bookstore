@@ -1,9 +1,12 @@
 package com.bookstore.demo.model;
 
+import org.hibernate.validator.constraints.URL;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "libri")
@@ -32,9 +35,13 @@ public class Book {
 
     @NotBlank(message = "L'ISBN10 è obbligatorio")
     @Column(nullable = false, unique = true)
+    @Pattern(regexp = "^\\d{10}$", message = "ISBN10 deve essere formato da 10 cifre")
     private String isbn10;
 
+    @Column(nullable = false, unique = true)
+    @Pattern(regexp = "^\\d{3}-\\d{10}$", message = "ISBN13 deve essere nel formato 978-xxxxxxxxxx")
     private String isbn13;
+
     private String formati;
 
     @NotNull(message = "Il prezzo è obbligatorio")
@@ -45,8 +52,9 @@ public class Book {
     private Double prezzo_originale;
     private Integer stock;
 
-    @Column(length = 500, name = "cover_url")
-    private String copertina_url;
+    @Column(length = 500)
+    @URL(message = "L'URL della copertina non è valido")
+    private String copertinaUrl;
 
     private Double valutazione_media;
     private Integer numero_recensioni;
@@ -155,12 +163,12 @@ public class Book {
         this.stock = stock;
     }
 
-    public String getCopertina_url() {
-        return copertina_url;
+    public String getCopertinaUrl() {
+        return copertinaUrl;
     }
 
-    public void setCopertina_url(String copertina_url) {
-        this.copertina_url = copertina_url;
+    public void setCopertinaUrl(String copertinaUrl) {
+        this.copertinaUrl = copertinaUrl;
     }
 
     public Double getValutazione_media() {

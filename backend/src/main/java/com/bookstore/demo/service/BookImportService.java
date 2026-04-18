@@ -30,9 +30,17 @@ public class BookImportService {
     }
 
     public void importFromCsv(InputStream inputStream) {
+        // Controlla se il database ha già dei libri
+        if (bookRepository.count() > 0) {
+            System.out.println("ℹ️ Il database contiene già dei libri. Salto l'importazione.");
+            return;
+        }
+
         List<Book> books = parseCsv(inputStream);
         if (!books.isEmpty()) {
+            System.out.println("⏳ Importazione di " + books.size() + " libri...");
             bookRepository.saveAll(books);
+            System.out.println("✅ Importazione libri completata!");
         }
     }
 
@@ -81,7 +89,7 @@ public class BookImportService {
                     book.setPrezzo(parseToDouble(v[8]));
                     book.setPrezzo_originale(parseToDouble(v[9]));
                     book.setStock(parseToInt(v[10]));
-                    book.setCopertina_url(clean(v[11])); // Verifica se nel modello è copertina_url o cover_url
+                    book.setCopertinaUrl(clean(v[11])); // Ora usa il setter corretto
                     book.setValutazione_media(parseToDouble(v[12]));
                     book.setNumero_recensioni(parseToInt(v[13]));
                     book.setCategoria(clean(v[14]));

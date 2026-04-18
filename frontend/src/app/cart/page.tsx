@@ -91,7 +91,7 @@ export default function CartPage() {
                   className="bg-white rounded-2xl border border-gray-100 p-5 flex gap-5 shadow-sm hover:shadow-md transition"
                 >
                   <img
-                    src={item.book?.copertina_url || "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"}
+                    src={item.book?.copertinaUrl || "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"}
                     alt={item.book?.titolo}
                     className="w-20 h-28 object-cover rounded-xl"
                     onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"; }}

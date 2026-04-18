@@ -1,5 +1,7 @@
 package com.bookstore.demo.controller;
 
+import com.bookstore.demo.dto.cart.AddToCartRequest;
+import com.bookstore.demo.dto.cart.UpdateQuantityRequest;
 import com.bookstore.demo.model.*;
 import com.bookstore.demo.service.ICartService;
 import com.bookstore.demo.service.ICheckoutService;

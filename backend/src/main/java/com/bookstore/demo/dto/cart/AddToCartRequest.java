@@ -1,4 +1,4 @@
-package com.bookstore.demo.model;
+package com.bookstore.demo.dto.cart;
 
 public class AddToCartRequest {
     private Long bookId;

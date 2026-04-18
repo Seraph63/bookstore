@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS libri (
     prezzo DOUBLE PRECISION NOT NULL,
     prezzo_originale DOUBLE PRECISION,
     stock INT DEFAULT 0 NOT NULL,
-    cover_url VARCHAR(500),
+    copertinaUrl VARCHAR(500),
     valutazione_media DOUBLE PRECISION,
     numero_recensioni INT,
     categoria VARCHAR(255) NOT NULL,

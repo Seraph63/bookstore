@@ -26,6 +26,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/books/**").permitAll() // Libri pubblici
+                        .requestMatchers("/api/authors").permitAll() // Autori pubblici per dropdown
+                        .requestMatchers("/api/publishers").permitAll() // Editori pubblici per dropdown
                         .requestMatchers("/api/auth/**").permitAll() // Login/Register pubblici
                         .requestMatchers("/api/users/**").permitAll() // Utenti pubblici
                         .requestMatchers("/api/cart/**").permitAll() // Carrello pubblico

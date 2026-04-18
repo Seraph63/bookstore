@@ -33,7 +33,7 @@ const mockBooks = [
     autore: { nome: 'Antoine', cognome: 'de Saint-Exupéry' },
     prezzo: 7.65,
     categoria: 'Ragazzi',
-    copertina_url: 'https://picsum.photos/seed/1/400/600'
+    copertinaUrl: 'https://picsum.photos/seed/1/400/600'
   },
   {
     id: 2,
@@ -41,7 +41,7 @@ const mockBooks = [
     autore: { nome: 'Herman', cognome: 'Melville' },
     prezzo: 18.70,
     categoria: 'Classico',
-    copertina_url: 'https://picsum.photos/seed/2/400/600'
+    copertinaUrl: 'https://picsum.photos/seed/2/400/600'
   },
 ];
 

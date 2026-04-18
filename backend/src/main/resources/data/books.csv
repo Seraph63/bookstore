@@ -1,4 +1,4 @@
-titolo,sottotitolo,autore_id,editore_id,anno_pubblicazione,isbn10,isbn13,formati,prezzo,prezzo_originale,stock,copertina_url,valutazione_media,numero_recensioni,categoria,tags,Descrizione
+titolo,sottotitolo,autore_id,editore_id,anno_pubblicazione,isbn10,isbn13,formati,prezzo,prezzo_originale,stock,copertinaUrl,valutazione_media,numero_recensioni,categoria,tags,Descrizione
 Il Nome della Rosa,Edizione Speciale,1,1,1980,8845207056,978-8845207051,Cartaceo|E-book,12.75,15.0,45,https://picsum.photos/seed/1/400/600,4.8,1250,Narrativa,Storico|Mistero,Un giallo medievale in un'abbazia isolata.
 1984,Edizione Integrale,2,2,1949,8804668233,978-8804668237,Cartaceo|E-book|Audiobook,10.2,12.0,120,https://picsum.photos/seed/2/400/600,4.9,3500,Distopia,Politica|Classico,Il capolavoro sul controllo totale.
 Il Signore degli Anelli,La Compagnia dell'Anello,3,1,1954,8845292614,978-8845292613,Cartaceo|Audiobook,21.25,25.0,30,https://picsum.photos/seed/3/400/600,5.0,5000,Fantasy,Epico|Avventura,L'inizio del viaggio di Frodo.

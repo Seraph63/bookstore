@@ -2,6 +2,7 @@ package com.bookstore.demo.repository;
 
 import com.bookstore.demo.model.Book;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,10 +21,21 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             "LOWER(b.autore.cognome) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<Book> searchBooks(@Param("query") String query);
 
+    @Query("SELECT b FROM Book b JOIN FETCH b.autore JOIN FETCH b.editore WHERE b.id = :id")
+    Optional<Book> findByIdWithDetails(@Param("id") Long id);
+
     @Query("SELECT b FROM Book b JOIN FETCH b.autore JOIN FETCH b.editore")
     List<Book> findAllWithDetails();
 
     @Query(value = "SELECT b FROM Book b JOIN FETCH b.autore JOIN FETCH b.editore", countQuery = "SELECT COUNT(b) FROM Book b")
     Page<Book> findAllWithDetails(Pageable pageable);
+
+    // Metodo per verificare esistenza ISBN duplicati
+    boolean existsByIsbn10(String isbn10);
+
+    boolean existsByIsbn13(String isbn13);
+
+    // Metodo per trovare libro per ISBN13
+    Optional<Book> findByIsbn13(String isbn13);
 
 }

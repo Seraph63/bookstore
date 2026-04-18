@@ -1,9 +1,9 @@
 package com.bookstore.demo.controller;
 
-import com.bookstore.demo.model.AddToCartRequest;
+import com.bookstore.demo.dto.cart.AddToCartRequest;
 import com.bookstore.demo.model.Cart;
 import com.bookstore.demo.model.Order;
-import com.bookstore.demo.model.UpdateQuantityRequest;
+import com.bookstore.demo.dto.cart.UpdateQuantityRequest;
 import com.bookstore.demo.service.ICartService;
 import com.bookstore.demo.service.ICheckoutService;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +34,7 @@ public class CartController {
     }
 
     @PostMapping("/{userId}/items")
-    public ResponseEntity<?> addItem(@PathVariable Long userId,
-            @RequestBody AddToCartRequest request) {
+    public ResponseEntity<?> addItem(@PathVariable Long userId, @RequestBody AddToCartRequest request) {
         try {
             Cart cart = cartService.addItem(userId, request.getBookId(), request.getQuantita());
             return ResponseEntity.ok(cart);

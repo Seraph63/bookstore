@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {
@@ -11,7 +11,7 @@ import {
 import Link from 'next/link';
 import { toast } from 'sonner';
 
-export default function ProfilePage() {
+function ProfileContent() {
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -119,5 +119,13 @@ export default function ProfilePage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<div>Caricamento...</div>}>
+      <ProfileContent />
+    </Suspense>
   );
 }

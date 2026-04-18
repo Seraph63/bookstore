@@ -27,7 +27,7 @@ describe('BookCard', () => {
     },
     prezzo: 7.65,
     categoria: "Ragazzi",
-    copertina_url: "https://picsum.photos/seed/9/400/600",
+    copertinaUrl: "https://picsum.photos/seed/9/400/600",
     stock: 5
   };
 
@@ -72,8 +72,8 @@ describe('BookCard', () => {
     expect(img.src).toContain('unsplash.com');
   });
 
-  test('usa immagine di default quando copertina_url è assente', () => {
-    const bookSenzaCover = { ...mockBook, copertina_url: undefined };
+  test('usa immagine di default quando copertinaUrl è assente', () => {
+    const bookSenzaCover = { ...mockBook, copertinaUrl: undefined };
     render(<BookCard book={bookSenzaCover} />);
 
     const img = screen.getByAltText(mockBook.titolo) as HTMLImageElement;

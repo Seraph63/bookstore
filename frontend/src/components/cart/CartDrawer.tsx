@@ -59,7 +59,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             items.map((item) => (
               <div key={item.id} className="flex gap-4 bg-gray-50 rounded-2xl p-3">
                 <img
-                  src={item.book?.copertina_url || "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"}
+                  src={item.book?.copertinaUrl || "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"}
                   alt={item.book?.titolo}
                   className="w-16 h-20 object-cover rounded-xl"
                   onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"; }}

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.bookstore.demo.repository.UserRepository;
 import com.bookstore.demo.model.User;
-import com.bookstore.demo.model.LoginRequest;
-import com.bookstore.demo.model.RegisterRequest;
+import com.bookstore.demo.dto.auth.LoginRequest;
+import com.bookstore.demo.dto.auth.RegisterRequest;
 
 import java.util.Map;
 

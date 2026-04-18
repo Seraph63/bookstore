@@ -9,6 +9,7 @@ interface User {
   nome: string;
   cognome: string;
   isGuest: boolean;
+  ruolo?: string;
 }
 
 interface NavbarProps {
@@ -76,6 +77,15 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
                 >
                   <span className="mr-3">👤</span> Profilo Utente {user?.isGuest && "(Registrati)"}
                 </Link>
+                {user?.ruolo === 'ADMIN' && (
+                  <Link
+                    href="/admin/books"
+                    onClick={() => setShowDropdown(false)}
+                    className="w-full px-4 py-3 text-sm flex items-center transition-colors text-purple-700 hover:bg-purple-50 font-medium"
+                  >
+                    <span className="mr-3">⚙️</span> Gestione Admin
+                  </Link>
+                )}
                 {!user?.isGuest && (
                   <Link
                     href="/orders"

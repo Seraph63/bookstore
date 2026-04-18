@@ -1,7 +1,10 @@
 package com.bookstore.demo.controller;
 
+import com.bookstore.demo.dto.book.BookCreateRequest;
+import com.bookstore.demo.dto.book.BookResponse;
 import com.bookstore.demo.model.Book;
 import com.bookstore.demo.repository.BookRepository;
+import com.bookstore.demo.service.IBookService;
 
 import jakarta.validation.Valid;
 
@@ -13,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 import org.springframework.lang.NonNull;
 
 @RestController
@@ -23,21 +27,27 @@ public class BookController {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private IBookService bookService;
+
     @GetMapping
-    public Page<Book> getAllBooks(
+    public Page<BookResponse> getAllBooks(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
         size = Math.min(size, 100);
-        return bookRepository.findAllWithDetails(
-                PageRequest.of(page, size, Sort.by("titolo").ascending()));
+        PageRequest pageable = PageRequest.of(page, size, Sort.by("titolo").ascending());
+        return bookService.getAllBooks(pageable);
     }
 
     // GET /api/books/:id - Dettaglio singolo libro
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable @NonNull Long id) {
-        return bookRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<BookResponse> getBookById(@PathVariable @NonNull Long id) {
+        try {
+            BookResponse response = bookService.getBookById(id);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build(); // 404 NOT FOUND
+        }
     }
 
     // GET /api/books/search?q=... - Ricerca e suggerimenti
@@ -49,11 +59,37 @@ public class BookController {
         return bookRepository.searchBooks(query);
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<?> saveBook(@Valid @RequestBody @NonNull Book book) {
-        // Se il libro non ha tutti i campi o l'ISBN esiste già,
-        // Spring lancerà automaticamente un'eccezione o restituirà 400 Bad Request
-        bookRepository.save(book);
-        return ResponseEntity.ok("Libro salvato con successo");
+    // CREATE - POST /api/books
+    @PostMapping
+    public ResponseEntity<BookResponse> createBook(@Valid @RequestBody BookCreateRequest request) {
+        try {
+            BookResponse response = bookService.createBook(request);
+            return ResponseEntity.status(201).body(response); // 201 CREATED
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build(); // 400 BAD REQUEST
+        }
+    }
+
+    // UPDATE - PUT /api/books/{id}
+    @PutMapping("/{id}")
+    public ResponseEntity<BookResponse> updateBook(@PathVariable Long id,
+            @Valid @RequestBody BookCreateRequest request) {
+        try {
+            BookResponse response = bookService.updateBook(id, request);
+            return ResponseEntity.ok(response); // 200 OK
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build(); // 400 BAD REQUEST
+        }
+    }
+
+    // DELETE - DELETE /api/books/{id}
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        try {
+            bookService.deleteBook(id);
+            return ResponseEntity.noContent().build(); // 204 NO CONTENT
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build(); // 404 NOT FOUND
+        }
     }
 }
