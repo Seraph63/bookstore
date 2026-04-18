@@ -34,8 +34,8 @@ export default function CartPage() {
   const handleCheckout = async () => {
     const order = await checkout();
     if (order) {
-      router.push('/');
-    }
+      router.push('/');      // Emetti evento per aggiornare i libri nella homepage
+      window.dispatchEvent(new CustomEvent('booksStockUpdated'));    }
   };
 
   return (

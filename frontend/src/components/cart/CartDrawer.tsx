@@ -15,6 +15,8 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     const order = await checkout();
     if (order) {
       onClose();
+      // Emetti evento per aggiornare i libri nella homepage
+      window.dispatchEvent(new CustomEvent('booksStockUpdated'));
     }
   };
 

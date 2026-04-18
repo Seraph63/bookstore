@@ -29,11 +29,27 @@ export default function HomePage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Handler per l'aggiornamento stock post-checkout
+  const handleStockUpdate = useCallback(() => {
+    console.log('Stock aggiornato, ricarico libri...');
+    fetchBooks(currentPage);
+  }, [fetchBooks, currentPage]);
+
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) setUser(JSON.parse(savedUser));
     fetchBooks(0);
   }, [fetchBooks]);
+
+  useEffect(() => {
+    // Ascolta l'evento di aggiornamento stock post-checkout  
+    window.addEventListener('booksStockUpdated', handleStockUpdate);
+
+    // Cleanup dell'event listener
+    return () => {
+      window.removeEventListener('booksStockUpdated', handleStockUpdate);
+    };
+  }, [handleStockUpdate]);
 
   const handleLogout = () => {
     document.cookie = "auth_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";

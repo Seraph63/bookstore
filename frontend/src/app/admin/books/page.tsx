@@ -43,6 +43,19 @@ export default function AdminBooksPage() {
     }
     
     fetchBooks();
+
+    // Ascolta l'evento di aggiornamento stock post-checkout
+    const handleStockUpdate = () => {
+      console.log('Stock aggiornato in admin, ricarico libri...');
+      fetchBooks();
+    };
+
+    window.addEventListener('booksStockUpdated', handleStockUpdate);
+
+    // Cleanup dell'event listener
+    return () => {
+      window.removeEventListener('booksStockUpdated', handleStockUpdate);
+    };
   }, [router]);
 
   const handleLogout = () => {
