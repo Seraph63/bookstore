@@ -1,5 +1,5 @@
-nome, cognome,username,email,password_hash,ruolo
-Serafino,Corriero,sercorrie,sercorrie@email.it, admin123,ADMIN
-Luca,Rossi,gio_rossi,luca.rossi@email.it, user123,USER
-Francesca,Bianchi,fra_bianchi,francesca.bianchi@email.it, user123,USER
-Luigi,Verdi,lu_verdi,luigi.verdi@email.it, user123,USER
+nome,cognome,username,email,password_hash,ruolo,attivo,data_registrazione
+Serafino,Corriero,sercorrie,sercorrie@email.it,admin123,ADMIN,true,2024-01-01T10:00:00
+Luca,Rossi,gio_rossi,luca.rossi@email.it,user123,USER,true,2024-01-02T10:00:00
+Francesca,Bianchi,fra_bianchi,francesca.bianchi@email.it,user123,USER,true,2024-01-03T10:00:00
+Luigi,Verdi,lu_verdi,luigi.verdi@email.it,user123,USER,false,2024-01-04T10:00:00

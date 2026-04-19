@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 interface BookFormProps {
   mode: 'create' | 'edit';
@@ -169,16 +170,31 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
       if (response.ok) {
         const result = await response.json();
         console.log('Salvataggio riuscito:', result);
-        router.push('/admin/books');
-        router.refresh();
+        
+        // Mostra messaggio di successo
+        toast.success(
+          mode === 'create' 
+            ? 'Libro creato con successo!' 
+            : 'Libro modificato con successo!'
+        );
+        
+        // Attendi un momento per permettere di vedere il toast
+        setTimeout(() => {
+          router.push('/admin/books');
+          router.refresh();
+        }, 1500);
       } else {
         const errorData = await response.text();
         console.error('Errore dal server:', errorData);
-        setError(errorData || `Errore ${response.status}: ${response.statusText}`);
+        const errorMessage = errorData || `Errore ${response.status}: ${response.statusText}`;
+        setError(errorMessage);
+        toast.error(`Errore nel salvataggio: ${errorMessage}`);
       }
     } catch (err) {
       console.error('Errore di rete:', err);
-      setError('Errore di connessione al server');
+      const errorMessage = 'Errore di connessione al server';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

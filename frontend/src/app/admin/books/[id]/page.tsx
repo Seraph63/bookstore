@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Navbar from '@/components/layout/Navbar';
 import { PencilSquareIcon, TrashIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { toast } from 'sonner';
 
 interface Book {
   id: number;
@@ -30,42 +30,22 @@ export default function BookDetailPage() {
   const params = useParams();
   const router = useRouter();
   const bookId = params?.id as string;
-  const [user, setUser] = useState<any>(null);
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    // Carica l'utente dal localStorage
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      const userData = JSON.parse(savedUser);
-      setUser(userData);
-      
-      // Verifica se l'utente è admin
-      if (userData.ruolo !== 'ADMIN') {
-        router.push('/');
-        return;
-      }
-    } else {
-      router.push('/login');
-      return;
-    }
-
+    // L'autenticazione admin è gestita dal layout admin
     if (bookId) {
       fetchBook();
     }
-  }, [bookId, router]);
-
-  const handleLogout = () => {
-    document.cookie = "auth_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    localStorage.removeItem('user');
-    router.push('/login');
-  };
+  }, [bookId]);
 
   const fetchBook = async () => {
     try {
+      setLoading(true);
+      setError('');
       const response = await fetch(`http://localhost:8080/api/books/${bookId}`);
       if (!response.ok) {
         throw new Error('Libro non trovato');
@@ -80,7 +60,7 @@ export default function BookDetailPage() {
   };
 
   const handleDelete = async () => {
-    if (!confirm('Sei sicuro di voler eliminare questo libro? Questa azione non può essere annullata.')) {
+    if (!book || !confirm('Sei sicuro di voler eliminare questo libro? Questa azione non può essere annullata.')) {
       return;
     }
 
@@ -94,9 +74,15 @@ export default function BookDetailPage() {
         throw new Error('Errore eliminazione libro');
       }
 
-      router.push('/admin/books');
+      toast.success('Libro eliminato con successo!');
+      
+      // Attendi un momento per permettere di vedere il toast
+      setTimeout(() => {
+        router.push('/admin/books');
+      }, 1500);
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Errore eliminazione libro');
+      const errorMessage = err instanceof Error ? err.message : 'Errore eliminazione libro';
+      toast.error(`Errore: ${errorMessage}`);
     } finally {
       setDeleting(false);
     }
@@ -104,200 +90,199 @@ export default function BookDetailPage() {
 
   if (loading) {
     return (
-      <>
-        <Navbar user={user} onLogout={handleLogout} />
-        <div className="min-h-screen bg-gray-50 py-8 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Caricamento libro...</p>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  if (error || !book) {
-    return (
-      <>
-        <Navbar user={user} onLogout={handleLogout} />
-        <div className="min-h-screen bg-gray-50 py-8 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-red-600 text-lg">{error}</p>
-            <button 
-              onClick={() => router.back()} 
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              Torna indietro
-            </button>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Navbar user={user} onLogout={handleLogout} />
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <button
-              onClick={() => router.back()}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <ArrowLeftIcon className="w-5 h-5" />
-              Torna indietro
-            </button>
-            <div className="flex gap-3">
-              <button
-                onClick={() => router.push(`/admin/books/${bookId}/edit`)}
-                className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
-              >
-                <PencilSquareIcon className="w-5 h-5" />
-                Modifica
-              </button>
-              <button
-                onClick={handleDelete}
-                disabled={deleting}
-                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors"
-              >
-                <TrashIcon className="w-5 h-5" />
-                {deleting ? 'Eliminazione...' : 'Elimina'}
-              </button>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-8">
-              {/* Copertina */}
-              <div className="lg:col-span-1">
-                <div className="aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden">
-                  <img
-                    src={book.copertinaUrl || "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"}
-                    alt={book.titolo}
-                    className="w-full h-full object-cover"
-                    onError={(e) => { 
-                      e.currentTarget.src = "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"; 
-                    }}
-                  />
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
+            <div className="bg-white rounded-lg shadow p-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-1">
+                  <div className="aspect-[3/4] bg-gray-200 rounded-lg"></div>
                 </div>
-              </div>
-
-              {/* Informazioni principali */}
-              <div className="lg:col-span-2 space-y-6">
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">{book.titolo}</h1>
-                  {book.sottotitolo && (
-                    <h2 className="text-xl text-gray-600 mb-4">{book.sottotitolo}</h2>
-                  )}
-                  
-                  <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
-                    <span>di <strong>{book.nomeAutore} {book.cognomeAutore}</strong></span>
-                    <span>•</span>
-                    <span>Editore: <strong>{book.nomeEditore}</strong></span>
-                    {book.annoPubblicazione && (
-                      <>
-                        <span>•</span>
-                        <span>Anno: <strong>{book.annoPubblicazione}</strong></span>
-                      </>
-                    )}
-                  </div>
-
-                  {book.categoria && (
-                    <div className="mb-4">
-                      <span className="inline-flex px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
-                        {book.categoria}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Prezzo e disponibilità */}
-                <div className="border-t pt-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <span className="text-3xl font-bold text-gray-900">€{book.prezzo.toFixed(2)}</span>
-                    {book.prezzoOriginale && book.prezzoOriginale > book.prezzo && (
-                      <>
-                        <span className="text-lg text-gray-500 line-through">€{book.prezzoOriginale.toFixed(2)}</span>
-                        {book.percentualeSconto && (
-                          <span className="text-sm bg-red-100 text-red-800 px-2 py-1 rounded">
-                            -{book.percentualeSconto.toFixed(0)}%
-                          </span>
-                        )}
-                      </>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
-                      book.disponibile 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {book.disponibile ? `${book.stock} disponibili` : 'Non disponibile'}
-                    </span>
-
-                    {book.formati && (
-                      <span className="text-sm text-gray-600">
-                        Formati: {book.formati}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Descrizione */}
-                {book.descrizione && (
-                  <div className="border-t pt-6">
-                    <h3 className="font-semibold text-gray-900 mb-3">Descrizione</h3>
-                    <p className="text-gray-700 leading-relaxed">{book.descrizione}</p>
-                  </div>
-                )}
-
-                {/* Tags */}
-                {book.tags && (
-                  <div className="border-t pt-6">
-                    <h3 className="font-semibold text-gray-900 mb-3">Tags</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {book.tags.split(',').map((tag, index) => (
-                        <span 
-                          key={index}
-                          className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded"
-                        >
-                          {tag.trim()}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Dettagli tecnici */}
-                <div className="border-t pt-6">
-                  <h3 className="font-semibold text-gray-900 mb-3">Dettagli</h3>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    {book.isbn10 && (
-                      <div>
-                        <span className="font-medium text-gray-700">ISBN-10:</span>
-                        <span className="ml-2 text-gray-600">{book.isbn10}</span>
-                      </div>
-                    )}
-                    {book.isbn13 && (
-                      <div>
-                        <span className="font-medium text-gray-700">ISBN-13:</span>
-                        <span className="ml-2 text-gray-600">{book.isbn13}</span>
-                      </div>
-                    )}
-                    <div>
-                      <span className="font-medium text-gray-700">ID Libro:</span>
-                      <span className="ml-2 text-gray-600">{book.id}</span>
-                    </div>
-                  </div>
+                <div className="lg:col-span-2 space-y-4">
+                  <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-full"></div>
+                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </>
+    );
+  }
+
+  if (error || !book) {
+    return (
+      <div className="py-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-red-600 text-lg mb-4">{error || 'Libro non trovato'}</p>
+            <button 
+              onClick={() => router.push('/admin/books')} 
+              className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              Torna alla lista libri
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <button
+            onClick={() => router.push('/admin/books')}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeftIcon className="w-5 h-5" />
+            Torna alla gestione libri
+          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => router.push(`/admin/books/${bookId}/edit`)}
+              className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+            >
+              <PencilSquareIcon className="w-5 h-5" />
+              Modifica
+            </button>
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors"
+            >
+              <TrashIcon className="w-5 h-5" />
+              {deleting ? 'Eliminazione...' : 'Elimina'}
+            </button>
+          </div>
+        </div>
+
+        {/* Book Details Card */}
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-8">
+            {/* Copertina */}
+            <div className="lg:col-span-1">
+              <div className="aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden">
+                <img
+                  src={book.copertinaUrl || "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"}
+                  alt={book.titolo}
+                  className="w-full h-full object-cover"
+                  onError={(e) => { 
+                    e.currentTarget.src = "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"; 
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Informazioni principali */}
+            <div className="lg:col-span-2 space-y-6">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{book.titolo}</h1>
+                {book.sottotitolo && (
+                  <h2 className="text-xl text-gray-600 mb-4">{book.sottotitolo}</h2>
+                )}
+                
+                <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
+                  <span>di <strong>{book.nomeAutore} {book.cognomeAutore}</strong></span>
+                  <span>•</span>
+                  <span>Editore: <strong>{book.nomeEditore}</strong></span>
+                  {book.annoPubblicazione && (
+                    <>
+                      <span>•</span>
+                      <span>Anno: <strong>{book.annoPubblicazione}</strong></span>
+                    </>
+                  )}
+                </div>
+
+                {book.categoria && (
+                  <div className="mb-4">
+                    <span className="inline-flex px-3 py-1 text-sm font-medium bg-purple-100 text-purple-800 rounded-full">
+                      {book.categoria}
+                    </span>
+                  </div>
+                )}
+
+                {book.descrizione && (
+                  <div className="prose prose-sm text-gray-700 mb-6">
+                    <p>{book.descrizione}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Pricing and Stock Info */}
+              <div className="border-t pt-6">
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Prezzo</h3>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold text-gray-900">
+                        €{book.prezzo?.toFixed(2)}
+                      </span>
+                      {book.prezzoOriginale && book.prezzoOriginale !== book.prezzo && (
+                        <>
+                          <span className="text-lg text-gray-500 line-through">
+                            €{book.prezzoOriginale.toFixed(2)}
+                          </span>
+                          <span className="text-sm font-medium text-green-600">
+                            -{book.percentualeSconto}%
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Disponibilità</h3>
+                    <div className="flex items-center gap-2">
+                      <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
+                        book.stock > 10
+                          ? 'bg-green-100 text-green-800'
+                          : book.stock > 0
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {book.stock > 0 ? `${book.stock} disponibili` : 'Esaurito'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Info */}
+              {(book.isbn10 || book.isbn13 || book.formati) && (
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">Dettagli Tecnici</h3>
+                  <dl className="space-y-2">
+                    {book.isbn10 && (
+                      <div className="flex justify-between">
+                        <dt className="text-sm font-medium text-gray-500">ISBN-10:</dt>
+                        <dd className="text-sm text-gray-900">{book.isbn10}</dd>
+                      </div>
+                    )}
+                    {book.isbn13 && (
+                      <div className="flex justify-between">
+                        <dt className="text-sm font-medium text-gray-500">ISBN-13:</dt>
+                        <dd className="text-sm text-gray-900">{book.isbn13}</dd>
+                      </div>
+                    )}
+                    {book.formati && (
+                      <div className="flex justify-between">
+                        <dt className="text-sm font-medium text-gray-500">Formato:</dt>
+                        <dd className="text-sm text-gray-900">{book.formati}</dd>
+                      </div>
+                    )}
+                  </dl>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
