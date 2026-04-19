@@ -1,7 +1,8 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
   // Questo risolve l'errore del log forzando l'uso di webpack con il polling
-  webpack: (config, { dev }) => {
+  webpack: (config: any, { dev }: { dev: boolean }) => {
     if (dev) {
       config.watchOptions = {
         poll: 1000,         // Controlla i file ogni secondo
