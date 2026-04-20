@@ -207,6 +207,23 @@ export default function BookDetailPage() {
                   </div>
                 )}
 
+                {/* Tags Section */}
+                {book.tags && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-500 mb-2">Tag:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {book.tags.split(',').map((tag, index) => (
+                        <span 
+                          key={index}
+                          className="inline-flex px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-md"
+                        >
+                          {tag.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {book.descrizione && (
                   <div className="prose prose-sm text-gray-700 mb-6">
                     <p>{book.descrizione}</p>

@@ -14,17 +14,20 @@ public class DatabaseInitializer implements CommandLineRunner {
     private final UserImportService userImportService;
     private final BookImportService bookImportService;
     private final CategoryImportService categoryImportService;
+    private final TagImportService tagImportService;
 
     public DatabaseInitializer(AuthorImportService authorImportService,
             PublisherImportService publisherImportService,
             UserImportService userImportService,
             BookImportService bookImportService,
-            CategoryImportService categoryImportService) {
+            CategoryImportService categoryImportService,
+            TagImportService tagImportService) {
         this.authorImportService = authorImportService;
         this.publisherImportService = publisherImportService;
         this.userImportService = userImportService;
         this.bookImportService = bookImportService;
         this.categoryImportService = categoryImportService;
+        this.tagImportService = tagImportService;
     }
 
     @Override
@@ -49,13 +52,19 @@ public class DatabaseInitializer implements CommandLineRunner {
                 System.out.println("Categorie importate.");
             }
 
-            // 4. UTENTI
+            // 4. TAGS
+            try (InputStream is = new ClassPathResource("data/tags.csv").getInputStream()) {
+                tagImportService.importFromCsv(is);
+                System.out.println("Tags importati.");
+            }
+
+            // 5. UTENTI
             try (InputStream is = new ClassPathResource("data/users.csv").getInputStream()) {
                 userImportService.importFromCsv(is);
                 System.out.println("Utenti importati.");
             }
 
-            // 5. LIBRI (Sempre per ultimi!)
+            // 6. LIBRI (Sempre per ultimi!)
             try (InputStream is = new ClassPathResource("data/books.csv").getInputStream()) {
                 bookImportService.importFromCsv(is);
                 System.out.println("Libri importati.");

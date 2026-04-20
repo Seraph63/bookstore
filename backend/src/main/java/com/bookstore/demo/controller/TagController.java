@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/Tag")
+@RequestMapping("/api/tag")
 @CrossOrigin(origins = "*")
 public class TagController {
 
@@ -19,13 +19,13 @@ public class TagController {
         this.TagRepository = TagRepository;
     }
 
-    // GET /api/Tag - Lista tutte le categorie
+    // GET /api/tag - Lista tutte le categorie
     @GetMapping
     public List<Tag> getAllTag() {
         return TagRepository.findAll();
     }
 
-    // GET /api/Tag/{id} - Dettaglio singola categoria
+    // GET /api/tag/{id} - Dettaglio singola categoria
     @GetMapping("/{id}")
     public ResponseEntity<Tag> getTagById(@PathVariable @NonNull Long id) {
         return TagRepository.findById(id)

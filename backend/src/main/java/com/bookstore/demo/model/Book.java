@@ -62,7 +62,7 @@ public class Book {
     private Double valutazione_media;
     private Integer numero_recensioni;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
     @JoinTable(name = "libro_tag", joinColumns = @JoinColumn(name = "libro_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tag = new HashSet<>();
 
