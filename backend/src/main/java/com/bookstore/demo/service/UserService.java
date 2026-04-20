@@ -2,7 +2,6 @@ package com.bookstore.demo.service;
 
 import com.bookstore.demo.model.User;
 import com.bookstore.demo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +20,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    @SuppressWarnings("null")
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
@@ -49,6 +49,7 @@ public class UserService {
     }
 
     public User updateUser(Long id, User userDetails) throws RuntimeException {
+        @SuppressWarnings("null")
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
@@ -111,11 +112,13 @@ public class UserService {
             user.setPassword(userDetails.getPassword());
         }
 
+        @SuppressWarnings("null")
         User savedUser = userRepository.save(user);
         System.out.println("Utente salvato - Ruolo: " + savedUser.getRuolo() + ", Attivo: " + savedUser.getAttivo());
         return savedUser;
     }
 
+    @SuppressWarnings("null")
     public void deleteUser(Long id) throws RuntimeException {
         if (!userRepository.existsById(id)) {
             throw new RuntimeException("Utente non trovato");
@@ -124,6 +127,7 @@ public class UserService {
     }
 
     public User toggleUserActive(Long id) throws RuntimeException {
+        @SuppressWarnings("null")
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 

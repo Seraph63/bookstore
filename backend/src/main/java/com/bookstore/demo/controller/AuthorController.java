@@ -2,7 +2,6 @@ package com.bookstore.demo.controller;
 
 import com.bookstore.demo.model.Author;
 import com.bookstore.demo.repository.AuthorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 

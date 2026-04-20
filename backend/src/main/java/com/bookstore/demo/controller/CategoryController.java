@@ -3,6 +3,7 @@ package com.bookstore.demo.controller;
 import com.bookstore.demo.model.Category;
 import com.bookstore.demo.repository.CategoryRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class CategoryController {
 
     // GET /api/categories/{id} - Dettaglio singola categoria
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<Category> getCategoryById(@PathVariable @NonNull Long id) {
         return categoryRepository.findById(id)
                 .map(category -> ResponseEntity.ok().body(category))
                 .orElse(ResponseEntity.notFound().build());
