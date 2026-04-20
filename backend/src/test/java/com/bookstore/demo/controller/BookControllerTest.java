@@ -60,7 +60,8 @@ public class BookControllerTest {
                 response.setPrezzoOriginale(24.99);
                 response.setStock(100);
                 response.setDisponibile(true);
-                response.setCategoria("Fiction");
+                response.setCategoriaId(1L); // ID categoria
+                response.setCategoria("Fiction"); // Descrizione categoria  
                 response.setPercentualeSconto(20.0);
                 return response;
         }

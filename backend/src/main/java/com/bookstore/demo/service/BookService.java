@@ -5,9 +5,11 @@ import com.bookstore.demo.dto.book.BookResponse;
 import com.bookstore.demo.model.Author;
 import com.bookstore.demo.model.Book;
 import com.bookstore.demo.model.Publisher;
+import com.bookstore.demo.model.Category;
 import com.bookstore.demo.repository.AuthorRepository;
 import com.bookstore.demo.repository.BookRepository;
 import com.bookstore.demo.repository.PublisherRepository;
+import com.bookstore.demo.repository.CategoryRepository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,18 +22,21 @@ public class BookService implements IBookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final PublisherRepository publisherRepository;
+    private final CategoryRepository categoryRepository;
 
     public BookService(BookRepository bookRepository,
             AuthorRepository authorRepository,
-            PublisherRepository publisherRepository) {
+            PublisherRepository publisherRepository,
+            CategoryRepository categoryRepository) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.publisherRepository = publisherRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Transactional
     public BookResponse createBook(BookCreateRequest request) {
-        // Valida che autore e editore esistano
+        // Valida che autore, editore e categoria esistano
         @SuppressWarnings("null")
         Author author = authorRepository.findById(request.getAutoreId())
                 .orElseThrow(
@@ -41,6 +46,11 @@ public class BookService implements IBookService {
         Publisher publisher = publisherRepository.findById(request.getEditoreId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Editore con ID " + request.getEditoreId() + " non trovato"));
+
+        @SuppressWarnings("null")
+        Category category = categoryRepository.findById(request.getCategoriaId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Categoria con ID " + request.getCategoriaId() + " non trovata"));
 
         // Controlla duplicati ISBN
         if (bookRepository.existsByIsbn10(request.getIsbn10())) {
@@ -53,6 +63,7 @@ public class BookService implements IBookService {
         book.setSottotitolo(request.getSottotitolo());
         book.setAutore(author);
         book.setEditore(publisher);
+        book.setCategoria(category); // Ora usa l'oggetto Category
         book.setAnno_pubblicazione(request.getAnnoPubblicazione());
         book.setIsbn10(request.getIsbn10());
         book.setIsbn13(request.getIsbn13());
@@ -62,7 +73,6 @@ public class BookService implements IBookService {
                 request.getPrezzoOriginale() != null ? request.getPrezzoOriginale().doubleValue() : null);
         book.setStock(request.getStock());
         book.setCopertinaUrl(request.getCopertinaUrl());
-        book.setCategoria(request.getCategoria());
         book.setTags(request.getTags());
         book.setDescrizione(request.getDescrizione());
 
@@ -90,7 +100,7 @@ public class BookService implements IBookService {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Libro con ID " + id + " non trovato"));
 
-        // Valida che autore e editore esistano
+        // Valida che autore, editore e categoria esistano
         @SuppressWarnings("null")
         Author author = authorRepository.findById(request.getAutoreId())
                 .orElseThrow(
@@ -100,6 +110,11 @@ public class BookService implements IBookService {
         Publisher publisher = publisherRepository.findById(request.getEditoreId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Editore con ID " + request.getEditoreId() + " non trovato"));
+
+        @SuppressWarnings("null")
+        Category category = categoryRepository.findById(request.getCategoriaId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Categoria con ID " + request.getCategoriaId() + " non trovata"));
 
         // Controlla duplicati ISBN (escludendo il libro corrente)
         if (request.getIsbn10() != null && !request.getIsbn10().equals(book.getIsbn10()) &&
@@ -112,6 +127,7 @@ public class BookService implements IBookService {
         book.setSottotitolo(request.getSottotitolo());
         book.setAutore(author);
         book.setEditore(publisher);
+        book.setCategoria(category); // Ora usa l'oggetto Category
         book.setAnno_pubblicazione(request.getAnnoPubblicazione());
         book.setIsbn10(request.getIsbn10());
         book.setIsbn13(request.getIsbn13());
@@ -121,7 +137,6 @@ public class BookService implements IBookService {
                 request.getPrezzoOriginale() != null ? request.getPrezzoOriginale().doubleValue() : null);
         book.setStock(request.getStock());
         book.setCopertinaUrl(request.getCopertinaUrl());
-        book.setCategoria(request.getCategoria());
         book.setTags(request.getTags());
         book.setDescrizione(request.getDescrizione());
 
@@ -163,7 +178,13 @@ public class BookService implements IBookService {
         response.setCopertinaUrl(book.getCopertinaUrl());
         response.setValutazioneMedia(book.getValutazione_media());
         response.setNumeroRecensioni(book.getNumero_recensioni());
-        response.setCategoria(book.getCategoria());
+        
+        // Gestione categoria - ora è un oggetto
+        if (book.getCategoria() != null) {
+            response.setCategoriaId(book.getCategoria().getId());
+            response.setCategoria(book.getCategoria().getDescrizione());
+        }
+        
         response.setTags(book.getTags());
         response.setDescrizione(book.getDescrizione());
 

@@ -3,9 +3,11 @@ package com.bookstore.demo.service;
 import com.bookstore.demo.model.Book;
 import com.bookstore.demo.model.Author;
 import com.bookstore.demo.model.Publisher;
+import com.bookstore.demo.model.Category;
 import com.bookstore.demo.repository.BookRepository;
 import com.bookstore.demo.repository.AuthorRepository;
 import com.bookstore.demo.repository.PublisherRepository;
+import com.bookstore.demo.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -19,14 +21,17 @@ public class BookImportService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final PublisherRepository publisherRepository;
+    private final CategoryRepository categoryRepository;
 
     // Iniettiamo tutti i repository necessari
     public BookImportService(BookRepository bookRepository,
             AuthorRepository authorRepository,
-            PublisherRepository publisherRepository) {
+            PublisherRepository publisherRepository,
+            CategoryRepository categoryRepository) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.publisherRepository = publisherRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public void importFromCsv(InputStream inputStream) {
@@ -67,9 +72,11 @@ public class BookImportService {
                     // 1. Estrazione ID dal CSV
                     Long authorId = parseToLong(v[2]);
                     Long publisherId = parseToLong(v[3]);
+                    Long categoriaId = parseToLong(v[14]); // La categoria ora è un ID
 
                     // 2. Caricamento oggetti dal DB (UNA SOLA VOLTA)
-                    // Usiamo orElseThrow per fermare l'import se i dati base (autori/editori)
+                    // Usiamo orElseThrow per fermare l'import se i dati base
+                    // (autori/editori/categorie)
                     // mancano
                     Author autore = authorRepository.findById(authorId)
                             .orElseThrow(() -> new RuntimeException("Autore ID " + authorId + " non trovato!"));
@@ -77,9 +84,13 @@ public class BookImportService {
                     Publisher editore = publisherRepository.findById(publisherId)
                             .orElseThrow(() -> new RuntimeException("Editore ID " + publisherId + " non trovato!"));
 
+                    Category categoria = categoryRepository.findById(categoriaId)
+                            .orElseThrow(() -> new RuntimeException("Categoria ID " + categoriaId + " non trovata!"));
+
                     // 3. Associazione al libro (usa i setter definiti in Book.java)
                     book.setAutore(autore);
                     book.setEditore(editore);
+                    book.setCategoria(categoria);
 
                     // 4. Resto dei campi
                     book.setAnno_pubblicazione(parseToInt(v[4]));
@@ -92,7 +103,7 @@ public class BookImportService {
                     book.setCopertinaUrl(clean(v[11])); // Ora usa il setter corretto
                     book.setValutazione_media(parseToDouble(v[12]));
                     book.setNumero_recensioni(parseToInt(v[13]));
-                    book.setCategoria(clean(v[14]));
+                    // La categoria è già impostata sopra come relazione
                     book.setTags(clean(v[15]));
                     book.setDescrizione(clean(v[16]));
 

@@ -80,7 +80,7 @@ export default function EditBookPage() {
     prezzoOriginale: book.prezzoOriginale || '',
     stock: book.stock || '',
     copertinaUrl: book.copertinaUrl || '',
-    categoria: book.categoria || '',
+    categoriaId: book.categoriaId || null, // Ora usa categoriaId
     tags: book.tags || '',
     descrizione: book.descrizione || ''
   };

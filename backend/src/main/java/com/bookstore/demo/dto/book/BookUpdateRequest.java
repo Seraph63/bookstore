@@ -11,6 +11,7 @@ public class BookUpdateRequest {
     private String copertinaUrl;
     private Integer stock;
     private Double prezzo;
+    private Long categoriaId;
 
     // 1. COSTRUTTORE VUOTO (obbligatorio per Jackson)
     public BookUpdateRequest() {
@@ -75,11 +76,11 @@ public class BookUpdateRequest {
         this.isbn13 = isbn13;
     }
 
-    public String getcopertinaUrl() {
+    public String getCopertinaUrl() {
         return copertinaUrl;
     }
 
-    public void setcopertinaUrl(String copertinaUrl) {
+    public void setCopertinaUrl(String copertinaUrl) {
         this.copertinaUrl = copertinaUrl;
     }
 
@@ -89,6 +90,22 @@ public class BookUpdateRequest {
 
     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    public Double getPrezzo() {
+        return prezzo;
+    }
+
+    public void setPrezzo(Double prezzo) {
+        this.prezzo = prezzo;
+    }
+
+    public Long getCategoriaId() {
+        return categoriaId;
+    }
+
+    public void setCategoriaId(Long categoriaId) {
+        this.categoriaId = categoriaId;
     }
 
 }

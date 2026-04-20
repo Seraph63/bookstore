@@ -13,15 +13,18 @@ public class DatabaseInitializer implements CommandLineRunner {
     private final PublisherImportService publisherImportService;
     private final UserImportService userImportService;
     private final BookImportService bookImportService;
+    private final CategoryImportService categoryImportService;
 
     public DatabaseInitializer(AuthorImportService authorImportService,
             PublisherImportService publisherImportService,
             UserImportService userImportService,
-            BookImportService bookImportService) {
+            BookImportService bookImportService,
+            CategoryImportService categoryImportService) {
         this.authorImportService = authorImportService;
         this.publisherImportService = publisherImportService;
         this.userImportService = userImportService;
         this.bookImportService = bookImportService;
+        this.categoryImportService = categoryImportService;
     }
 
     @Override
@@ -40,14 +43,19 @@ public class DatabaseInitializer implements CommandLineRunner {
                 publisherImportService.importFromCsv(is);
                 System.out.println("Editori importati.");
             }
+            // 3. CATEGORIE
+            try (InputStream is = new ClassPathResource("data/categories.csv").getInputStream()) {
+                categoryImportService.importFromCsv(is);
+                System.out.println("Categorie importate.");
+            }
 
-            // 3. UTENTI
+            // 4. UTENTI
             try (InputStream is = new ClassPathResource("data/users.csv").getInputStream()) {
                 userImportService.importFromCsv(is);
                 System.out.println("Utenti importati.");
             }
 
-            // 4. LIBRI (Sempre per ultimi!)
+            // 5. LIBRI (Sempre per ultimi!)
             try (InputStream is = new ClassPathResource("data/books.csv").getInputStream()) {
                 bookImportService.importFromCsv(is);
                 System.out.println("Libri importati.");

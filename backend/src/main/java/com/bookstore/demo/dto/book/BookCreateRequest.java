@@ -33,7 +33,7 @@ public class BookCreateRequest {
     private BigDecimal prezzoOriginale;
     private Integer stock;
     private String copertinaUrl;
-    private String categoria;
+    private Long categoriaId;
     private String tags;
     private String descrizione;
 
@@ -133,12 +133,12 @@ public class BookCreateRequest {
         this.copertinaUrl = copertinaUrl;
     }
 
-    public String getCategoria() {
-        return categoria;
+    public Long getCategoriaId() {
+        return categoriaId;
     }
 
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
+    public void setCategoriaId(Long categoriaId) {
+        this.categoriaId = categoriaId;
     }
 
     public String getTags() {

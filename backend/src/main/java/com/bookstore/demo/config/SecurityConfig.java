@@ -28,6 +28,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/books/**").permitAll() // Libri pubblici
                         .requestMatchers("/api/authors").permitAll() // Autori pubblici per dropdown
                         .requestMatchers("/api/publishers").permitAll() // Editori pubblici per dropdown
+                        .requestMatchers("/api/categories/**").permitAll() // Categorie pubbliche per dropdown
                         .requestMatchers("/api/auth/**").permitAll() // Login/Register pubblici
                         .requestMatchers("/api/users/**").permitAll() // Utenti pubblici
                         .requestMatchers("/api/cart/**").permitAll() // Carrello pubblico
