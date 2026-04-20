@@ -39,7 +39,8 @@ public class BookResponse {
     private Integer numeroRecensioni;
 
     // Categorizzazione
-    private String categoria;
+    private Long categoriaId; // ID per il form di modifica
+    private String categoria; // Descrizione categoria per visualizzazione
     private String tags;
     private String descrizione;
 
@@ -238,6 +239,14 @@ public class BookResponse {
 
     public void setCategoria(String categoria) {
         this.categoria = categoria;
+    }
+
+    public Long getCategoriaId() {
+        return categoriaId;
+    }
+
+    public void setCategoriaId(Long categoriaId) {
+        this.categoriaId = categoriaId;
     }
 
     public String getTags() {

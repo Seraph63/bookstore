@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,10 +47,10 @@ public class UserImportService {
                     continue;
                 }
 
-                // Regex per gestire virgole dentro le virgolette (come negli altri servizi)
+                // Regex per gestire virgole dentro le virgolette
                 String[] v = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 
-                if (v.length >= 3) { // Assumiamo almeno Nome, Cognome, Email
+                if (v.length >= 6) { // Ora necessitiamo almeno 6 campi base
                     User user = new User();
                     user.setNome(clean(v[0]));
                     user.setCognome(clean(v[1]));
@@ -57,8 +59,28 @@ public class UserImportService {
                     user.setPassword(hashPassword(clean(v[4])));
                     user.setRuolo(clean(v[5]));
 
-                    // Evitiamo duplicati basandoci sull'email (campo unique solitamente)
-                    if (!userRepository.existsByEmail(user.getEmail())) {
+                    // Gestione campo attivo (se presente, altrimenti default true)
+                    if (v.length > 6 && !clean(v[6]).isEmpty()) {
+                        user.setAttivo(Boolean.parseBoolean(clean(v[6])));
+                    } else {
+                        user.setAttivo(true);
+                    }
+
+                    // Gestione data registrazione (se presente, altrimenti default now)
+                    if (v.length > 7 && !clean(v[7]).isEmpty()) {
+                        try {
+                            user.setDataRegistrazione(LocalDateTime.parse(clean(v[7])));
+                        } catch (Exception e) {
+                            user.setDataRegistrazione(LocalDateTime.now());
+                        }
+                    } else {
+                        user.setDataRegistrazione(LocalDateTime.now());
+                    }
+
+                    // Evitiamo duplicati basandoci su username e email
+                    if (!userRepository.existsByUsername(user.getUsername()) &&
+                            (user.getEmail() == null || user.getEmail().isEmpty()
+                                    || !userRepository.existsByEmail(user.getEmail()))) {
                         users.add(user);
                     }
                 }

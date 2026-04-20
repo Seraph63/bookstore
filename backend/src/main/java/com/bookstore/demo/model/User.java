@@ -1,6 +1,7 @@
 package com.bookstore.demo.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "utenti")
@@ -20,7 +21,23 @@ public class User {
     private String email;
     private String ruolo;
 
+    @Column(name = "attivo")
+    private Boolean attivo = true;
+
+    @Column(name = "data_registrazione")
+    private LocalDateTime dataRegistrazione;
+
     public User() {
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (dataRegistrazione == null) {
+            dataRegistrazione = LocalDateTime.now();
+        }
+        if (attivo == null) {
+            attivo = true;
+        }
     }
 
     public Long getId() {
@@ -77,5 +94,21 @@ public class User {
 
     public void setRuolo(String ruolo) {
         this.ruolo = ruolo;
+    }
+
+    public Boolean getAttivo() {
+        return attivo;
+    }
+
+    public void setAttivo(Boolean attivo) {
+        this.attivo = attivo;
+    }
+
+    public LocalDateTime getDataRegistrazione() {
+        return dataRegistrazione;
+    }
+
+    public void setDataRegistrazione(LocalDateTime dataRegistrazione) {
+        this.dataRegistrazione = dataRegistrazione;
     }
 }

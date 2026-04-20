@@ -2,47 +2,26 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import BookForm from '@/components/admin/BookForm';
-import Navbar from '@/components/layout/Navbar';
 
 export default function EditBookPage() {
   const params = useParams();
   const router = useRouter();
   const bookId = params?.id as string;
-  const [user, setUser] = useState<any>(null);
   const [book, setBook] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    // Carica l'utente dal localStorage
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      const userData = JSON.parse(savedUser);
-      setUser(userData);
-      
-      // Verifica se l'utente è admin
-      if (userData.ruolo !== 'ADMIN') {
-        router.push('/');
-        return;
-      }
-    } else {
-      router.push('/login');
-      return;
-    }
-
+    // L'autenticazione admin è gestita dal layout admin
     if (bookId) {
       fetchBook();
     }
-  }, [bookId, router]);
-
-  const handleLogout = () => {
-    document.cookie = "auth_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    localStorage.removeItem('user');
-    router.push('/login');
-  };
+  }, [bookId]);
 
   const fetchBook = async () => {
     try {
+      setLoading(true);
+      setError('');
       const response = await fetch(`http://localhost:8080/api/books/${bookId}`);
       if (!response.ok) {
         throw new Error('Libro non trovato');
@@ -58,34 +37,32 @@ export default function EditBookPage() {
 
   if (loading) {
     return (
-      <>
-        <Navbar user={user} onLogout={handleLogout} />
-        <div className="min-h-screen bg-gray-50 py-8 flex items-center justify-center">
+      <div className="py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Caricamento libro...</p>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
   if (error || !book) {
     return (
-      <>
-        <Navbar user={user} onLogout={handleLogout} />
-        <div className="min-h-screen bg-gray-50 py-8 flex items-center justify-center">
+      <div className="py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <p className="text-red-600 text-lg">{error}</p>
+            <p className="text-red-600 text-lg mb-4">{error || 'Libro non trovato'}</p>
             <button 
-              onClick={() => window.history.back()} 
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              onClick={() => router.push('/admin/books')} 
+              className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
-              Torna indietro
+              Torna alla gestione libri
             </button>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -103,23 +80,20 @@ export default function EditBookPage() {
     prezzoOriginale: book.prezzoOriginale || '',
     stock: book.stock || '',
     copertinaUrl: book.copertinaUrl || '',
-    categoria: book.categoria || '',
+    categoriaId: book.categoriaId || null, // Ora usa categoriaId
     tags: book.tags || '',
     descrizione: book.descrizione || ''
   };
 
   return (
-    <>
-      <Navbar user={user} onLogout={handleLogout} />
-      <div className="min-h-screen bg-gray-50 py-8">
-        <BookForm 
-          mode="edit" 
-          bookId={Number(bookId)}
-          initialData={initialData}
-          authorName={`${book.nomeAutore || ''} ${book.cognomeAutore || ''}`.trim()}
-          publisherName={book.nomeEditore || ''}
-        />
-      </div>
-    </>
+    <div className="py-8">
+      <BookForm 
+        mode="edit" 
+        bookId={Number(bookId)}
+        initialData={initialData}
+        authorName={`${book.nomeAutore || ''} ${book.cognomeAutore || ''}`.trim()}
+        publisherName={book.nomeEditore || ''}
+      />
+    </div>
   );
 }

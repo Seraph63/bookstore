@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 interface BookFormProps {
   mode: 'create' | 'edit';
@@ -22,6 +23,11 @@ interface Publisher {
   sede: string;
 }
 
+interface Category {
+  id: number;
+  descrizione: string;
+}
+
 interface FormData {
   titolo: string;
   sottotitolo: string;
@@ -35,7 +41,7 @@ interface FormData {
   prezzoOriginale: number;
   stock: number;
   copertinaUrl: string;
-  categoria: string;
+  categoriaId: number | null;
   tags: string;
   descrizione: string;
 }
@@ -46,6 +52,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
   const [error, setError] = useState('');
   const [authors, setAuthors] = useState<Author[]>([]);
   const [publishers, setPublishers] = useState<Publisher[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   
   const [formData, setFormData] = useState<FormData>({
@@ -61,7 +68,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
     prezzoOriginale: 0,
     stock: 0,
     copertinaUrl: '',
-    categoria: '',
+    categoriaId: null,
     tags: '',
     descrizione: ''
   });
@@ -88,7 +95,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
         prezzoOriginale: initialData.prezzoOriginale || 0,
         stock: initialData.stock || 0,
         copertinaUrl: initialData.copertinaUrl || '',
-        categoria: initialData.categoria || '',
+        categoriaId: initialData.categoriaId || null,
         tags: initialData.tags || '',
         descrizione: initialData.descrizione || ''
       });
@@ -98,9 +105,10 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
   const loadAuthorsAndPublishers = async () => {
     setLoadingData(true);
     try {
-      const [authorsResponse, publishersResponse] = await Promise.all([
+      const [authorsResponse, publishersResponse, categoriesResponse] = await Promise.all([
         fetch('http://localhost:8080/api/authors'),
-        fetch('http://localhost:8080/api/publishers')
+        fetch('http://localhost:8080/api/publishers'),
+        fetch('http://localhost:8080/api/categories')
       ]);
 
       if (authorsResponse.ok) {
@@ -116,9 +124,16 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
       } else {
         console.error('Errore caricamento editori');
       }
+
+      if (categoriesResponse.ok) {
+        const categoriesData = await categoriesResponse.json();
+        setCategories(categoriesData);
+      } else {
+        console.error('Errore caricamento categorie');
+      }
     } catch (error) {
       console.error('Errore durante il caricamento:', error);
-      setError('Errore durante il caricamento degli autori e editori');
+      setError('Errore durante il caricamento di autori, editori e categorie');
     } finally {
       setLoadingData(false);
     }
@@ -130,7 +145,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
       ...prev,
       [name]: name === 'prezzo' || name === 'prezzoOriginale' || name === 'annoPubblicazione' || name === 'stock' 
         ? Number(value) 
-        : name === 'autoreId' || name === 'editoreId'
+        : name === 'autoreId' || name === 'editoreId' || name === 'categoriaId'
         ? value === '' ? null : Number(value)
         : value
     }));
@@ -169,16 +184,31 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
       if (response.ok) {
         const result = await response.json();
         console.log('Salvataggio riuscito:', result);
-        router.push('/admin/books');
-        router.refresh();
+        
+        // Mostra messaggio di successo
+        toast.success(
+          mode === 'create' 
+            ? 'Libro creato con successo!' 
+            : 'Libro modificato con successo!'
+        );
+        
+        // Attendi un momento per permettere di vedere il toast
+        setTimeout(() => {
+          router.push('/admin/books');
+          router.refresh();
+        }, 1500);
       } else {
         const errorData = await response.text();
         console.error('Errore dal server:', errorData);
-        setError(errorData || `Errore ${response.status}: ${response.statusText}`);
+        const errorMessage = errorData || `Errore ${response.status}: ${response.statusText}`;
+        setError(errorMessage);
+        toast.error(`Errore nel salvataggio: ${errorMessage}`);
       }
     } catch (err) {
       console.error('Errore di rete:', err);
-      setError('Errore di connessione al server');
+      const errorMessage = 'Errore di connessione al server';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -245,12 +275,12 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
             />
           </div>
 
-          {/* Autore */}
+          {/* Autore e Editore */}
           <div className="md:col-span-2">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Autore</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Autore e Editore</h3>
           </div>
 
-          <div className="md:col-span-2">
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Seleziona Autore *
             </label>
@@ -270,12 +300,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
             </select>
           </div>
 
-          {/* Editore */}
-          <div className="md:col-span-2">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Editore</h3>
-          </div>
-
-          <div className="md:col-span-2">
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Seleziona Editore *
             </label>
@@ -289,7 +314,10 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
               <option value="">-- Seleziona un editore --</option>
               {publishers.map((publisher) => (
                 <option key={publisher.id} value={publisher.id}>
-                  {publisher.nome} ({publisher.sede})
+                  {publisher.nome}
+                  {publisher.sede && publisher.sede !== 'Sede non specificata' 
+                    ? ` - ${publisher.sede}` 
+                    : ''}
                 </option>
               ))}
             </select>
@@ -320,15 +348,20 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Categoria *
             </label>
-            <input
-              type="text"
-              name="categoria"
-              value={formData.categoria}
+            <select
+              name="categoriaId"
+              value={formData.categoriaId || ''}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="es. Narrativa, Saggistica, Fantasy"
-            />
+            >
+              <option value="">-- Seleziona una categoria --</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.descrizione}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>

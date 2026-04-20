@@ -1,0 +1,251 @@
+"use client";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ArrowLeftIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { toast } from 'sonner';
+
+interface UserFormData {
+  username: string;
+  password: string;
+  nome: string;
+  cognome: string;
+  email: string;
+  ruolo: string;
+  attivo: boolean;
+}
+
+export default function CreateUserPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState<UserFormData>({
+    username: '',
+    password: '',
+    nome: '',
+    cognome: '',
+    email: '',
+    ruolo: 'USER',
+    attivo: true
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:8080/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        toast.success('Utente creato con successo!');
+        
+        setTimeout(() => {
+          router.push('/admin/users');
+        }, 1500);
+      } else {
+        const errorData = await response.text();
+        toast.error(`Errore: ${errorData || 'Errore sconosciuto'}`);
+      }
+    } catch (err) {
+      toast.error('Errore di connessione al server');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <button
+            onClick={() => router.push('/admin/users')}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeftIcon className="w-5 h-5" />
+            Torna alla gestione utenti
+          </button>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">Nuovo Utente</h1>
+            <p className="text-gray-600 mt-2">Aggiungi un nuovo utente al sistema</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Nome */}
+              <div>
+                <label htmlFor="nome" className="block text-sm font-medium text-gray-700 mb-2">
+                  Nome *
+                </label>
+                <input
+                  type="text"
+                  id="nome"
+                  name="nome"
+                  required
+                  value={formData.nome}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Mario"
+                />
+              </div>
+
+              {/* Cognome */}
+              <div>
+                <label htmlFor="cognome" className="block text-sm font-medium text-gray-700 mb-2">
+                  Cognome *
+                </label>
+                <input
+                  type="text"
+                  id="cognome"
+                  name="cognome"
+                  required
+                  value={formData.cognome}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Rossi"
+                />
+              </div>
+
+              {/* Username */}
+              <div>
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                  Username *
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  required
+                  value={formData.username}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="mario.rossi"
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="mario.rossi@email.com"
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password *
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Inserisci la password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? (
+                    <EyeSlashIcon className="w-5 h-5" />
+                  ) : (
+                    <EyeIcon className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Ruolo */}
+              <div>
+                <label htmlFor="ruolo" className="block text-sm font-medium text-gray-700 mb-2">
+                  Ruolo *
+                </label>
+                <select
+                  id="ruolo"
+                  name="ruolo"
+                  required
+                  value={formData.ruolo}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+                  <option value="USER">Utente</option>
+                  <option value="ADMIN">Amministratore</option>
+                </select>
+              </div>
+
+              {/* Stato */}
+              <div>
+                <label htmlFor="attivo" className="block text-sm font-medium text-gray-700 mb-2">
+                  Stato
+                </label>
+                <div className="mt-2">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="attivo"
+                      name="attivo"
+                      checked={formData.attivo}
+                      onChange={handleChange}
+                      className="rounded border-gray-300 text-purple-600 shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
+                    />
+                    <span className="ml-2 text-sm text-gray-900">Utente attivo</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex justify-end gap-4 pt-6 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={() => router.push('/admin/users')}
+                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Annulla
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 transition-colors"
+              >
+                {loading ? 'Creazione...' : 'Crea Utente'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}

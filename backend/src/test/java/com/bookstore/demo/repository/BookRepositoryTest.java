@@ -2,6 +2,7 @@ package com.bookstore.demo.repository;
 
 import com.bookstore.demo.model.Author;
 import com.bookstore.demo.model.Book;
+import com.bookstore.demo.model.Category;
 import com.bookstore.demo.model.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,18 +21,28 @@ public class BookRepositoryTest {
     @Autowired
     private PublisherRepository publisherRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @SuppressWarnings("null")
     @Test
     public void testSearchBooks() {
+        // Crea autore di test
         Author author = new Author();
         author.setNome("James");
         author.setCognome("Gosling");
         author = authorRepository.save(author);
 
+        // Crea editore di test
         Publisher publisher = new Publisher();
         publisher.setNome("Addison-Wesley");
         publisher.setSede("Boston");
         publisher = publisherRepository.save(publisher);
+
+        // Crea categoria di test
+        Category category = new Category();
+        category.setDescrizione("Informatica");
+        category = categoryRepository.save(category);
 
         Book b1 = new Book();
         b1.setTitolo("Il linguaggio Java");
@@ -40,7 +51,7 @@ public class BookRepositoryTest {
         b1.setPrezzo(29.99);
         b1.setAnno_pubblicazione(1995);
         b1.setStock(10);
-        b1.setCategoria("Informatica");
+        b1.setCategoria(category); // Ora usa oggetto Category
         b1.setAutore(author);
         b1.setEditore(publisher);
 
@@ -51,7 +62,7 @@ public class BookRepositoryTest {
         b2.setPrezzo(35.00);
         b2.setAnno_pubblicazione(2015);
         b2.setStock(5);
-        b2.setCategoria("Informatica");
+        b2.setCategoria(category); // Ora usa oggetto Category
         b2.setAutore(author);
         b2.setEditore(publisher);
 

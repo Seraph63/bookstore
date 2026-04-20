@@ -58,7 +58,11 @@ public class Book {
 
     private Double valutazione_media;
     private Integer numero_recensioni;
-    private String categoria;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "categoria_id")
+    private Category categoria;
+
     private String tags;
 
     @Column(columnDefinition = "TEXT")
@@ -187,11 +191,11 @@ public class Book {
         this.numero_recensioni = numero_recensioni;
     }
 
-    public String getCategoria() {
+    public Category getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(String categoria) {
+    public void setCategoria(Category categoria) {
         this.categoria = categoria;
     }
 
