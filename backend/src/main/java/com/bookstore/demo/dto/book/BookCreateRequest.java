@@ -2,6 +2,7 @@ package com.bookstore.demo.dto.book;
 
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
+import java.util.Set;
 
 public class BookCreateRequest {
 
@@ -34,7 +35,7 @@ public class BookCreateRequest {
     private Integer stock;
     private String copertinaUrl;
     private Long categoriaId;
-    private String tags;
+    private Set<Long> tagIds;
     private String descrizione;
 
     public String getTitolo() {
@@ -141,12 +142,12 @@ public class BookCreateRequest {
         this.categoriaId = categoriaId;
     }
 
-    public String getTags() {
-        return tags;
+    public Set<Long> getTagIds() {
+        return tagIds;
     }
 
-    public void setTags(String tags) {
-        this.tags = tags;
+    public void setTagIds(Set<Long> tagIds) {
+        this.tagIds = tagIds;
     }
 
     public String getDescrizione() {

@@ -41,7 +41,7 @@ public class BookResponse {
     // Categorizzazione
     private Long categoriaId; // ID per il form di modifica
     private String categoria; // Descrizione categoria per visualizzazione
-    private String tags;
+    private String tags; // Descrizioni dei tag concatenate
     private String descrizione;
 
     // Costruttori, getter, setter...

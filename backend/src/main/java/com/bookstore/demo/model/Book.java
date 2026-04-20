@@ -1,5 +1,8 @@
 package com.bookstore.demo.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.hibernate.validator.constraints.URL;
 
 import jakarta.persistence.*;
@@ -59,11 +62,13 @@ public class Book {
     private Double valutazione_media;
     private Integer numero_recensioni;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "libro_tag", joinColumns = @JoinColumn(name = "libro_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tag = new HashSet<>();
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoria_id")
     private Category categoria;
-
-    private String tags;
 
     @Column(columnDefinition = "TEXT")
     private String descrizione;
@@ -199,12 +204,23 @@ public class Book {
         this.categoria = categoria;
     }
 
-    public String getTags() {
-        return tags;
+    public Set<Tag> getTag() {
+        return tag;
     }
 
-    public void setTags(String tags) {
-        this.tags = tags;
+    public void setTag(Set<Tag> tag) {
+        this.tag = tag;
+    }
+
+    // Metodi utility per gestire la relazione
+    public void addTag(Tag tag) {
+        this.tag.add(tag);
+        tag.getLibri().add(this);
+    }
+
+    public void removeTag(Tag tag) {
+        this.tag.remove(tag);
+        tag.getLibri().remove(this);
     }
 
     public String getDescrizione() {

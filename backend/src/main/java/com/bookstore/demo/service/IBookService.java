@@ -1,6 +1,7 @@
 package com.bookstore.demo.service;
 
 import com.bookstore.demo.dto.book.BookCreateRequest;
+import com.bookstore.demo.dto.book.BookUpdateRequest;
 import com.bookstore.demo.dto.book.BookResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +14,7 @@ public interface IBookService {
 
     Page<BookResponse> getAllBooks(Pageable pageable);
 
-    BookResponse updateBook(Long id, BookCreateRequest request);
+    BookResponse updateBook(Long id, BookUpdateRequest request);
 
     void deleteBook(Long id);
 }

@@ -4,16 +4,20 @@ import com.bookstore.demo.model.Book;
 import com.bookstore.demo.model.Author;
 import com.bookstore.demo.model.Publisher;
 import com.bookstore.demo.model.Category;
+import com.bookstore.demo.model.Tag;
 import com.bookstore.demo.repository.BookRepository;
 import com.bookstore.demo.repository.AuthorRepository;
 import com.bookstore.demo.repository.PublisherRepository;
 import com.bookstore.demo.repository.CategoryRepository;
+import com.bookstore.demo.repository.TagRepository;
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class BookImportService {
@@ -22,16 +26,19 @@ public class BookImportService {
     private final AuthorRepository authorRepository;
     private final PublisherRepository publisherRepository;
     private final CategoryRepository categoryRepository;
+    private final TagRepository tagRepository;
 
     // Iniettiamo tutti i repository necessari
     public BookImportService(BookRepository bookRepository,
             AuthorRepository authorRepository,
             PublisherRepository publisherRepository,
-            CategoryRepository categoryRepository) {
+            CategoryRepository categoryRepository,
+            TagRepository tagRepository) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.publisherRepository = publisherRepository;
         this.categoryRepository = categoryRepository;
+        this.tagRepository = tagRepository;
     }
 
     public void importFromCsv(InputStream inputStream) {
@@ -104,7 +111,23 @@ public class BookImportService {
                     book.setValutazione_media(parseToDouble(v[12]));
                     book.setNumero_recensioni(parseToInt(v[13]));
                     // La categoria è già impostata sopra come relazione
-                    book.setTags(clean(v[15]));
+
+                    // Gestione tag tramite ID
+                    String tagIdsString = clean(v[15]);
+                    if (tagIdsString != null && !tagIdsString.isEmpty()) {
+                        Set<Tag> tags = new HashSet<>();
+                        String[] tagIdArray = tagIdsString.split("\\|");
+                        for (String tagIdStr : tagIdArray) {
+                            try {
+                                Long tagId = Long.parseLong(tagIdStr.trim());
+                                tagRepository.findById(tagId).ifPresent(tags::add);
+                            } catch (NumberFormatException e) {
+                                System.err.println("Errore parsing tag ID: " + tagIdStr);
+                            }
+                        }
+                        book.setTag(tags);
+                    }
+
                     book.setDescrizione(clean(v[16]));
 
                     books.add(book);
