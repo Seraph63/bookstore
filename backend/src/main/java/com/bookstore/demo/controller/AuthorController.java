@@ -13,8 +13,11 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class AuthorController {
 
-    @Autowired
-    private AuthorRepository authorRepository;
+    private final AuthorRepository authorRepository;
+
+    public AuthorController(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
+    }
 
     @GetMapping("/authors")
     public List<Author> getAllAuthors() {

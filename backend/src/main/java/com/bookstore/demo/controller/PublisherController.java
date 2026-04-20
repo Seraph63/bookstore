@@ -13,8 +13,11 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class PublisherController {
 
-    @Autowired
-    private PublisherRepository publisherRepository;
+    private final PublisherRepository publisherRepository;
+
+    public PublisherController(PublisherRepository publisherRepository) {
+        this.publisherRepository = publisherRepository;
+    }
 
     @GetMapping("/publishers")
     public List<Publisher> getAllPublishers() {

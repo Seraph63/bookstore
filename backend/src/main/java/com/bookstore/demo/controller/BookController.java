@@ -24,11 +24,13 @@ import org.springframework.lang.NonNull;
 @CrossOrigin(origins = "*")
 public class BookController {
 
-    @Autowired
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
+    private final IBookService bookService;
 
-    @Autowired
-    private IBookService bookService;
+    public BookController(BookRepository bookRepository, IBookService bookService) {
+        this.bookRepository = bookRepository;
+        this.bookService = bookService;
+    }
 
     @GetMapping
     public Page<BookResponse> getAllBooks(
