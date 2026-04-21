@@ -2,6 +2,14 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import BookCard from './BookCard';
 import '@testing-library/jest-dom';
 
+// Mock next/navigation
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    back: jest.fn(),
+  })),
+}));
+
 jest.mock('@/context/CartContext', () => ({
   useCart: () => ({
     items: [],
@@ -20,14 +28,13 @@ jest.mock('@/context/CartContext', () => ({
 
 describe('BookCard', () => {
   const mockBook = {
+    id: 1,
     titolo: "Il Piccolo Principe",
-    autore: {
-      nome: "Antoine",
-      cognome: "de Saint-Exupéry"
-    },
+    nomeAutore: "Antoine",
+    cognomeAutore: "de Saint-Exupéry",
     prezzo: 7.65,
     categoria: "Ragazzi",
-    copertinaUrl: "https://picsum.photos/seed/9/400/600",
+    copertina_url: "https://picsum.photos/seed/9/400/600",
     stock: 5
   };
 
@@ -37,21 +44,21 @@ describe('BookCard', () => {
     expect(screen.getByText(mockBook.titolo)).toBeInTheDocument();
 
     expect(screen.getByText((content) => {
-      return content.includes(mockBook.autore.nome) && content.includes(mockBook.autore.cognome);
+      return content.includes(mockBook.nomeAutore) && content.includes(mockBook.cognomeAutore);
     })).toBeInTheDocument();
 
     expect(screen.getByText(/7.65/)).toBeInTheDocument();
   });
 
-  test('mostra "Autore Sconosciuto" quando autore è null', () => {
-    const bookSenzaAutore = { ...mockBook, autore: null };
+  test('mostra "Autore Sconosciuto" quando nomeAutore è null', () => {
+    const bookSenzaAutore = { ...mockBook, nomeAutore: null, cognomeAutore: null };
     render(<BookCard book={bookSenzaAutore} />);
 
     expect(screen.getByText('Autore Sconosciuto')).toBeInTheDocument();
   });
 
-  test('mostra "Autore Sconosciuto" quando autore.nome è undefined', () => {
-    const bookAutoreVuoto = { ...mockBook, autore: { nome: undefined, cognome: undefined } };
+  test('mostra "Autore Sconosciuto" quando nomeAutore è undefined', () => {
+    const bookAutoreVuoto = { ...mockBook, nomeAutore: undefined, cognomeAutore: undefined };
     render(<BookCard book={bookAutoreVuoto} />);
 
     expect(screen.getByText('Autore Sconosciuto')).toBeInTheDocument();
@@ -69,15 +76,15 @@ describe('BookCard', () => {
     const img = screen.getByAltText(mockBook.titolo) as HTMLImageElement;
     fireEvent.error(img);
 
-    expect(img.src).toContain('unsplash.com');
+    expect(img.src).toContain('picsum.photos');
   });
 
-  test('usa immagine di default quando copertinaUrl è assente', () => {
-    const bookSenzaCover = { ...mockBook, copertinaUrl: undefined };
+  test('usa immagine di default quando copertina_url è assente', () => {
+    const bookSenzaCover = { ...mockBook, copertina_url: undefined };
     render(<BookCard book={bookSenzaCover} />);
 
     const img = screen.getByAltText(mockBook.titolo) as HTMLImageElement;
-    expect(img.src).toContain('unsplash.com');
+    expect(img.src).toContain('picsum.photos');
   });
 
   test('mostra quantità disponibile quando stock > 0', () => {

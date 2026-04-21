@@ -20,4 +20,10 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
      */
     boolean existsByDescrizione(String descrizione);
 
+    /**
+     * Ricerca tag per liste di descrizioni.
+     * Utilizzato per importazioni e bulk operations.
+     */
+    java.util.Set<Tag> findByDescrizioneIn(java.util.Collection<String> descrizioni);
+
 }

@@ -98,7 +98,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
           .map(tag => tag.id);
       };
       // Aspetta che autori e editori siano stati caricati prima di settare i dati
-      console.log('Settaggio dati iniziali:', initialData);
+      // Settaggio dati iniziali
       setFormData({
         titolo: initialData.titolo || '',
         sottotitolo: initialData.sottotitolo || '',
@@ -153,6 +153,8 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
       if (tagsResponse.ok) {
         const tagsData = await tagsResponse.json();
         setTags(tagsData);
+      } else {
+        console.error('Errore caricamento tag');
       }
     } catch (error) {
       console.error('Errore durante il caricamento:', error);
@@ -214,8 +216,6 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
 
       const method = mode === 'create' ? 'POST' : 'PUT';
 
-      console.log(`${method} ${url}`, formData);
-
       const response = await fetch(url, {
         method,
         headers: {
@@ -224,11 +224,8 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
         body: JSON.stringify(formData),
       });
 
-      console.log('Risposta server:', response.status, response.statusText);
-
       if (response.ok) {
         const result = await response.json();
-        console.log('Salvataggio riuscito:', result);
 
         // Mostra messaggio di successo
         toast.success(
@@ -294,11 +291,12 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="titolo" className="block text-sm font-medium text-gray-700 mb-2">
                 Titolo *
               </label>
               <input
                 type="text"
+                id="titolo"
                 name="titolo"
                 value={formData.titolo}
                 onChange={handleChange}
@@ -308,11 +306,12 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="sottotitolo" className="block text-sm font-medium text-gray-700 mb-2">
                 Sottotitolo
               </label>
               <input
                 type="text"
+                id="sottotitolo"
                 name="sottotitolo"
                 value={formData.sottotitolo}
                 onChange={handleChange}
@@ -326,10 +325,11 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="autoreId" className="block text-sm font-medium text-gray-700 mb-2">
                 Seleziona Autore *
               </label>
               <select
+                id="autoreId"
                 name="autoreId"
                 value={formData.autoreId || ''}
                 onChange={handleChange}
@@ -346,10 +346,11 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="editoreId" className="block text-sm font-medium text-gray-700 mb-2">
                 Seleziona Editore *
               </label>
               <select
+                id="editoreId"
                 name="editoreId"
                 value={formData.editoreId || ''}
                 onChange={handleChange}
@@ -389,10 +390,11 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="categoriaId" className="block text-sm font-medium text-gray-700 mb-2">
                 Categoria *
               </label>
               <select
+                id="categoriaId"
                 name="categoriaId"
                 value={formData.categoriaId || ''}
                 onChange={handleChange}
@@ -423,11 +425,12 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="isbn13" className="block text-sm font-medium text-gray-700 mb-2">
                 ISBN-13 *
               </label>
               <input
                 type="text"
+                id="isbn13"
                 name="isbn13"
                 value={formData.isbn13}
                 onChange={handleChange}
@@ -514,11 +517,12 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="prezzo" className="block text-sm font-medium text-gray-700 mb-2">
                 Prezzo (€) *
               </label>
               <input
                 type="number"
+                id="prezzo"
                 name="prezzo"
                 value={formData.prezzo}
                 onChange={handleChange}
@@ -545,11 +549,12 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-2">
                 Stock *
               </label>
               <input
                 type="number"
+                id="stock"
                 name="stock"
                 value={formData.stock}
                 onChange={handleChange}
