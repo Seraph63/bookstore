@@ -37,7 +37,12 @@ CREATE TABLE IF NOT EXISTS categorie (
 );
 
 CREATE TABLE IF NOT EXISTS tags (
-    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    descrizione VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS formati (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     descrizione VARCHAR(100) NOT NULL UNIQUE
 );
 
@@ -51,7 +56,6 @@ CREATE TABLE IF NOT EXISTS libri (
     anno_pubblicazione INT NOT NULL,
     isbn10 VARCHAR(20),
     isbn13 VARCHAR(20) NOT NULL UNIQUE,
-    formati VARCHAR(100),
     prezzo DOUBLE PRECISION NOT NULL,
     prezzo_originale DOUBLE PRECISION,
     stock INT DEFAULT 0 NOT NULL,
@@ -77,6 +81,15 @@ CREATE TABLE IF NOT EXISTS libro_tag (
     PRIMARY KEY (libro_id, tag_id),
     FOREIGN KEY (libro_id) REFERENCES libri(id) ON DELETE CASCADE,
     FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+);
+
+-- Tabella libro_formato (relazione molti-a-molti Book <-> Formato)
+CREATE TABLE IF NOT EXISTS libro_formato (
+    libro_id BIGINT,
+    formato_id BIGINT,
+    PRIMARY KEY (libro_id, formato_id),
+    FOREIGN KEY (libro_id) REFERENCES libri(id) ON DELETE CASCADE,
+    FOREIGN KEY (formato_id) REFERENCES formati(id) ON DELETE CASCADE
 );
 
 -- Tabella Carrello (un carrello per utente)

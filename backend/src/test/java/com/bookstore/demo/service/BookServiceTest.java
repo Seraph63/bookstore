@@ -3,12 +3,10 @@ package com.bookstore.demo.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -32,6 +30,7 @@ import com.bookstore.demo.repository.BookRepository;
 import com.bookstore.demo.repository.CategoryRepository;
 import com.bookstore.demo.repository.PublisherRepository;
 import com.bookstore.demo.repository.TagRepository;
+import com.bookstore.demo.repository.FormatoRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
@@ -51,6 +50,9 @@ public class BookServiceTest {
     @Mock
     private TagRepository tagRepository;
 
+    @Mock
+    private FormatoRepository formatoRepository;
+
     private BookService bookService;
 
     private Author testAuthor;
@@ -62,7 +64,7 @@ public class BookServiceTest {
     @BeforeEach
     void setUp() {
         bookService = new BookService(bookRepository, authorRepository, publisherRepository,
-                categoryRepository, tagRepository);
+                categoryRepository, tagRepository, formatoRepository);
 
         // Crea oggetti di test
         testAuthor = new Author();
@@ -87,6 +89,7 @@ public class BookServiceTest {
         testTag2.setDescrizione("Avventura");
     }
 
+    @SuppressWarnings("null")
     @Test
     public void testCreateBookWithTags() {
         // Prepara request
@@ -135,6 +138,7 @@ public class BookServiceTest {
         verify(bookRepository).save(any(Book.class));
     }
 
+    @SuppressWarnings("null")
     @Test
     public void testCreateBookWithoutTags() {
         // Prepara request senza tag
@@ -205,6 +209,7 @@ public class BookServiceTest {
                 .hasMessage("Tag con ID 999 non trovato");
     }
 
+    @SuppressWarnings("null")
     @Test
     public void testUpdateBookWithDifferentTags() {
         // Prepara existing book

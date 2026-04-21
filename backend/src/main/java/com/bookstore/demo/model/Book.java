@@ -45,8 +45,6 @@ public class Book {
     @Pattern(regexp = "^\\d{3}-\\d{10}$", message = "ISBN13 deve essere nel formato 978-xxxxxxxxxx")
     private String isbn13;
 
-    private String formati;
-
     @NotNull(message = "Il prezzo è obbligatorio")
     @DecimalMin(value = "0.01", message = "Il prezzo deve essere maggiore di zero")
     @Column(nullable = false)
@@ -65,6 +63,10 @@ public class Book {
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
     @JoinTable(name = "libro_tag", joinColumns = @JoinColumn(name = "libro_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tag = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
+    @JoinTable(name = "libro_formato", joinColumns = @JoinColumn(name = "libro_id"), inverseJoinColumns = @JoinColumn(name = "formato_id"))
+    private Set<Formato> formato = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoria_id")
@@ -140,14 +142,6 @@ public class Book {
         this.isbn13 = isbn13;
     }
 
-    public String getFormati() {
-        return formati;
-    }
-
-    public void setFormati(String formati) {
-        this.formati = formati;
-    }
-
     public Double getPrezzo() {
         return prezzo;
     }
@@ -202,6 +196,25 @@ public class Book {
 
     public void setCategoria(Category categoria) {
         this.categoria = categoria;
+    }
+
+    public Set<Formato> getFormato() {
+        return formato;
+    }
+
+    public void setFormato(Set<Formato> formato) {
+        this.formato = formato;
+    }
+
+    // Metodi utility per gestire la relazione
+    public void addFormato(Formato formato) {
+        this.formato.add(formato);
+        formato.getLibri().add(this);
+    }
+
+    public void removeFormato(Formato formato) {
+        this.formato.remove(formato);
+        formato.getLibri().remove(this);
     }
 
     public Set<Tag> getTag() {

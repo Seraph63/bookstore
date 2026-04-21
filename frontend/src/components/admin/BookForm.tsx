@@ -33,6 +33,11 @@ interface Tag {
   descrizione: string;
 }
 
+interface Formato {
+  id: number;
+  descrizione: string;
+}
+
 interface FormData {
   titolo: string;
   sottotitolo: string;
@@ -41,7 +46,7 @@ interface FormData {
   annoPubblicazione: number;
   isbn10: string;
   isbn13: string;
-  formati: string;
+  formatoIds: number[];
   prezzo: number;
   prezzoOriginale: number;
   stock: number;
@@ -60,6 +65,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
   const [publishers, setPublishers] = useState<Publisher[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
+  const [formati, setFormati] = useState<Formato[]>([]);
   const [loadingData, setLoadingData] = useState(true);
 
   const [formData, setFormData] = useState<FormData>({
@@ -70,7 +76,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
     annoPubblicazione: new Date().getFullYear(),
     isbn10: '',
     isbn13: '',
-    formati: 'Cartaceo',
+    formatoIds: [],
     prezzo: 0,
     prezzoOriginale: 0,
     stock: 0,
@@ -87,7 +93,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
 
   useEffect(() => {
     if (mode === 'edit' && initialData && !loadingData) {
-      // ✅ Conversione tags string a tagIds array
+      // Conversione tags string a tagIds array
       const parseTagIds = (tagsString: string): number[] => {
         if (!tagsString) return [];
 
@@ -97,6 +103,18 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
           .filter(tag => descriptions.includes(tag.descrizione))
           .map(tag => tag.id);
       };
+
+      // Conversione formati string a formatoIds array
+      const parseformatoIds = (formatiString: string): number[] => {
+        if (!formatiString) return [];
+
+        // Se sono descrizioni separate da virgola, trova gli ID corrispondenti
+        const descriptions = formatiString.split(',').map(t => t.trim());
+        return formati
+          .filter(formato => descriptions.includes(formato.descrizione))
+          .map(formato => formato.id);
+      };
+
       // Aspetta che autori e editori siano stati caricati prima di settare i dati
       // Settaggio dati iniziali
       setFormData({
@@ -107,7 +125,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
         annoPubblicazione: initialData.annoPubblicazione || new Date().getFullYear(),
         isbn10: initialData.isbn10 || '',
         isbn13: initialData.isbn13 || '',
-        formati: initialData.formati || 'Cartaceo',
+        formatoIds: parseformatoIds(initialData.formati || ''),
         prezzo: initialData.prezzo || 0,
         prezzoOriginale: initialData.prezzoOriginale || 0,
         stock: initialData.stock || 0,
@@ -117,16 +135,17 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
         descrizione: initialData.descrizione || ''
       });
     }
-  }, [mode, initialData, loadingData, tags]); 
+  }, [mode, initialData, loadingData, tags, formati]);
 
   const loadAuthorsAndPublishers = async () => {
     setLoadingData(true);
     try {
-      const [authorsResponse, publishersResponse, categoriesResponse, tagsResponse] = await Promise.all([
+      const [authorsResponse, publishersResponse, categoriesResponse, tagsResponse, formatiResponse] = await Promise.all([
         fetch('http://localhost:8080/api/authors'),
         fetch('http://localhost:8080/api/publishers'),
         fetch('http://localhost:8080/api/categories'),
-        fetch('http://localhost:8080/api/tag')
+        fetch('http://localhost:8080/api/tag'),
+        fetch('http://localhost:8080/api/formati')
       ]);
 
       if (authorsResponse.ok) {
@@ -156,6 +175,13 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
       } else {
         console.error('Errore caricamento tag');
       }
+
+      if (formatiResponse.ok) {
+        const formatiData = await formatiResponse.json();
+        setFormati(formatiData);
+      } else {
+        console.error('Errore caricamento formati');
+      }
     } catch (error) {
       console.error('Errore durante il caricamento:', error);
       setError('Errore durante il caricamento di autori, editori e categorie');
@@ -164,7 +190,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
     }
   };
 
-  // ✅ Aggiungi un tag
+  // Aggiungi un tag
   const handleAddTag = (tagId: number) => {
     if (!formData.tagIds.includes(tagId)) {
       setFormData(prev => ({
@@ -174,7 +200,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
     }
   };
 
-  // ✅ Rimuovi un tag
+  // Rimuovi un tag
   const handleRemoveTag = (tagId: number) => {
     setFormData(prev => ({
       ...prev,
@@ -182,14 +208,42 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
     }));
   };
 
-  // ✅ Ottieni tag selezionati
+  // Ottieni tag selezionati
   const getSelectedTags = (): Tag[] => {
     return tags.filter(tag => formData.tagIds.includes(tag.id));
   };
 
-  // ✅ Ottieni tag disponibili (non selezionati)
+  // Ottieni tag disponibili (non selezionati)
   const getAvailableTags = (): Tag[] => {
     return tags.filter(tag => !formData.tagIds.includes(tag.id));
+  };
+
+  // Aggiungi un formato
+  const handleAddFormato = (formatoId: number) => {
+    if (!formData.formatoIds.includes(formatoId)) {
+      setFormData(prev => ({
+        ...prev,
+        formatoIds: [...prev.formatoIds, formatoId]
+      }));
+    }
+  };
+
+  // Rimuovi un formato
+  const handleRemoveformato = (formatoId: number) => {
+    setFormData(prev => ({
+      ...prev,
+      formatoIds: prev.formatoIds.filter(id => id !== formatoId)
+    }));
+  };
+
+  // Ottieni formato selezionati
+  const getSelectedFormati = (): Formato[] => {
+    return formati.filter(formato => formData.formatoIds.includes(formato.id));
+  };
+
+  // Ottieni formato disponibili (non selezionati)
+  const getAvailableFormati = (): Formato[] => {
+    return formati.filter(formato => !formData.formatoIds.includes(formato.id));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -440,21 +494,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Formati
-              </label>
-              <input
-                type="text"
-                name="formati"
-                value={formData.formati}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="es. Cartaceo|E-book|Audiobook"
-              />
-            </div>
-
-            {/* ✅ Tag Pills/Chips Section */}
+            {/* Tag Pills/Chips Section */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Tag
@@ -504,6 +544,63 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
                     {getAvailableTags().map(tag => (
                       <option key={tag.id} value={tag.id}>
                         {tag.descrizione}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+
+            {/* Formati Pills/Chips Section */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Formato
+              </label>
+
+              {/* Formato selezionati (Pills) */}
+              <div className="mb-4">
+                <div className="flex flex-wrap gap-2 min-h-[2.5rem] p-3 border border-gray-300 rounded-md bg-gray-50">
+                  {getSelectedFormati().length > 0 ? (
+                    getSelectedFormati().map(formato => (
+                      <span
+                        key={formato.id}
+                        className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium hover:bg-purple-200 transition-colors"
+                      >
+                        {formato.descrizione}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveformato(formato.id)}
+                          className="text-purple-600 hover:text-purple-900 font-bold ml-1"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-gray-500 text-sm italic">
+                      Nessun formato selezionato
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Dropdown per aggiungere formato */}
+              {getAvailableFormati().length > 0 && (
+                <div>
+                  <select
+                    value=""
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        handleAddFormato(Number(e.target.value));
+                        e.target.value = ''; // Reset selection
+                      }
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  >
+                    <option value="">+ Aggiungi formato...</option>
+                    {getAvailableFormati().map(formato => (
+                      <option key={formato.id} value={formato.id}>
+                        {formato.descrizione}
                       </option>
                     ))}
                   </select>

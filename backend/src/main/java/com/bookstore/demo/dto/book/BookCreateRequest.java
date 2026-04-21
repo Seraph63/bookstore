@@ -25,8 +25,6 @@ public class BookCreateRequest {
     @Pattern(regexp = "^\\d{3}-\\d{10}$", message = "ISBN13 deve essere nel formato 978-xxxxxxxxxx")
     private String isbn13;
 
-    private String formati;
-
     @NotNull(message = "Prezzo e obbligatorio")
     @DecimalMin(value = "0.01", message = "Prezzo deve essere positivo")
     private BigDecimal prezzo;
@@ -36,6 +34,7 @@ public class BookCreateRequest {
     private String copertinaUrl;
     private Long categoriaId;
     private Set<Long> tagIds;
+    private Set<Long> formatiIds;
     private String descrizione;
 
     public String getTitolo() {
@@ -94,14 +93,6 @@ public class BookCreateRequest {
         this.isbn13 = isbn13;
     }
 
-    public String getFormati() {
-        return formati;
-    }
-
-    public void setFormati(String formati) {
-        this.formati = formati;
-    }
-
     public BigDecimal getPrezzo() {
         return prezzo;
     }
@@ -148,6 +139,14 @@ public class BookCreateRequest {
 
     public void setTagIds(Set<Long> tagIds) {
         this.tagIds = tagIds;
+    }
+
+    public Set<Long> getFormatiIds() {
+        return formatiIds;
+    }
+
+    public void setFormatiIds(Set<Long> formatiIds) {
+        this.formatiIds = formatiIds;
     }
 
     public String getDescrizione() {

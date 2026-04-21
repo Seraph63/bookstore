@@ -8,11 +8,13 @@ import com.bookstore.demo.model.Book;
 import com.bookstore.demo.model.Publisher;
 import com.bookstore.demo.model.Category;
 import com.bookstore.demo.model.Tag;
+import com.bookstore.demo.model.Formato;
 import com.bookstore.demo.repository.AuthorRepository;
 import com.bookstore.demo.repository.BookRepository;
 import com.bookstore.demo.repository.PublisherRepository;
 import com.bookstore.demo.repository.TagRepository;
 import com.bookstore.demo.repository.CategoryRepository;
+import com.bookstore.demo.repository.FormatoRepository;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,17 +33,20 @@ public class BookService implements IBookService {
     private final PublisherRepository publisherRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
+    private final FormatoRepository formatoRepository;
 
     public BookService(BookRepository bookRepository,
             AuthorRepository authorRepository,
             PublisherRepository publisherRepository,
             CategoryRepository categoryRepository,
-            TagRepository tagRepository) {
+            TagRepository tagRepository,
+            FormatoRepository formatoRepository) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.publisherRepository = publisherRepository;
         this.categoryRepository = categoryRepository;
         this.tagRepository = tagRepository;
+        this.formatoRepository = formatoRepository;
     }
 
     @Transactional
@@ -72,6 +77,18 @@ public class BookService implements IBookService {
                 tags.add(tag);
             }
         }
+
+        // Gestione multipli formati IDs
+        Set<Formato> formati = new HashSet<>();
+        if (request.getFormatiIds() != null && !request.getFormatiIds().isEmpty()) {
+            for (Long formatoId : request.getFormatiIds()) {
+                @SuppressWarnings("null")
+                Formato formato = formatoRepository.findById(formatoId)
+                        .orElseThrow(
+                                () -> new IllegalArgumentException("Formato con ID " + formatoId + " non trovato"));
+                formati.add(formato);
+            }
+        }
         // Controlla duplicati ISBN
         if (bookRepository.existsByIsbn10(request.getIsbn10())) {
             throw new IllegalArgumentException("Un libro con ISBN-10 " + request.getIsbn10() + " esiste già");
@@ -87,7 +104,7 @@ public class BookService implements IBookService {
         book.setAnno_pubblicazione(request.getAnnoPubblicazione());
         book.setIsbn10(request.getIsbn10());
         book.setIsbn13(request.getIsbn13());
-        book.setFormati(request.getFormati());
+        book.setFormato(formati);
         book.setPrezzo(request.getPrezzo().doubleValue());
         book.setPrezzo_originale(
                 request.getPrezzoOriginale() != null ? request.getPrezzoOriginale().doubleValue() : null);
@@ -147,6 +164,18 @@ public class BookService implements IBookService {
             }
         }
 
+        // Gestione multipli formati IDs
+        Set<Formato> formati = new HashSet<>();
+        if (request.getFormatiIds() != null && !request.getFormatiIds().isEmpty()) {
+            for (Long formatoId : request.getFormatiIds()) {
+                @SuppressWarnings("null")
+                Formato formato = formatoRepository.findById(formatoId)
+                        .orElseThrow(
+                                () -> new IllegalArgumentException("Formato con ID " + formatoId + " non trovato"));
+                formati.add(formato);
+            }
+        }
+
         // Controlla duplicati ISBN (escludendo il libro corrente)
         if (request.getIsbn10() != null && !request.getIsbn10().equals(book.getIsbn10()) &&
                 bookRepository.existsByIsbn10(request.getIsbn10())) {
@@ -162,7 +191,7 @@ public class BookService implements IBookService {
         book.setAnno_pubblicazione(request.getAnnoPubblicazione());
         book.setIsbn10(request.getIsbn10());
         book.setIsbn13(request.getIsbn13());
-        book.setFormati(request.getFormati());
+        book.setFormato(formati); // Ora usa il Set di Formato
         book.setPrezzo(request.getPrezzo().doubleValue());
         book.setPrezzo_originale(
                 request.getPrezzoOriginale() != null ? request.getPrezzoOriginale().doubleValue() : null);
@@ -201,7 +230,6 @@ public class BookService implements IBookService {
         response.setAnnoPubblicazione(book.getAnno_pubblicazione());
         response.setIsbn10(book.getIsbn10());
         response.setIsbn13(book.getIsbn13());
-        response.setFormati(book.getFormati());
         response.setPrezzo(book.getPrezzo());
         response.setPrezzoOriginale(book.getPrezzo_originale());
         response.setStock(book.getStock());
@@ -223,6 +251,15 @@ public class BookService implements IBookService {
                     .map(Tag::getDescrizione)
                     .collect(Collectors.joining(", "));
             response.setTags(tagDescriptions);
+        }
+
+        // Gestione formati - ora è un Set di oggetti
+        if (book.getFormato() != null && !book.getFormato().isEmpty()) {
+            // Concatena tutte le descrizioni dei tag
+            String formatoDescriptions = book.getFormato().stream()
+                    .map(Formato::getDescrizione)
+                    .collect(Collectors.joining(", "));
+            response.setFormati(formatoDescriptions);
         }
 
         response.setDescrizione(book.getDescrizione());

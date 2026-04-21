@@ -19,13 +19,13 @@ public class TagController {
         this.TagRepository = TagRepository;
     }
 
-    // GET /api/tag - Lista tutte le categorie
+    // GET /api/tag - Lista tutti i tag
     @GetMapping
     public List<Tag> getAllTag() {
         return TagRepository.findAll();
     }
 
-    // GET /api/tag/{id} - Dettaglio singola categoria
+    // GET /api/tag/{id} - Dettaglio singolo tag
     @GetMapping("/{id}")
     public ResponseEntity<Tag> getTagById(@PathVariable @NonNull Long id) {
         return TagRepository.findById(id)
