@@ -316,7 +316,7 @@ public class BookControllerTest {
                                     "tagIds": [1, 2],
                                     "annoPubblicazione": 1980,
                                     "isbn10": "1234567890",
-                                    "isbn13": "1234567890123",
+                                    "isbn13": "978-1234567890",
                                     "prezzo": 19.99,
                                     "prezzoOriginale": 24.99,
                                     "stock": 100,

@@ -131,7 +131,7 @@ public class BookServiceTest {
         // Verify
         assertThat(response.getId()).isEqualTo(1L);
         assertThat(response.getTitolo()).isEqualTo("Test Book");
-        assertThat(response.getTags()).isEqualTo("Fantasy, Avventura");
+        assertThat(response.getTags()).contains("Fantasy").contains("Avventura");
 
         verify(tagRepository).findById(1L);
         verify(tagRepository).findById(2L);
@@ -257,7 +257,7 @@ public class BookServiceTest {
         // Verify
         assertThat(response.getId()).isEqualTo(1L);
         assertThat(response.getTitolo()).isEqualTo("Updated Book");
-        assertThat(response.getTags()).isEqualTo("Fantasy, Avventura");
+        assertThat(response.getTags()).contains("Fantasy").contains("Avventura");
 
         verify(tagRepository).findById(1L);
         verify(tagRepository).findById(2L);
@@ -283,8 +283,8 @@ public class BookServiceTest {
         // Execute
         BookResponse response = bookService.getBookById(1L);
 
-        // Verify tags are concatenated correctly
-        assertThat(response.getTags()).isEqualTo("Fantasy, Avventura");
+        // Verify tags are concatenated correctly (order may vary due to Set)
+        assertThat(response.getTags()).contains("Fantasy").contains("Avventura");
         assertThat(response.getCategoriaId()).isEqualTo(1L);
         assertThat(response.getCategoria()).isEqualTo("Test Category");
     }
