@@ -72,6 +72,15 @@ beforeEach(() => {
         ])
       });
     }
+    if (url.includes('/api/formati')) {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve([
+          { id: 1, descrizione: 'Cartaceo' },
+          { id: 2, descrizione: 'Digitale' },
+        ])
+      });
+    }
     return Promise.reject(new Error('Unknown API endpoint'));
   });
 });
@@ -317,8 +326,6 @@ describe('BookForm', () => {
   });
 
   it('handles API errors when loading tags', async () => {
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
-    
     (fetch as jest.Mock).mockImplementation((url: string) => {
       if (url.includes('/api/tag')) {
         return Promise.resolve({
@@ -353,10 +360,11 @@ describe('BookForm', () => {
 
     render(<BookForm mode="create" />);
 
+    // When tag API fails, the form still renders but the tag dropdown is not shown
     await waitFor(() => {
-      expect(consoleError).toHaveBeenCalled();
+      expect(screen.getByText('Inserisci Nuovo Libro')).toBeInTheDocument();
     });
 
-    consoleError.mockRestore();
+    expect(screen.queryByDisplayValue('+ Aggiungi tag...')).not.toBeInTheDocument();
   });
 });
