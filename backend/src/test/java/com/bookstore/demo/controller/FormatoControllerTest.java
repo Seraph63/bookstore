@@ -1,9 +1,8 @@
-package com.bookstore.demo.controller;
+﻿package com.bookstore.demo.controller;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,12 +21,13 @@ import com.bookstore.demo.repository.FormatoRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@SuppressWarnings("null")
+
 public class FormatoControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @SuppressWarnings("removal")
     @MockBean
     private FormatoRepository formatoRepository;
 
@@ -52,7 +52,6 @@ public class FormatoControllerTest {
 
         // Esegue la richiesta e verifica la risposta
         mockMvc.perform(get("/api/formati"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
@@ -70,7 +69,6 @@ public class FormatoControllerTest {
 
         // Esegue la richiesta e verifica la risposta
         mockMvc.perform(get("/api/formati"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
@@ -85,7 +83,6 @@ public class FormatoControllerTest {
 
         // Esegue la richiesta e verifica la risposta
         mockMvc.perform(get("/api/formati/1"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1))
@@ -99,7 +96,6 @@ public class FormatoControllerTest {
 
         // Esegue la richiesta e verifica la risposta
         mockMvc.perform(get("/api/formati/999"))
-                .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
@@ -107,7 +103,6 @@ public class FormatoControllerTest {
     public void testGetFormatoByIdInvalidFormat() throws Exception {
         // Test con ID non valido
         mockMvc.perform(get("/api/formati/invalid"))
-                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -119,7 +114,6 @@ public class FormatoControllerTest {
 
         mockMvc.perform(get("/api/formati")
                 .header("Origin", "http://localhost:3000"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("Access-Control-Allow-Origin", "*"));
     }

@@ -52,17 +52,15 @@ public class BookService implements IBookService {
     @Transactional
     public BookResponse createBook(BookCreateRequest request) {
         // Valida che autore, editore e categoria esistano
-        @SuppressWarnings("null")
+
         Author author = authorRepository.findById(request.getAutoreId())
                 .orElseThrow(
                         () -> new IllegalArgumentException("Autore con ID " + request.getAutoreId() + " non trovato"));
 
-        @SuppressWarnings("null")
         Publisher publisher = publisherRepository.findById(request.getEditoreId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Editore con ID " + request.getEditoreId() + " non trovato"));
 
-        @SuppressWarnings("null")
         Category category = categoryRepository.findById(request.getCategoriaId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Categoria con ID " + request.getCategoriaId() + " non trovata"));
@@ -71,7 +69,7 @@ public class BookService implements IBookService {
         Set<Tag> tags = new HashSet<>();
         if (request.getTagIds() != null && !request.getTagIds().isEmpty()) {
             for (Long tagId : request.getTagIds()) {
-                @SuppressWarnings("null")
+
                 Tag tag = tagRepository.findById(tagId)
                         .orElseThrow(() -> new IllegalArgumentException("Tag con ID " + tagId + " non trovato"));
                 tags.add(tag);
@@ -82,7 +80,7 @@ public class BookService implements IBookService {
         Set<Formato> formati = new HashSet<>();
         if (request.getFormatiIds() != null && !request.getFormatiIds().isEmpty()) {
             for (Long formatoId : request.getFormatiIds()) {
-                @SuppressWarnings("null")
+
                 Formato formato = formatoRepository.findById(formatoId)
                         .orElseThrow(
                                 () -> new IllegalArgumentException("Formato con ID " + formatoId + " non trovato"));
@@ -134,22 +132,20 @@ public class BookService implements IBookService {
 
     @Transactional
     public BookResponse updateBook(Long id, BookUpdateRequest request) {
-        @SuppressWarnings("null")
+
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Libro con ID " + id + " non trovato"));
 
         // Valida che autore, editore e categoria esistano
-        @SuppressWarnings("null")
+
         Author author = authorRepository.findById(request.getAutoreId())
                 .orElseThrow(
                         () -> new IllegalArgumentException("Autore con ID " + request.getAutoreId() + " non trovato"));
 
-        @SuppressWarnings("null")
         Publisher publisher = publisherRepository.findById(request.getEditoreId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Editore con ID " + request.getEditoreId() + " non trovato"));
 
-        @SuppressWarnings("null")
         Category category = categoryRepository.findById(request.getCategoriaId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Categoria con ID " + request.getCategoriaId() + " non trovata"));
@@ -158,7 +154,7 @@ public class BookService implements IBookService {
         Set<Tag> tags = new HashSet<>();
         if (request.getTagIds() != null && !request.getTagIds().isEmpty()) {
             for (Long tagId : request.getTagIds()) {
-                @SuppressWarnings("null")
+
                 Tag tag = tagRepository.findById(tagId)
                         .orElseThrow(() -> new IllegalArgumentException("Tag con ID " + tagId + " non trovato"));
                 tags.add(tag);
@@ -169,7 +165,7 @@ public class BookService implements IBookService {
         Set<Formato> formati = new HashSet<>();
         if (request.getFormatiIds() != null && !request.getFormatiIds().isEmpty()) {
             for (Long formatoId : request.getFormatiIds()) {
-                @SuppressWarnings("null")
+
                 Formato formato = formatoRepository.findById(formatoId)
                         .orElseThrow(
                                 () -> new IllegalArgumentException("Formato con ID " + formatoId + " non trovato"));
@@ -208,7 +204,6 @@ public class BookService implements IBookService {
         return convertToResponse(updatedBook);
     }
 
-    @SuppressWarnings("null")
     @Transactional
     public void deleteBook(Long id) {
         if (!bookRepository.existsById(id)) {

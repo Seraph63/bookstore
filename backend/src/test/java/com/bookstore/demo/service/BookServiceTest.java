@@ -89,7 +89,6 @@ public class BookServiceTest {
         testTag2.setDescrizione("Avventura");
     }
 
-    @SuppressWarnings("null")
     @Test
     public void testCreateBookWithTags() {
         // Prepara request
@@ -138,7 +137,6 @@ public class BookServiceTest {
         verify(bookRepository).save(any(Book.class));
     }
 
-    @SuppressWarnings("null")
     @Test
     public void testCreateBookWithoutTags() {
         // Prepara request senza tag
@@ -209,7 +207,6 @@ public class BookServiceTest {
                 .hasMessage("Tag con ID 999 non trovato");
     }
 
-    @SuppressWarnings("null")
     @Test
     public void testUpdateBookWithDifferentTags() {
         // Prepara existing book

@@ -47,24 +47,24 @@ public class BookImportService {
         this.formatoRepository = formatoRepository;
     }
 
-    @SuppressWarnings("null")
     public void importFromCsv(InputStream inputStream) {
-        // Rimuovi eventuali libri esistenti per evitare duplicati al riavvio
-        if (bookRepository.count() > 0) {
-            bookRepository.deleteAll();
-        }
-
         List<Book> books = parseCsv(inputStream);
         if (!books.isEmpty()) {
             log.info("Importazione di {} libri...", books.size());
 
             if (formatoRepository.count() == 0) {
-                throw new RuntimeException("Impossibile importare libri: nessun formato disponibile!");
+                log.warn("Nessun formato disponibile, importazione libri saltata.");
+                return;
             }
 
             int count = 0;
+            int skipped = 0;
             for (Book book : books) {
                 try {
+                    if (bookRepository.existsByIsbn13(book.getIsbn13())) {
+                        skipped++;
+                        continue;
+                    }
                     bookRepository.save(book);
                     count++;
                     if (count % 10 == 0) {
@@ -76,7 +76,7 @@ public class BookImportService {
                 }
             }
 
-            log.info("Importazione libri completata: {} libri caricati.", count);
+            log.info("Importazione libri completata: {} libri caricati, {} già presenti.", count, skipped);
         }
     }
 

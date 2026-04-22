@@ -1,9 +1,8 @@
-package com.bookstore.demo.controller;
+﻿package com.bookstore.demo.controller;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,12 +21,12 @@ import com.bookstore.demo.repository.TagRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@SuppressWarnings("null")
 public class TagControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @SuppressWarnings("removal")
     @MockBean
     private TagRepository tagRepository;
 
@@ -52,7 +51,6 @@ public class TagControllerTest {
 
         // Esegue la richiesta e verifica la risposta
         mockMvc.perform(get("/api/tag"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
@@ -70,7 +68,6 @@ public class TagControllerTest {
 
         // Esegue la richiesta e verifica la risposta
         mockMvc.perform(get("/api/tag"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
@@ -85,7 +82,6 @@ public class TagControllerTest {
 
         // Esegue la richiesta e verifica la risposta
         mockMvc.perform(get("/api/tag/1"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1))
@@ -99,7 +95,6 @@ public class TagControllerTest {
 
         // Esegue la richiesta e verifica la risposta
         mockMvc.perform(get("/api/tag/999"))
-                .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
@@ -107,7 +102,6 @@ public class TagControllerTest {
     public void testGetTagByIdInvalidFormat() throws Exception {
         // Test con ID non valido
         mockMvc.perform(get("/api/tag/invalid"))
-                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -119,7 +113,6 @@ public class TagControllerTest {
 
         mockMvc.perform(get("/api/tag")
                 .header("Origin", "http://localhost:3000"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("Access-Control-Allow-Origin", "*"));
     }

@@ -24,7 +24,6 @@ public class BookRepositoryTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @SuppressWarnings("null")
     @Test
     public void testSearchBooks() {
         // Crea autore di test

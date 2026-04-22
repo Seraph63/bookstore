@@ -1,4 +1,4 @@
-package com.bookstore.demo.controller;
+﻿package com.bookstore.demo.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -7,7 +7,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,15 +31,16 @@ import com.bookstore.demo.service.IBookService;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@SuppressWarnings("null")
 public class BookControllerTest {
 
         @Autowired
         private MockMvc mockMvc;
 
+        @SuppressWarnings("removal")
         @MockBean
         private IBookService bookService;
 
+        @SuppressWarnings("removal")
         @MockBean
         private BookRepository bookRepository;
 
@@ -105,7 +105,6 @@ public class BookControllerTest {
                 mockMvc.perform(get("/api/books")
                                 .param("page", "0")
                                 .param("size", "12"))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.content").isArray())
                                 .andExpect(jsonPath("$.content[0].id").value(1))
@@ -122,7 +121,6 @@ public class BookControllerTest {
 
                 // Act & Assert
                 mockMvc.perform(get("/api/books/1"))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.id").value(1))
                                 .andExpect(jsonPath("$.titolo").value("Il nome della rosa"))
@@ -138,7 +136,6 @@ public class BookControllerTest {
 
                 // Act & Assert
                 mockMvc.perform(get("/api/books/999"))
-                                .andDo(print())
                                 .andExpect(status().isNotFound());
         }
 
@@ -152,7 +149,6 @@ public class BookControllerTest {
                 // Act & Assert
                 mockMvc.perform(get("/api/books/search")
                                 .param("q", "tolkien"))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$").isArray())
                                 .andExpect(jsonPath("$[0].id").value(1))
@@ -188,7 +184,6 @@ public class BookControllerTest {
                 mockMvc.perform(post("/api/books")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
-                                .andDo(print())
                                 .andExpect(status().isCreated())
                                 .andExpect(jsonPath("$.titolo").value("Il nuovo libro"))
                                 .andExpect(jsonPath("$.nomeAutore").value("Umberto"));
@@ -209,7 +204,6 @@ public class BookControllerTest {
                 mockMvc.perform(post("/api/books")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(invalidJson))
-                                .andDo(print())
                                 .andExpect(status().isBadRequest());
         }
 
@@ -235,7 +229,6 @@ public class BookControllerTest {
                 mockMvc.perform(put("/api/books/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.titolo").value("Titolo aggiornato"))
                                 .andExpect(jsonPath("$.prezzo").value(22.99));
@@ -260,7 +253,6 @@ public class BookControllerTest {
                 mockMvc.perform(put("/api/books/999")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
-                                .andDo(print())
                                 .andExpect(status().isBadRequest());
         }
 
@@ -271,7 +263,6 @@ public class BookControllerTest {
 
                 // Act & Assert
                 mockMvc.perform(delete("/api/books/1"))
-                                .andDo(print())
                                 .andExpect(status().isNoContent());
         }
 
@@ -283,7 +274,6 @@ public class BookControllerTest {
 
                 // Act & Assert
                 mockMvc.perform(delete("/api/books/999"))
-                                .andDo(print())
                                 .andExpect(status().isNotFound());
         }
 
@@ -292,7 +282,6 @@ public class BookControllerTest {
                 // Act & Assert
                 mockMvc.perform(get("/api/books/search")
                                 .param("q", ""))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$").isArray())
                                 .andExpect(jsonPath("$.length()").value(0));
@@ -328,7 +317,6 @@ public class BookControllerTest {
                 mockMvc.perform(post("/api/books")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
-                                .andDo(print())
                                 .andExpect(status().isCreated())
                                 .andExpect(jsonPath("$.tags").value("Fantasy, Avventura"));
         }
@@ -355,7 +343,6 @@ public class BookControllerTest {
                 mockMvc.perform(put("/api/books/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.tags").value("Mistero, Thriller"));
         }
@@ -368,7 +355,6 @@ public class BookControllerTest {
 
                 // Act & Assert
                 mockMvc.perform(get("/api/books/1"))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.id").value(1))
                                 .andExpect(jsonPath("$.titolo").value("Il nome della rosa"))
@@ -398,7 +384,6 @@ public class BookControllerTest {
                 mockMvc.perform(post("/api/books")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
-                                .andDo(print())
                                 .andExpect(status().isCreated())
                                 .andExpect(jsonPath("$.tags").doesNotExist());
         }

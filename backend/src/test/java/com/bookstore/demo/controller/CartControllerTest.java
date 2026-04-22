@@ -24,15 +24,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@SuppressWarnings("null")
 public class CartControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @SuppressWarnings("removal")
     @MockBean
     private ICartService cartService;
 
+    @SuppressWarnings("removal")
     @MockBean
     private ICheckoutService checkoutService;
 
