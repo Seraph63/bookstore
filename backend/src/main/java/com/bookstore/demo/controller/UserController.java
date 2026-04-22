@@ -5,6 +5,8 @@ import com.bookstore.demo.service.UserService;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "*")
 public class UserController {
+
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
 
@@ -46,7 +50,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable @NonNull Long id, @RequestBody User userDetails) {
         try {
-            System.out.println("Ricevuto aggiornamento per utente " + id + ": " + userDetails.getUsername()); // Debug
+            log.debug("Aggiornamento utente {}: username='{}'", id, userDetails.getUsername());
             User updatedUser = userService.updateUser(id, userDetails);
             return ResponseEntity.ok(updatedUser);
         } catch (RuntimeException e) {

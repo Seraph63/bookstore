@@ -120,6 +120,7 @@ public class BookService implements IBookService {
         return convertToResponse(savedBook);
     }
 
+    @Transactional(readOnly = true)
     public BookResponse getBookById(Long id) {
         Book book = bookRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new IllegalArgumentException("Libro con ID " + id + " non trovato"));

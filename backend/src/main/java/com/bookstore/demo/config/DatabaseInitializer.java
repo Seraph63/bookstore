@@ -1,10 +1,14 @@
 package com.bookstore.demo.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DatabaseInitializer implements CommandLineRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(DatabaseInitializer.class);
 
     private final DataImportTransactionService dataImportService;
 
@@ -14,18 +18,12 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println(">>> Avvio importazione automatica dati...");
-
+        log.info("Avvio importazione automatica dati...");
         try {
-            // CRITICO: Usa un'unica transazione per evitare problemi di isolamento
             dataImportService.importAllData();
-
-            System.out.println(">>> Database popolato con successo all'avvio!");
-
+            log.info("Database popolato con successo all'avvio!");
         } catch (Exception e) {
-            System.err.println("Errore durante l'inizializzazione: " + e.getMessage());
-            e.printStackTrace();
-            // Non blocchiamo l'avvio dell'app se mancano i file, ma lo segnaliamo
+            log.error("Errore durante l'inizializzazione: {}", e.getMessage(), e);
         }
     }
 }

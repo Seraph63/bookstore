@@ -46,7 +46,7 @@ interface FormData {
   annoPubblicazione: number;
   isbn10: string;
   isbn13: string;
-  formatoIds: number[];
+  formatiIds: number[];
   prezzo: number;
   prezzoOriginale: number;
   stock: number;
@@ -76,7 +76,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
     annoPubblicazione: new Date().getFullYear(),
     isbn10: '',
     isbn13: '',
-    formatoIds: [],
+    formatiIds: [],
     prezzo: 0,
     prezzoOriginale: 0,
     stock: 0,
@@ -104,8 +104,8 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
           .map(tag => tag.id);
       };
 
-      // Conversione formati string a formatoIds array
-      const parseformatoIds = (formatiString: string): number[] => {
+      // Conversione formati string a formatiIds array
+      const parseFormatiIds = (formatiString: string): number[] => {
         if (!formatiString) return [];
 
         // Se sono descrizioni separate da virgola, trova gli ID corrispondenti
@@ -125,7 +125,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
         annoPubblicazione: initialData.annoPubblicazione || new Date().getFullYear(),
         isbn10: initialData.isbn10 || '',
         isbn13: initialData.isbn13 || '',
-        formatoIds: parseformatoIds(initialData.formati || ''),
+        formatiIds: parseFormatiIds(initialData.formati || ''),
         prezzo: initialData.prezzo || 0,
         prezzoOriginale: initialData.prezzoOriginale || 0,
         stock: initialData.stock || 0,
@@ -151,39 +151,28 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
       if (authorsResponse.ok) {
         const authorsData = await authorsResponse.json();
         setAuthors(authorsData);
-      } else {
-        console.error('Errore caricamento autori');
       }
 
       if (publishersResponse.ok) {
         const publishersData = await publishersResponse.json();
         setPublishers(publishersData);
-      } else {
-        console.error('Errore caricamento editori');
       }
 
       if (categoriesResponse.ok) {
         const categoriesData = await categoriesResponse.json();
         setCategories(categoriesData);
-      } else {
-        console.error('Errore caricamento categorie');
       }
 
       if (tagsResponse.ok) {
         const tagsData = await tagsResponse.json();
         setTags(tagsData);
-      } else {
-        console.error('Errore caricamento tag');
       }
 
       if (formatiResponse.ok) {
         const formatiData = await formatiResponse.json();
         setFormati(formatiData);
-      } else {
-        console.error('Errore caricamento formati');
       }
     } catch (error) {
-      console.error('Errore durante il caricamento:', error);
       setError('Errore durante il caricamento di autori, editori e categorie');
     } finally {
       setLoadingData(false);
@@ -220,10 +209,10 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
 
   // Aggiungi un formato
   const handleAddFormato = (formatoId: number) => {
-    if (!formData.formatoIds.includes(formatoId)) {
+    if (!formData.formatiIds.includes(formatoId)) {
       setFormData(prev => ({
         ...prev,
-        formatoIds: [...prev.formatoIds, formatoId]
+        formatiIds: [...prev.formatiIds, formatoId]
       }));
     }
   };
@@ -232,18 +221,18 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
   const handleRemoveformato = (formatoId: number) => {
     setFormData(prev => ({
       ...prev,
-      formatoIds: prev.formatoIds.filter(id => id !== formatoId)
+      formatiIds: prev.formatiIds.filter(id => id !== formatoId)
     }));
   };
 
   // Ottieni formato selezionati
   const getSelectedFormati = (): Formato[] => {
-    return formati.filter(formato => formData.formatoIds.includes(formato.id));
+    return formati.filter(formato => formData.formatiIds.includes(formato.id));
   };
 
   // Ottieni formato disponibili (non selezionati)
   const getAvailableFormati = (): Formato[] => {
-    return formati.filter(formato => !formData.formatoIds.includes(formato.id));
+    return formati.filter(formato => !formData.formatiIds.includes(formato.id));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -295,13 +284,11 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
         }, 1500);
       } else {
         const errorData = await response.text();
-        console.error('Errore dal server:', errorData);
         const errorMessage = errorData || `Errore ${response.status}: ${response.statusText}`;
         setError(errorMessage);
         toast.error(`Errore nel salvataggio: ${errorMessage}`);
       }
     } catch (err) {
-      console.error('Errore di rete:', err);
       const errorMessage = 'Errore di connessione al server';
       setError(errorMessage);
       toast.error(errorMessage);

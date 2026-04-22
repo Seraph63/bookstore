@@ -12,6 +12,8 @@ import com.bookstore.demo.repository.PublisherRepository;
 import com.bookstore.demo.repository.CategoryRepository;
 import com.bookstore.demo.repository.TagRepository;
 import com.bookstore.demo.repository.FormatoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -20,6 +22,8 @@ import java.util.*;
 
 @Service
 public class BookImportService {
+
+    private static final Logger log = LoggerFactory.getLogger(BookImportService.class);
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
@@ -45,62 +49,34 @@ public class BookImportService {
 
     @SuppressWarnings("null")
     public void importFromCsv(InputStream inputStream) {
-        System.out.println("🚀 AVVIO BookImportService.importFromCsv()");
-
-        // Controlla se il database ha già dei libri
-        long bookCount = bookRepository.count();
-        System.out.println("🔢 Libri presenti nel database: " + bookCount);
-
-        // Anche diagnostica sui formati e relazioni
-        long formatCount = formatoRepository.count();
-        System.out.println("🔢 Formati presenti nel database: " + formatCount);
-
-        // TEMPORANEO: Forza re-importazione per pulire dati inconsistenti
-        if (bookCount > 0) {
-            System.out.println(
-                    "⚠️ OVERRIDE: Forzo re-importazione anche con libri esistenti per risolvere inconsistenze");
-            System.out.println("🧹 Pulisco libri esistenti per evitare duplicati...");
+        // Rimuovi eventuali libri esistenti per evitare duplicati al riavvio
+        if (bookRepository.count() > 0) {
             bookRepository.deleteAll();
-            System.out.println("✅ Pulizia completata");
-            // return; // COMMENTATO PER FORZARE RE-IMPORT
         }
 
         List<Book> books = parseCsv(inputStream);
         if (!books.isEmpty()) {
-            System.out.println("⏳ Importazione di " + books.size() + " libri...");
+            log.info("Importazione di {} libri...", books.size());
 
-            // DIAGNOSTICA: Verifichiamo che i formati siano presenti nel database
-            System.out.println("🔍 Controllo presenza formati nel database:");
-            List<Formato> formatiDisponibili = formatoRepository.findAll();
-            System.out.println("   Formati trovati: " + formatiDisponibili.size());
-            for (Formato f : formatiDisponibili) {
-                System.out.println("   - ID: " + f.getId() + ", Descrizione: " + f.getDescrizione());
-            }
-
-            if (formatiDisponibili.isEmpty()) {
-                System.err.println("❌ ERRORE: Nessun formato trovato nel database!");
+            if (formatoRepository.count() == 0) {
                 throw new RuntimeException("Impossibile importare libri: nessun formato disponibile!");
             }
 
-            // Salviamo i libri uno alla volta per assicurarci che le relazioni
-            // many-to-many vengano risolte immediatamente
             int count = 0;
             for (Book book : books) {
                 try {
                     bookRepository.save(book);
                     count++;
                     if (count % 10 == 0) {
-                        System.out.println("📚 Importati " + count + " di " + books.size() + " libri...");
+                        log.debug("Importati {} di {} libri...", count, books.size());
                     }
                 } catch (Exception e) {
-                    System.err.println("❌ Errore nell'importazione del libro: " + book.getTitolo());
-                    System.err.println("   Errore: " + e.getMessage());
-                    e.printStackTrace();
+                    log.error("Errore nell'importazione del libro '{}': {}", book.getTitolo(), e.getMessage(), e);
                     throw e;
                 }
             }
 
-            System.out.println("✅ Importazione libri completata!");
+            log.info("Importazione libri completata: {} libri caricati.", count);
         }
     }
 
@@ -164,27 +140,17 @@ public class BookImportService {
                     if (formatoIdsString != null && !formatoIdsString.isEmpty()) {
                         Set<Formato> formati = new HashSet<>();
                         String[] formatoIdArray = formatoIdsString.split("\\|");
-                        System.out.println(">>> Cercando formati con ID: " + formatoIdsString);
                         for (String formatoIdStr : formatoIdArray) {
                             try {
                                 Long formatoId = Long.parseLong(formatoIdStr.trim());
-                                System.out.println(">>> Ricerca formato con ID: " + formatoId);
                                 Optional<Formato> formatoOpt = formatoRepository.findById(formatoId);
                                 if (formatoOpt.isPresent()) {
                                     formati.add(formatoOpt.get());
-                                    System.out.println(">>> Formato trovato: " + formatoOpt.get().getDescrizione());
                                 } else {
-                                    System.err.println(">>> ERRORE: Formato con ID " + formatoId + " non trovato!");
-                                    // Lista tutti i formati disponibili per debug
-                                    List<Formato> allFormati = formatoRepository.findAll();
-                                    System.out.println(">>> Formati disponibili nel database:");
-                                    for (Formato f : allFormati) {
-                                        System.out
-                                                .println("  ID: " + f.getId() + ", Descrizione: " + f.getDescrizione());
-                                    }
+                                    log.warn("Formato con ID {} non trovato, verrà ignorato.", formatoId);
                                 }
                             } catch (NumberFormatException e) {
-                                System.err.println("Errore parsing formato ID: " + formatoIdStr);
+                                log.warn("Valore formato non valido '{}', verrà ignorato.", formatoIdStr);
                             }
                         }
                         book.setFormato(formati);
@@ -200,7 +166,7 @@ public class BookImportService {
                                 Long tagId = Long.parseLong(tagIdStr.trim());
                                 tagRepository.findById(tagId).ifPresent(tags::add);
                             } catch (NumberFormatException e) {
-                                System.err.println("Errore parsing tag ID: " + tagIdStr);
+                                log.warn("Valore tag non valido '{}', verrà ignorato.", tagIdStr);
                             }
                         }
                         book.setTag(tags);
