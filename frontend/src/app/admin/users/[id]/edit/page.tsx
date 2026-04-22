@@ -57,8 +57,6 @@ export default function EditUserPage() {
       }
       const user: User = await response.json();
       
-      console.log('Dati utente ricevuti:', user);
-      
       const newFormData = {
         username: user.username || '',
         password: '', // Non mostriamo la password esistente
@@ -69,7 +67,6 @@ export default function EditUserPage() {
         attivo: user.attivo === true // Più esplicito
       };
       
-      console.log('FormData impostati:', newFormData);
       setFormData(newFormData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Errore caricamento utente');
@@ -91,16 +88,8 @@ export default function EditUserPage() {
     setLoading(true);
 
     try {
-      // Prepara i dati della richiesta
-      const requestData = { ...formData };
-      
-      // Se la password è vuota, non la includiamo nella richiesta
-      if (!requestData.password || requestData.password.trim() === '') {
-        delete requestData.password;
-      }
-
-      console.log('Dati form prima dell\'invio:', formData);
-      console.log('Dati inviati al server:', requestData);
+      const { password, ...rest } = formData;
+      const requestData = password.trim() ? { ...rest, password } : rest;
 
       const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
         method: 'PUT',
@@ -111,8 +100,7 @@ export default function EditUserPage() {
       });
 
       if (response.ok) {
-        const updatedUser = await response.json();
-        console.log('Risposta dal server:', updatedUser);
+        await response.json();
         toast.success('Utente modificato con successo!');
         
         setTimeout(() => {
@@ -120,7 +108,6 @@ export default function EditUserPage() {
         }, 1500);
       } else {
         const errorData = await response.text();
-        console.error('Errore risposta server:', errorData);
         toast.error(`Errore: ${errorData || 'Errore sconosciuto'}`);
       }
     } catch (err) {

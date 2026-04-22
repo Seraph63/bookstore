@@ -40,7 +40,6 @@ public class OrderController {
         return ResponseEntity.ok(Map.of("count", count));
     }
 
-    @SuppressWarnings("null")
     @PutMapping("/items/{itemId}")
     @Transactional
     public ResponseEntity<?> updateItemQuantity(@PathVariable Long itemId,
@@ -86,7 +85,6 @@ public class OrderController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    @SuppressWarnings("null")
     @DeleteMapping("/items/{itemId}")
     @Transactional
     public ResponseEntity<?> deleteItem(@PathVariable Long itemId) {

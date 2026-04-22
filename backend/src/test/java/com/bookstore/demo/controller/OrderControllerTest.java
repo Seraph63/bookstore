@@ -24,6 +24,7 @@ public class OrderControllerTest {
         @Autowired
         private MockMvc mockMvc;
 
+        @SuppressWarnings("removal")
         @MockBean
         private OrderRepository orderRepository;
 

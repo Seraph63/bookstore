@@ -1,51 +1,51 @@
 titolo,sottotitolo,autore_id,editore_id,anno_pubblicazione,isbn10,isbn13,formati,prezzo,prezzo_originale,stock,copertinaUrl,valutazione_media,numero_recensioni,categoria,tags,Descrizione
-Il Nome della Rosa,Edizione Speciale,1,1,1980,8845207056,978-8845207051,Cartaceo|E-book,12.75,15.0,45,https://picsum.photos/seed/1/400/600,4.8,1250,1,Storico|Mistero,Un giallo medievale in un'abbazia isolata.
-1984,Edizione Integrale,2,2,1949,8804668233,978-8804668237,Cartaceo|E-book|Audiobook,10.2,12.0,120,https://picsum.photos/seed/2/400/600,4.9,3500,2,Politica|Classico,Il capolavoro sul controllo totale.
-Il Signore degli Anelli,La Compagnia dell'Anello,3,1,1954,8845292614,978-8845292613,Cartaceo|Audiobook,21.25,25.0,30,https://picsum.photos/seed/3/400/600,5.0,5000,3,Epico|Avventura,L'inizio del viaggio di Frodo.
-Sapiens,Da animali a dèi,4,1,2011,8845296490,978-8845296499,Cartaceo|E-book,15.3,18.0,85,https://picsum.photos/seed/4/400/600,4.7,2100,4,Scienza|Storia,La storia dell'umanità spiegata.
-Il Codice da Vinci,,5,2,2003,8804523006,978-8804523000,Cartaceo|E-book,9.9,14.5,200,https://picsum.photos/seed/5/400/600,4.2,15000,5,Mistero|Religione,Un omicidio al Louvre svela un segreto.
-L'Alchimista,,6,1,1988,8845265471,978-8845265471,Cartaceo|Audiobook,11.0,11.0,50,https://picsum.photos/seed/6/400/600,4.5,8000,1,Spirituale|Viaggio,Il viaggio verso le piramidi.
-Orgoglio e Pregiudizio,,7,3,1813,8806225436,978-8806225438,Cartaceo|E-book,8.5,10.0,15,https://picsum.photos/seed/7/400/600,4.8,4200,6,Romanzo|Amore,La storia di Elizabeth Bennet.
-Harry Potter 1,La Pietra Filosofale,8,4,1997,8867155956,978-8867155958,Cartaceo|E-book|Audiobook,13.6,16.0,300,https://picsum.photos/seed/8/400/600,4.9,25000,3,Magia|Ragazzi,Il ragazzo che è sopravvissuto.
-Il Piccolo Principe,,9,1,1943,8845296539,978-8845296536,Cartaceo,7.65,9.0,500,https://picsum.photos/seed/9/400/600,4.9,12000,7,Poesia|Favola,Un pilota cade nel deserto.
-Moby Dick,La Balena Bianca,10,5,1851,8845915441,978-8845915444,Cartaceo|Audiobook,18.7,22.0,12,https://picsum.photos/seed/10/400/600,4.5,900,6,Avventura|Mare,La caccia folle del Capitano Achab.
-Don Chisciotte,,11,3,1605,8806223123,978-8806223120,Cartaceo,24.0,24.0,8,https://picsum.photos/seed/11/400/600,4.6,1100,6,Satira|Cavalleria,Le avventure del cavaliere errante.
-Guerra e Pace,,12,6,1869,8811364512,978-8811364510,Cartaceo|E-book,19.55,23.0,20,https://picsum.photos/seed/12/400/600,4.7,2100,6,Storico|Russia,Le vicende di cinque famiglie ruse.
-Odissea,,13,2,-800,8804685412,978-8804685410,Cartaceo|Audiobook,11.05,13.0,40,https://picsum.photos/seed/13/400/600,4.8,3000,8,Mitologia|Viaggio,Il ritorno di Ulisse a Itaca.
-Iliade,,13,3,-750,8806235412,978-8806235415,Cartaceo,12.75,15.0,35,https://picsum.photos/seed/14/400/600,4.7,2800,8,Guerra|Mitologia,L'ira di Achille.
-Cime Tempestose,,14,7,1847,8807900123,978-8807900120,Cartaceo|E-book,9.35,11.0,60,https://picsum.photos/seed/15/400/600,4.6,3500,6,Gotico|Amore,L'amore tormentato tra Heathcliff e Catherine.
-I Promessi Sposi,,15,2,1827,8804661234,978-8804661230,Cartaceo|Audiobook,13.0,13.0,100,https://picsum.photos/seed/16/400/600,4.4,1500,6,Storico|Italia,Renzo e Lucia contro Don Rodrigo.
-Il Processo,,16,5,1925,8845912345,978-8845912340,Cartaceo|E-book,11.05,13.0,25,https://picsum.photos/seed/17/400/600,4.7,1800,1,Assurdo|Legge,Josef K. viene arrestato senza motivo.
-La Metamorfosi,,16,6,1915,8811361234,978-8811361230,Cartaceo|E-book,7.0,7.0,80,https://picsum.photos/seed/18/400/600,4.8,2500,1,Assurdo|Famiglia,Gregor Samsa si sveglia trasformato in insetto.
-Delitto e Castigo,,17,3,1866,8806221234,978-8806221230,Cartaceo|Audiobook,15.3,18.0,40,https://picsum.photos/seed/19/400/600,4.9,3200,6,Psicologico|Russia,La colpa di Raskol'nikov.
-L'Idiota,,17,1,1869,8845212345,978-8845212340,Cartaceo,14.45,17.0,30,https://picsum.photos/seed/20/400/600,4.7,1400,6,Psicologico|Russia,Il Principe Myškin nella società russa.
-Fondazione,Il Ciclo delle Fondazioni,18,2,1951,8804712345,978-8804712340,Cartaceo|E-book,14.0,14.0,55,https://picsum.photos/seed/21/400/600,4.9,2200,9,Galattico|Storia,La psicostoria di Hari Seldon.
-Dune,Il primo libro,19,8,1965,8834712345,978-8834712340,Cartaceo|E-book|Audiobook,17.0,20.0,90,https://picsum.photos/seed/22/400/600,4.8,6000,9,Spezia|Impero,"Arrakis, il pianeta delle sabbie."
-Neuromante,,20,2,1984,8804612345,978-8804612340,Cartaceo,12.75,15.0,40,https://picsum.photos/seed/23/400/600,4.6,1100,9,Cyberpunk|Hacker,Il manifesto del genere cyberpunk.
-Brave New World,Il Mondo Nuovo,21,2,1932,8804512345,978-8804512340,Cartaceo|E-book,11.05,13.0,65,https://picsum.photos/seed/24/400/600,4.7,2500,2,Eugenetica|Futuro,Una società perfetta e senza dolore.
-Fahrenheit 451,,22,2,1953,8804412345,978-8804412340,Cartaceo|Audiobook,10.2,12.0,110,https://picsum.photos/seed/25/400/600,4.8,4000,2,Libri|Censura,Il corpo dei pompieri che brucia libri.
-Il Grande Gatsby,,23,7,1925,8807812345,978-8807812340,Cartaceo|E-book,8.5,10.0,75,https://picsum.photos/seed/26/400/600,4.6,5500,6,Jazz|Sogno Americano,Il misterioso Jay Gatsby.
-Ulisse,,24,2,1922,8804312345,978-8804312340,Cartaceo,21.25,25.0,15,https://picsum.photos/seed/27/400/600,4.2,800,6,Modernismo|Dublino,Una giornata nella vita di Leopold Bloom.
-La Divina Commedia,Edizione Illustrata,25,3,1320,8806112345,978-8806112340,Cartaceo|Audiobook,25.5,30.0,25,https://picsum.photos/seed/28/400/600,5.0,9000,13,Aldilà|Teologia,Il viaggio di Dante tra i tre regni.
-Il Gattopardo,,26,7,1958,8807012345,978-8807012340,Cartaceo|E-book,11.9,14.0,45,https://picsum.photos/seed/29/400/600,4.7,2100,1,Sicilia|Risorgimento,Tutto cambia perché nulla cambi.
-Lo Hobbit,Un viaggio inaspettato,3,1,1937,8845212346,978-8845212341,Cartaceo|E-book|Audiobook,13.6,16.0,150,https://picsum.photos/seed/30/400/600,4.9,7500,3,Avventura|Anello,Bilbo Baggins e i tredici nani.
-Il Trono di Spade,Libro Primo,27,2,1996,8804512346,978-8804512342,Cartaceo|E-book,17.0,20.0,130,https://picsum.photos/seed/31/400/600,4.8,12000,3,Politica|Intrigo,L'inverno sta arrivando.
-Anna Karenina,,12,2,1877,8804412346,978-8804412342,Cartaceo|E-book,14.45,17.0,40,https://picsum.photos/seed/32/400/600,4.8,3800,6,Amore|Russia,Le famiglie felici si somigliano tutte.
-Il Maestro e Margherita,,28,3,1967,8806112346,978-8806112341,Cartaceo|Audiobook,12.75,15.0,55,https://picsum.photos/seed/33/400/600,4.9,4200,1,Satira|Diavolo,Il Diavolo arriva nella Mosca sovietica.
-Il Vecchio e il Mare,,29,2,1952,8804312346,978-8804312341,Cartaceo|E-book,10.2,12.0,200,https://picsum.photos/seed/34/400/600,4.7,6000,1,Lotta|Pesca,Santiago e la sua lotta con il marlin.
-Cent'anni di solitudine,,30,2,1967,8804212345,978-8804212340,Cartaceo|Audiobook,15.3,18.0,60,https://picsum.photos/seed/35/400/600,4.9,8500,1,Realismo Magico,La dinastia Buendía a Macondo.
-Dracula,,31,6,1897,8811112345,978-8811112340,Cartaceo|E-book,9.35,11.0,70,https://picsum.photos/seed/36/400/600,4.6,5000,10,Vampiri|Gotico,Il conte Dracula dalla Transilvania a Londra.
-Frankenstein,,32,2,1818,8804112345,978-8804112340,Cartaceo,8.5,10.0,85,https://picsum.photos/seed/37/400/600,4.7,4800,10,Scienza|Mostro,Victor Frankenstein e la sua creatura.
-Lo Straniero,,33,1,1942,8845211234,978-8845211230,Cartaceo|E-book,11.05,13.0,40,https://picsum.photos/seed/38/400/600,4.8,3200,1,Assurdo|Esistenza,Oggi è morta mamma.
-La Peste,,33,1,1947,8845211235,978-8845211231,Cartaceo|Audiobook,12.75,15.0,50,https://picsum.photos/seed/39/400/600,4.7,2800,1,Malattia|Resistenza,Orano colpita dall'epidemia.
-Siddharta,,34,5,1922,8845911234,978-8845911230,Cartaceo|E-book,10.0,10.0,120,https://picsum.photos/seed/40/400/600,4.8,7500,1,Spirituale|India,Il cammino verso l'illuminazione.
-Il Lupo della Steppa,,34,5,1927,8845911235,978-8845911231,Cartaceo,12.75,15.0,35,https://picsum.photos/seed/41/400/600,4.6,1800,1,Psicologia|Dualità,Harry Haller e la sua natura lupesca.
-Così parlò Zarathustra,Un libro per tutti e per nessuno,35,5,1883,8845911236,978-8845911232,Cartaceo|E-book,15.3,18.0,25,https://picsum.photos/seed/42/400/600,4.7,2500,11,Oltreuomo|Morale,La morte di Dio e l'eterno ritorno.
-Critica della Ragion Pura,,36,9,1781,8842011234,978-8842011230,Cartaceo,22.1,26.0,10,https://picsum.photos/seed/43/400/600,4.5,600,11,Conoscenza|Metafisica,I limiti dell'intelletto umano.
-Il Principe,,37,3,1532,8806112347,978-8806112342,Cartaceo|Audiobook,9.35,11.0,90,https://picsum.photos/seed/44/400/600,4.8,4000,4,Politica|Potere,Il manuale del realismo politico.
-L'Arte della Guerra,,38,7,-500,8807812346,978-8807812341,Cartaceo|E-book,7.65,9.0,150,https://picsum.photos/seed/45/400/600,4.9,5500,4,Strategia|Militare,Vincere senza combattere.
-Donne che corrono coi lupi,,39,10,1992,8876812345,978-8876812340,Cartaceo|E-book,17.0,20.0,65,https://picsum.photos/seed/46/400/600,4.8,4200,4,Psicologia|Femminile,Il mito della Donna Selvatica.
-L'interpretazione dei sogni,,40,11,1899,8833912345,978-8833912340,Cartaceo|E-book,16.15,19.0,30,https://picsum.photos/seed/47/400/600,4.7,1900,4,Psicoanalisi|Sogni,La scoperta dell'inconscio.
-La Coscienza di Zeno,,41,12,1923,8804112346,978-8804112341,Cartaceo|E-book,11.05,13.0,50,https://picsum.photos/seed/48/400/600,4.7,2800,6,Psicologico|Fumo,L'inetto e la sua autoanalisi.
-Se questo è un uomo,,42,3,1947,8806112348,978-8806112343,Cartaceo|Audiobook,12.75,15.0,140,https://picsum.photos/seed/49/400/600,5.0,15000,12,Shoah|Testimonianza,La sopravvivenza ad Auschwitz.
-La Storia,,43,3,1974,8806112349,978-8806112344,Cartaceo,17.85,21.0,35,https://picsum.photos/seed/50/400/600,4.8,3100,1,Storico|Roma,Uno scandalo che dura da diecimila anni.
+Il Nome della Rosa,Edizione Speciale,1,1,1980,8845207056,978-8845207051,1|2,12.75,15.0,45,https://picsum.photos/seed/1/400/600,4.8,1250,1,1|2,Un giallo medievale in un'abbazia isolata.
+1984,Edizione Integrale,2,2,1949,8804668233,978-8804668237,1|2|3,10.2,12.0,120,https://picsum.photos/seed/2/400/600,4.9,3500,2,3|4,Il capolavoro sul controllo totale.
+Il Signore degli Anelli,La Compagnia dell'Anello,3,1,1954,8845292614,978-8845292613,1|3,21.25,25.0,30,https://picsum.photos/seed/3/400/600,5.0,5000,3,5|6,L'inizio del viaggio di Frodo.
+Sapiens,Da animali a dèi,4,1,2011,8845296490,978-8845296499,1|2,15.3,18.0,85,https://picsum.photos/seed/4/400/600,4.7,2100,4,7|8,La storia dell'umanità spiegata.
+Il Codice da Vinci,,5,2,2003,8804523006,978-8804523000,1|2,9.9,14.5,200,https://picsum.photos/seed/5/400/600,4.2,15000,5,2|9,Un omicidio al Louvre svela un segreto.
+L'Alchimista,,6,1,1988,8845265471,978-8845265471,1|3,11.0,11.0,50,https://picsum.photos/seed/6/400/600,4.5,8000,1,10|11,Il viaggio verso le piramidi.
+Orgoglio e Pregiudizio,,7,3,1813,8806225436,978-8806225438,1|2,8.5,10.0,15,https://picsum.photos/seed/7/400/600,4.8,4200,6,12|13,La storia di Elizabeth Bennet.
+Harry Potter 1,La Pietra Filosofale,8,4,1997,8867155956,978-8867155958,1|2|3,13.6,16.0,300,https://picsum.photos/seed/8/400/600,4.9,25000,3,14|15,Il ragazzo che è sopravvissuto.
+Il Piccolo Principe,,9,1,1943,8845296539,978-8845296536,1,7.65,9.0,500,https://picsum.photos/seed/9/400/600,4.9,12000,7,16|17,Un pilota cade nel deserto.
+Moby Dick,La Balena Bianca,10,5,1851,8845915441,978-8845915444,1|3,18.7,22.0,12,https://picsum.photos/seed/10/400/600,4.5,900,6,6|18,La caccia folle del Capitano Achab.
+Don Chisciotte,,11,3,1605,8806223123,978-8806223120,1,24.0,24.0,8,https://picsum.photos/seed/11/400/600,4.6,1100,6,19|20,Le avventure del cavaliere errante.
+Guerra e Pace,,12,6,1869,8811364512,978-8811364510,1|2,19.55,23.0,20,https://picsum.photos/seed/12/400/600,4.7,2100,6,1|21,Le vicende di cinque famiglie ruse.
+Odissea,,13,2,-800,8804685412,978-8804685410,1|3,11.05,13.0,40,https://picsum.photos/seed/13/400/600,4.8,3000,8,22|11,Il ritorno di Ulisse a Itaca.
+Iliade,,13,3,-750,8806235412,978-8806235415,1,12.75,15.0,35,https://picsum.photos/seed/14/400/600,4.7,2800,8,23|22,L'ira di Achille.
+Cime Tempestose,,14,7,1847,8807900123,978-8807900120,1|2,9.35,11.0,60,https://picsum.photos/seed/15/400/600,4.6,3500,6,24|13,L'amore tormentato tra Heathcliff e Catherine.
+I Promessi Sposi,,15,2,1827,8804661234,978-8804661230,1|3,13.0,13.0,100,https://picsum.photos/seed/16/400/600,4.4,1500,6,1|25,Renzo e Lucia contro Don Rodrigo.
+Il Processo,,16,5,1925,8845912345,978-8845912340,1|2,11.05,13.0,25,https://picsum.photos/seed/17/400/600,4.7,1800,1,26|27,Josef K. viene arrestato senza motivo.
+La Metamorfosi,,16,6,1915,8811361234,978-8811361230,1|2,7.0,7.0,80,https://picsum.photos/seed/18/400/600,4.8,2500,1,26|28,Gregor Samsa si sveglia trasformato in insetto.
+Delitto e Castigo,,17,3,1866,8806221234,978-8806221230,1|3,15.3,18.0,40,https://picsum.photos/seed/19/400/600,4.9,3200,6,29|21,La colpa di Raskol'nikov.
+L'Idiota,,17,1,1869,8845212345,978-8845212340,1,14.45,17.0,30,https://picsum.photos/seed/20/400/600,4.7,1400,6,29|21,Il Principe Myškin nella società russa.
+Fondazione,Il Ciclo delle Fondazioni,18,2,1951,8804712345,978-8804712340,1|2,14.0,14.0,55,https://picsum.photos/seed/21/400/600,4.9,2200,9,30|8,La psicostoria di Hari Seldon.
+Dune,Il primo libro,19,8,1965,8834712345,978-8834712340,1|2|3,17.0,20.0,90,https://picsum.photos/seed/22/400/600,4.8,6000,9,31|32,"Arrakis, il pianeta delle sabbie."
+Neuromante,,20,2,1984,8804612345,978-8804612340,1,12.75,15.0,40,https://picsum.photos/seed/23/400/600,4.6,1100,9,33|34,Il manifesto del genere cyberpunk.
+Brave New World,Il Mondo Nuovo,21,2,1932,8804512345,978-8804512340,1|2,11.05,13.0,65,https://picsum.photos/seed/24/400/600,4.7,2500,2,35|36,Una società perfetta e senza dolore.
+Fahrenheit 451,,22,2,1953,8804412345,978-8804412340,1|3,10.2,12.0,110,https://picsum.photos/seed/25/400/600,4.8,4000,2,37|38,Il corpo dei pompieri che brucia libri.
+Il Grande Gatsby,,23,7,1925,8807812345,978-8807812340,1|2,8.5,10.0,75,https://picsum.photos/seed/26/400/600,4.6,5500,6,39|40,Il misterioso Jay Gatsby.
+Ulisse,,24,2,1922,8804312345,978-8804312340,1,21.25,25.0,15,https://picsum.photos/seed/27/400/600,4.2,800,6,41|42,Una giornata nella vita di Leopold Bloom.
+La Divina Commedia,Edizione Illustrata,25,3,1320,8806112345,978-8806112340,1|3,25.5,30.0,25,https://picsum.photos/seed/28/400/600,5.0,9000,13,43|44,Il viaggio di Dante tra i tre regni.
+Il Gattopardo,,26,7,1958,8807012345,978-8807012340,1|2,11.9,14.0,45,https://picsum.photos/seed/29/400/600,4.7,2100,1,45|46,Tutto cambia perché nulla cambi.
+Lo Hobbit,Un viaggio inaspettato,3,1,1937,8845212346,978-8845212341,1|2|3,13.6,16.0,150,https://picsum.photos/seed/30/400/600,4.9,7500,3,6|47,Bilbo Baggins e i tredici nani.
+Il Trono di Spade,Libro Primo,27,2,1996,8804512346,978-8804512342,1|2,17.0,20.0,130,https://picsum.photos/seed/31/400/600,4.8,12000,3,3|48,L'inverno sta arrivando.
+Anna Karenina,,12,2,1877,8804412346,978-8804412342,1|2,14.45,17.0,40,https://picsum.photos/seed/32/400/600,4.8,3800,6,13|21,Le famiglie felici si somigliano tutte.
+Il Maestro e Margherita,,28,3,1967,8806112346,978-8806112341,1|3,12.75,15.0,55,https://picsum.photos/seed/33/400/600,4.9,4200,1,19|49,Il Diavolo arriva nella Mosca sovietica.
+Il Vecchio e il Mare,,29,2,1952,8804312346,978-8804312341,1|2,10.2,12.0,200,https://picsum.photos/seed/34/400/600,4.7,6000,1,50|51,Santiago e la sua lotta con il marlin.
+Cent'anni di solitudine,,30,2,1967,8804212345,978-8804212340,1|3,15.3,18.0,60,https://picsum.photos/seed/35/400/600,4.9,8500,1,52,La dinastia Buendía a Macondo.
+Dracula,,31,6,1897,8811112345,978-8811112340,1|2,9.35,11.0,70,https://picsum.photos/seed/36/400/600,4.6,5000,10,53|24,Il conte Dracula dalla Transilvania a Londra.
+Frankenstein,,32,2,1818,8804112345,978-8804112340,1,8.5,10.0,85,https://picsum.photos/seed/37/400/600,4.7,4800,10,7|54,Victor Frankenstein e la sua creatura.
+Lo Straniero,,33,1,1942,8845211234,978-8845211230,1|2,11.05,13.0,40,https://picsum.photos/seed/38/400/600,4.8,3200,1,26|55,Oggi è morta mamma.
+La Peste,,33,1,1947,8845211235,978-8845211231,1|3,12.75,15.0,50,https://picsum.photos/seed/39/400/600,4.7,2800,1,56|57,Orano colpita dall'epidemia.
+Siddharta,,34,5,1922,8845911234,978-8845911230,1|2,10.0,10.0,120,https://picsum.photos/seed/40/400/600,4.8,7500,1,10|58,Il cammino verso l'illuminazione.
+Il Lupo della Steppa,,34,5,1927,8845911235,978-8845911231,1,12.75,15.0,35,https://picsum.photos/seed/41/400/600,4.6,1800,1,59|60,Harry Haller e la sua natura lupesca.
+Così parlò Zarathustra,Un libro per tutti e per nessuno,35,5,1883,8845911236,978-8845911232,1|2,15.3,18.0,25,https://picsum.photos/seed/42/400/600,4.7,2500,11,61|62,La morte di Dio e l'eterno ritorno.
+Critica della Ragion Pura,,36,9,1781,8842011234,978-8842011230,1,22.1,26.0,10,https://picsum.photos/seed/43/400/600,4.5,600,11,63|64,I limiti dell'intelletto umano.
+Il Principe,,37,3,1532,8806112347,978-8806112342,1|3,9.35,11.0,90,https://picsum.photos/seed/44/400/600,4.8,4000,4,3|65,Il manuale del realismo politico.
+L'Arte della Guerra,,38,7,-500,8807812346,978-8807812341,1|2,7.65,9.0,150,https://picsum.photos/seed/45/400/600,4.9,5500,4,66|67,Vincere senza combattere.
+Donne che corrono coi lupi,,39,10,1992,8876812345,978-8876812340,1|2,17.0,20.0,65,https://picsum.photos/seed/46/400/600,4.8,4200,4,59|68,Il mito della Donna Selvatica.
+L'interpretazione dei sogni,,40,11,1899,8833912345,978-8833912340,1|2,16.15,19.0,30,https://picsum.photos/seed/47/400/600,4.7,1900,4,69|70,La scoperta dell'inconscio.
+La Coscienza di Zeno,,41,12,1923,8804112346,978-8804112341,1|2,11.05,13.0,50,https://picsum.photos/seed/48/400/600,4.7,2800,6,29|71,L'inetto e la sua autoanalisi.
+Se questo è un uomo,,42,3,1947,8806112348,978-8806112343,1|3,12.75,15.0,140,https://picsum.photos/seed/49/400/600,5.0,15000,12,72|73,La sopravvivenza ad Auschwitz.
+La Storia,,43,3,1974,8806112349,978-8806112344,1,17.85,21.0,35,https://picsum.photos/seed/50/400/600,4.8,3100,1,1|74,Uno scandalo che dura da diecimila anni.

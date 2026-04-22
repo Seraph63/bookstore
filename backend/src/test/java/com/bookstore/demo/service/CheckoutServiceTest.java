@@ -60,7 +60,6 @@ public class CheckoutServiceTest {
         testCart.setItems(new ArrayList<>());
     }
 
-    @SuppressWarnings("null")
     @Test
     void testCheckoutSuccess() {
         CartItem item1 = new CartItem();

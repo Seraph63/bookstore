@@ -1,6 +1,7 @@
 package com.bookstore.demo.controller;
 
 import com.bookstore.demo.dto.book.BookCreateRequest;
+import com.bookstore.demo.dto.book.BookUpdateRequest;
 import com.bookstore.demo.dto.book.BookResponse;
 import com.bookstore.demo.model.Book;
 import com.bookstore.demo.repository.BookRepository;
@@ -8,7 +9,6 @@ import com.bookstore.demo.service.IBookService;
 
 import jakarta.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -75,7 +75,7 @@ public class BookController {
     // UPDATE - PUT /api/books/{id}
     @PutMapping("/{id}")
     public ResponseEntity<BookResponse> updateBook(@PathVariable Long id,
-            @Valid @RequestBody BookCreateRequest request) {
+            @Valid @RequestBody BookUpdateRequest request) {
         try {
             BookResponse response = bookService.updateBook(id, request);
             return ResponseEntity.ok(response); // 200 OK

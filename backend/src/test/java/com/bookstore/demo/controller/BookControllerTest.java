@@ -1,4 +1,4 @@
-package com.bookstore.demo.controller;
+﻿package com.bookstore.demo.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -7,7 +7,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,15 +31,16 @@ import com.bookstore.demo.service.IBookService;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@SuppressWarnings("null")
 public class BookControllerTest {
 
         @Autowired
         private MockMvc mockMvc;
 
+        @SuppressWarnings("removal")
         @MockBean
         private IBookService bookService;
 
+        @SuppressWarnings("removal")
         @MockBean
         private BookRepository bookRepository;
 
@@ -61,7 +61,8 @@ public class BookControllerTest {
                 response.setStock(100);
                 response.setDisponibile(true);
                 response.setCategoriaId(1L); // ID categoria
-                response.setCategoria("Fiction"); // Descrizione categoria  
+                response.setCategoria("Fiction"); // Descrizione categoria
+                response.setTags("Fantasy, Avventura"); // Tags per test
                 response.setPercentualeSconto(20.0);
                 return response;
         }
@@ -104,7 +105,6 @@ public class BookControllerTest {
                 mockMvc.perform(get("/api/books")
                                 .param("page", "0")
                                 .param("size", "12"))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.content").isArray())
                                 .andExpect(jsonPath("$.content[0].id").value(1))
@@ -121,7 +121,6 @@ public class BookControllerTest {
 
                 // Act & Assert
                 mockMvc.perform(get("/api/books/1"))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.id").value(1))
                                 .andExpect(jsonPath("$.titolo").value("Il nome della rosa"))
@@ -137,7 +136,6 @@ public class BookControllerTest {
 
                 // Act & Assert
                 mockMvc.perform(get("/api/books/999"))
-                                .andDo(print())
                                 .andExpect(status().isNotFound());
         }
 
@@ -151,7 +149,6 @@ public class BookControllerTest {
                 // Act & Assert
                 mockMvc.perform(get("/api/books/search")
                                 .param("q", "tolkien"))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$").isArray())
                                 .andExpect(jsonPath("$[0].id").value(1))
@@ -187,7 +184,6 @@ public class BookControllerTest {
                 mockMvc.perform(post("/api/books")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
-                                .andDo(print())
                                 .andExpect(status().isCreated())
                                 .andExpect(jsonPath("$.titolo").value("Il nuovo libro"))
                                 .andExpect(jsonPath("$.nomeAutore").value("Umberto"));
@@ -208,7 +204,6 @@ public class BookControllerTest {
                 mockMvc.perform(post("/api/books")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(invalidJson))
-                                .andDo(print())
                                 .andExpect(status().isBadRequest());
         }
 
@@ -234,7 +229,6 @@ public class BookControllerTest {
                 mockMvc.perform(put("/api/books/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.titolo").value("Titolo aggiornato"))
                                 .andExpect(jsonPath("$.prezzo").value(22.99));
@@ -259,7 +253,6 @@ public class BookControllerTest {
                 mockMvc.perform(put("/api/books/999")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
-                                .andDo(print())
                                 .andExpect(status().isBadRequest());
         }
 
@@ -270,7 +263,6 @@ public class BookControllerTest {
 
                 // Act & Assert
                 mockMvc.perform(delete("/api/books/1"))
-                                .andDo(print())
                                 .andExpect(status().isNoContent());
         }
 
@@ -282,7 +274,6 @@ public class BookControllerTest {
 
                 // Act & Assert
                 mockMvc.perform(delete("/api/books/999"))
-                                .andDo(print())
                                 .andExpect(status().isNotFound());
         }
 
@@ -291,9 +282,109 @@ public class BookControllerTest {
                 // Act & Assert
                 mockMvc.perform(get("/api/books/search")
                                 .param("q", ""))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$").isArray())
                                 .andExpect(jsonPath("$.length()").value(0));
+        }
+
+        // Test per funzionalità Tag
+
+        @Test
+        void testCreateBook_WithTags() throws Exception {
+                // Arrange
+                BookResponse mockResponse = createSampleBookResponse();
+                when(bookService.createBook(any())).thenReturn(mockResponse);
+
+                String requestJson = """
+                                {
+                                    "titolo": "Il nome della rosa",
+                                    "sottotitolo": "Romanzo",
+                                    "autoreId": 1,
+                                    "editoreId": 1,
+                                    "categoriaId": 1,
+                                    "tagIds": [1, 2],
+                                    "annoPubblicazione": 1980,
+                                    "isbn10": "1234567890",
+                                    "isbn13": "978-1234567890",
+                                    "prezzo": 19.99,
+                                    "prezzoOriginale": 24.99,
+                                    "stock": 100,
+                                    "copertinaUrl": "test.jpg"
+                                }
+                                """;
+
+                // Act & Assert
+                mockMvc.perform(post("/api/books")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestJson))
+                                .andExpect(status().isCreated())
+                                .andExpect(jsonPath("$.tags").value("Fantasy, Avventura"));
+        }
+
+        @Test
+        void testUpdateBook_WithDifferentTags() throws Exception {
+                // Arrange
+                BookResponse mockResponse = createSampleBookResponse();
+                mockResponse.setTags("Mistero, Thriller"); // Tag diversi
+                when(bookService.updateBook(eq(1L), any())).thenReturn(mockResponse);
+
+                String requestJson = """
+                                {
+                                    "titolo": "Il nome della rosa - Updated",
+                                    "autoreId": 1,
+                                    "editoreId": 1,
+                                    "categoriaId": 1,
+                                    "tagIds": [3, 4],
+                                    "prezzo": 22.99
+                                }
+                                """;
+
+                // Act & Assert
+                mockMvc.perform(put("/api/books/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestJson))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.tags").value("Mistero, Thriller"));
+        }
+
+        @Test
+        void testGetBook_WithTagsInResponse() throws Exception {
+                // Arrange
+                BookResponse mockResponse = createSampleBookResponse();
+                when(bookService.getBookById(1L)).thenReturn(mockResponse);
+
+                // Act & Assert
+                mockMvc.perform(get("/api/books/1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(1))
+                                .andExpect(jsonPath("$.titolo").value("Il nome della rosa"))
+                                .andExpect(jsonPath("$.tags").value("Fantasy, Avventura"))
+                                .andExpect(jsonPath("$.categoriaId").value(1))
+                                .andExpect(jsonPath("$.categoria").value("Fiction"));
+        }
+
+        @Test
+        void testCreateBook_WithoutTags() throws Exception {
+                // Arrange
+                BookResponse mockResponse = createSampleBookResponse();
+                mockResponse.setTags(null); // Nessun tag
+                when(bookService.createBook(any())).thenReturn(mockResponse);
+
+                String requestJson = """
+                                {
+                                    "titolo": "Book Without Tags",
+                                    "autoreId": 1,
+                                    "editoreId": 1,
+                                    "categoriaId": 1,
+                                    "prezzo": 19.99
+                                }
+                                """;
+
+                // Act & Assert
+                mockMvc.perform(post("/api/books")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestJson))
+                                .andExpect(status().isCreated())
+                                .andExpect(jsonPath("$.tags").doesNotExist());
         }
 }

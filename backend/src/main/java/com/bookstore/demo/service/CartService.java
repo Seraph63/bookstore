@@ -33,7 +33,6 @@ public class CartService implements ICartService {
         return cartRepository.findByUserId(userId).orElse(null);
     }
 
-    @SuppressWarnings("null")
     public Cart getOrCreateCart(@Nullable Long userId) {
         return cartRepository.findByUserId(userId).orElseGet(() -> {
             User user = userRepository.findById(userId)
@@ -44,7 +43,6 @@ public class CartService implements ICartService {
         });
     }
 
-    @SuppressWarnings("null")
     @Transactional
     public Cart addItem(Long userId, Long bookId, int quantita) {
         if (quantita <= 0) {
@@ -91,7 +89,6 @@ public class CartService implements ICartService {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Carrello non trovato"));
 
-        @SuppressWarnings("null")
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("Libro non trovato"));
 

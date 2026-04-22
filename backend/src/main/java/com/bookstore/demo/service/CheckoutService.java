@@ -35,7 +35,7 @@ public class CheckoutService implements ICheckoutService {
         // Ri-verifica stock e calcola totale
         double totale = 0;
         for (CartItem cartItem : cart.getItems()) {
-            @SuppressWarnings("null")
+
             Book book = bookRepository.findById(cartItem.getBook().getId())
                     .orElseThrow(() -> new IllegalArgumentException(
                             "Libro non più disponibile: " + cartItem.getBook().getTitolo()));

@@ -1,4 +1,4 @@
-package com.bookstore.demo.controller;
+﻿package com.bookstore.demo.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import java.util.Optional;
 
@@ -26,13 +25,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootTest
 // addFilters = false evita che Spring Security blocchi la chiamata simulata
 @AutoConfigureMockMvc(addFilters = false)
-@SuppressWarnings("null")
-
 public class AuthControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @SuppressWarnings("removal")
     @MockBean
     private UserRepository userRepository;
 
@@ -45,8 +43,8 @@ public class AuthControllerTest {
         User mockUser = new User();
         mockUser.setEmail("mario@test.it");
         // Generiamo l'hash corretto per "password123"
-        mockUser.setPassword(passwordEncoder.encode("password123")); 
-        
+        mockUser.setPassword(passwordEncoder.encode("password123"));
+
         when(userRepository.findByEmail("mario@test.it")).thenReturn(Optional.of(mockUser));
 
         // 2. Act & Assert
@@ -55,10 +53,10 @@ public class AuthControllerTest {
         mockMvc.perform(post("/api/auth/login")
                 .contentType("application/json")
                 .content(loginJson))
-                .andDo(print()) // Ora vedrai il JSON dell'utente nel body!
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("mario@test.it"));
     }
+
     @Test
     void testLoginFailureUserNotFound() throws Exception {
         // 1. Arrange: Simuliamo che l'email non sia presente nel DB
@@ -80,7 +78,7 @@ public class AuthControllerTest {
         User mockUser = new User();
         mockUser.setEmail("mario@test.it");
         mockUser.setPassword(passwordEncoder.encode("password_giusta")); // Password hashata
-        
+
         when(userRepository.findByEmail("mario@test.it")).thenReturn(Optional.of(mockUser));
 
         // 2. Act & Assert: Inviamo la password SBAGLIATA
@@ -92,21 +90,22 @@ public class AuthControllerTest {
                 .andExpect(status().isUnauthorized()) // Verifica codice 401
                 .andExpect(jsonPath("$.error").value("Password errata")); // Verifica il messaggio
     }
+
     @Test
     void testRegisterNewUser() throws Exception {
         // 1. Arrange: Prepariamo i dati della richiesta (JSON)
         String registerJson = """
-            {
-                "nome": "Luca",
-                "cognome": "Bianchi",
-                "email": "luca.bianchi@test.it",
-                "password": "passwordSicura123"
-            }
-            """;
+                {
+                    "nome": "Luca",
+                    "cognome": "Bianchi",
+                    "email": "luca.bianchi@test.it",
+                    "password": "passwordSicura123"
+                }
+                """;
 
         // Simuliamo che l'email non sia già presente
         when(userRepository.findByEmail("luca.bianchi@test.it")).thenReturn(Optional.empty());
-        
+
         // Mockiamo il salvataggio restituendo l'utente stesso
         when(userRepository.save(any(User.class))).thenAnswer(i -> (User) i.getArguments()[0]);
 
@@ -122,14 +121,15 @@ public class AuthControllerTest {
         // Recuperiamo l'argomento passato a userRepository.save()
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userCaptor.capture());
-        
+
         User savedUser = userCaptor.getValue();
         assertThat(savedUser).isNotNull();
         String passwordSalvata = savedUser.getPassword();
-        
+
         // La password salvata NON deve essere uguale a "passwordSicura123"
         assertThat(passwordSalvata).isNotEqualTo("passwordSicura123");
-        // Deve però essere una password valida per l'encoder (inizia tipicamente con $2a$)
+        // Deve però essere una password valida per l'encoder (inizia tipicamente con
+        // $2a$)
         assertThat(passwordEncoder.matches("passwordSicura123", passwordSalvata)).isTrue();
     }
 }

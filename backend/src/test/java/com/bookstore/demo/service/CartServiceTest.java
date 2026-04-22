@@ -56,7 +56,6 @@ public class CartServiceTest {
         testCart.setItems(new ArrayList<>());
     }
 
-    @SuppressWarnings("null")
     @Test
     void testAddItemToEmptyCart() {
         when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(testCart));
@@ -70,7 +69,6 @@ public class CartServiceTest {
         verify(cartRepository).save(any(Cart.class));
     }
 
-    @SuppressWarnings("null")
     @Test
     void testAddItemIncreasesQuantityIfAlreadyInCart() {
         CartItem existingItem = new CartItem();
@@ -110,7 +108,6 @@ public class CartServiceTest {
                 .hasMessageContaining("maggiore di zero");
     }
 
-    @SuppressWarnings("null")
     @Test
     void testRemoveItem() {
         CartItem item = new CartItem();
@@ -128,7 +125,6 @@ public class CartServiceTest {
         assertThat(result.getItems()).isEmpty();
     }
 
-    @SuppressWarnings("null")
     @Test
     void testClearCart() {
         CartItem item = new CartItem();

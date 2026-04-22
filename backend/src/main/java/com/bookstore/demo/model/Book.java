@@ -1,5 +1,8 @@
 package com.bookstore.demo.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.hibernate.validator.constraints.URL;
 
 import jakarta.persistence.*;
@@ -42,8 +45,6 @@ public class Book {
     @Pattern(regexp = "^\\d{3}-\\d{10}$", message = "ISBN13 deve essere nel formato 978-xxxxxxxxxx")
     private String isbn13;
 
-    private String formati;
-
     @NotNull(message = "Il prezzo è obbligatorio")
     @DecimalMin(value = "0.01", message = "Il prezzo deve essere maggiore di zero")
     @Column(nullable = false)
@@ -59,11 +60,17 @@ public class Book {
     private Double valutazione_media;
     private Integer numero_recensioni;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
+    @JoinTable(name = "libro_tag", joinColumns = @JoinColumn(name = "libro_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tag = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
+    @JoinTable(name = "libro_formato", joinColumns = @JoinColumn(name = "libro_id"), inverseJoinColumns = @JoinColumn(name = "formato_id"))
+    private Set<Formato> formato = new HashSet<>();
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoria_id")
     private Category categoria;
-
-    private String tags;
 
     @Column(columnDefinition = "TEXT")
     private String descrizione;
@@ -135,14 +142,6 @@ public class Book {
         this.isbn13 = isbn13;
     }
 
-    public String getFormati() {
-        return formati;
-    }
-
-    public void setFormati(String formati) {
-        this.formati = formati;
-    }
-
     public Double getPrezzo() {
         return prezzo;
     }
@@ -199,12 +198,42 @@ public class Book {
         this.categoria = categoria;
     }
 
-    public String getTags() {
-        return tags;
+    public Set<Formato> getFormato() {
+        return formato;
     }
 
-    public void setTags(String tags) {
-        this.tags = tags;
+    public void setFormato(Set<Formato> formato) {
+        this.formato = formato;
+    }
+
+    // Metodi utility per gestire la relazione
+    public void addFormato(Formato formato) {
+        this.formato.add(formato);
+        formato.getLibri().add(this);
+    }
+
+    public void removeFormato(Formato formato) {
+        this.formato.remove(formato);
+        formato.getLibri().remove(this);
+    }
+
+    public Set<Tag> getTag() {
+        return tag;
+    }
+
+    public void setTag(Set<Tag> tag) {
+        this.tag = tag;
+    }
+
+    // Metodi utility per gestire la relazione
+    public void addTag(Tag tag) {
+        this.tag.add(tag);
+        tag.getLibri().add(this);
+    }
+
+    public void removeTag(Tag tag) {
+        this.tag.remove(tag);
+        tag.getLibri().remove(this);
     }
 
     public String getDescrizione() {

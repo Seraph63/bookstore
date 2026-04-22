@@ -29,11 +29,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/authors").permitAll() // Autori pubblici per dropdown
                         .requestMatchers("/api/publishers").permitAll() // Editori pubblici per dropdown
                         .requestMatchers("/api/categories/**").permitAll() // Categorie pubbliche per dropdown
+                        .requestMatchers("/api/tag").permitAll() // Tag pubblici per dropdown
                         .requestMatchers("/api/auth/**").permitAll() // Login/Register pubblici
                         .requestMatchers("/api/users/**").permitAll() // Utenti pubblici
                         .requestMatchers("/api/cart/**").permitAll() // Carrello pubblico
                         .requestMatchers("/api/orders/**").permitAll() // Ordini pubblici
                         .requestMatchers("/api/orders/items/**").permitAll() // Aggiornamento quantità ordini
+                        .requestMatchers("/api/formati/**").permitAll() // Formati pubblici per dropdown
                         .anyRequest().authenticated() // Tutto il resto protetto
                 )
                 .httpBasic(Customizer.withDefaults()); // Permette test rapidi

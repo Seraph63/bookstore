@@ -2,7 +2,8 @@ package com.bookstore.demo.service;
 
 import com.bookstore.demo.model.User;
 import com.bookstore.demo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +11,8 @@ import java.util.Optional;
 
 @Service
 public class UserService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
 
@@ -49,16 +52,12 @@ public class UserService {
     }
 
     public User updateUser(Long id, User userDetails) throws RuntimeException {
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-        System.out.println("Aggiornamento utente " + id + ":");
-        System.out.println("  Username ricevuto: '" + userDetails.getUsername() + "'");
-        System.out.println("  Ruolo ricevuto: '" + userDetails.getRuolo() + "'");
-        System.out.println("  Attivo ricevuto: " + userDetails.getAttivo());
-        System.out.println("  Nome ricevuto: '" + userDetails.getNome() + "'");
-        System.out.println("  Cognome ricevuto: '" + userDetails.getCognome() + "'");
-        System.out.println("  Email ricevuto: '" + userDetails.getEmail() + "'");
+        log.debug("Aggiornamento utente {}: username='{}', ruolo='{}', attivo={}",
+                id, userDetails.getUsername(), userDetails.getRuolo(), userDetails.getAttivo());
 
         // Validazione e aggiornamento username
         String newUsername = userDetails.getUsername();
@@ -70,7 +69,7 @@ public class UserService {
             }
             user.setUsername(newUsername);
         } else if (newUsername != null) {
-            System.out.println("Username vuoto ricevuto, mantengo quello esistente: " + user.getUsername());
+            log.debug("Username vuoto ricevuto, mantengo quello esistente: {}", user.getUsername());
         }
 
         // Validazione e aggiornamento email
@@ -96,13 +95,11 @@ public class UserService {
 
         // Aggiorna ruolo sempre se fornito
         if (userDetails.getRuolo() != null) {
-            System.out.println("Aggiornando ruolo da '" + user.getRuolo() + "' a '" + userDetails.getRuolo() + "'");
             user.setRuolo(userDetails.getRuolo());
         }
 
         // Aggiorna stato attivo sempre se fornito
         if (userDetails.getAttivo() != null) {
-            System.out.println("Aggiornando attivo da " + user.getAttivo() + " a " + userDetails.getAttivo());
             user.setAttivo(userDetails.getAttivo());
         }
 
@@ -112,7 +109,7 @@ public class UserService {
         }
 
         User savedUser = userRepository.save(user);
-        System.out.println("Utente salvato - Ruolo: " + savedUser.getRuolo() + ", Attivo: " + savedUser.getAttivo());
+        log.debug("Utente {} salvato - ruolo: {}, attivo: {}", id, savedUser.getRuolo(), savedUser.getAttivo());
         return savedUser;
     }
 
@@ -124,6 +121,7 @@ public class UserService {
     }
 
     public User toggleUserActive(Long id) throws RuntimeException {
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 

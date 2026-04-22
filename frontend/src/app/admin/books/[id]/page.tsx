@@ -207,6 +207,42 @@ export default function BookDetailPage() {
                   </div>
                 )}
 
+                {/* Tags e Formati affiancati */}
+                {(book.tags || book.formati) && (
+                  <div className="flex flex-wrap gap-6 mb-4">
+                    {book.tags && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-500 mb-2">Tag:</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {book.tags.split(',').map((tag, index) => (
+                            <span
+                              key={index}
+                              className="inline-flex px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-md"
+                            >
+                              {tag.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {book.formati && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-500 mb-2">Formati:</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {book.formati.split(',').map((formato, index) => (
+                            <span
+                              key={index}
+                              className="inline-flex px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-md"
+                            >
+                              {formato.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {book.descrizione && (
                   <div className="prose prose-sm text-gray-700 mb-6">
                     <p>{book.descrizione}</p>
@@ -254,7 +290,7 @@ export default function BookDetailPage() {
               </div>
 
               {/* Additional Info */}
-              {(book.isbn10 || book.isbn13 || book.formati) && (
+              {(book.isbn10 || book.isbn13) && (
                 <div className="border-t pt-6">
                   <h3 className="text-lg font-medium text-gray-900 mb-4">Dettagli Tecnici</h3>
                   <dl className="space-y-2">
@@ -268,12 +304,6 @@ export default function BookDetailPage() {
                       <div className="flex justify-between">
                         <dt className="text-sm font-medium text-gray-500">ISBN-13:</dt>
                         <dd className="text-sm text-gray-900">{book.isbn13}</dd>
-                      </div>
-                    )}
-                    {book.formati && (
-                      <div className="flex justify-between">
-                        <dt className="text-sm font-medium text-gray-500">Formato:</dt>
-                        <dd className="text-sm text-gray-900">{book.formati}</dd>
                       </div>
                     )}
                   </dl>

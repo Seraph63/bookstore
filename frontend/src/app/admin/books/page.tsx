@@ -30,7 +30,6 @@ export default function AdminBooksPage() {
 
     // Ascolta l'evento di aggiornamento stock post-checkout
     const handleStockUpdate = () => {
-      console.log('Stock aggiornato in admin, ricarico libri...');
       fetchBooks();
     };
 

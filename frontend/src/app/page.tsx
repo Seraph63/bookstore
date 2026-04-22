@@ -31,7 +31,6 @@ export default function HomePage() {
 
   // Handler per l'aggiornamento stock post-checkout
   const handleStockUpdate = useCallback(() => {
-    console.log('Stock aggiornato, ricarico libri...');
     fetchBooks(currentPage);
   }, [fetchBooks, currentPage]);
 

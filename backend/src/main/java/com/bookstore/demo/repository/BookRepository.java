@@ -21,7 +21,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             "LOWER(b.autore.cognome) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<Book> searchBooks(@Param("query") String query);
 
-    @Query("SELECT b FROM Book b JOIN FETCH b.autore JOIN FETCH b.editore WHERE b.id = :id")
+    @Query("SELECT b FROM Book b JOIN FETCH b.autore JOIN FETCH b.editore LEFT JOIN FETCH b.formato LEFT JOIN FETCH b.tag WHERE b.id = :id")
     Optional<Book> findByIdWithDetails(@Param("id") Long id);
 
     @Query("SELECT b FROM Book b JOIN FETCH b.autore JOIN FETCH b.editore")

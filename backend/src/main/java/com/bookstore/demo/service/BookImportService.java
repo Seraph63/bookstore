@@ -4,48 +4,79 @@ import com.bookstore.demo.model.Book;
 import com.bookstore.demo.model.Author;
 import com.bookstore.demo.model.Publisher;
 import com.bookstore.demo.model.Category;
+import com.bookstore.demo.model.Tag;
+import com.bookstore.demo.model.Formato;
 import com.bookstore.demo.repository.BookRepository;
 import com.bookstore.demo.repository.AuthorRepository;
 import com.bookstore.demo.repository.PublisherRepository;
 import com.bookstore.demo.repository.CategoryRepository;
+import com.bookstore.demo.repository.TagRepository;
+import com.bookstore.demo.repository.FormatoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class BookImportService {
+
+    private static final Logger log = LoggerFactory.getLogger(BookImportService.class);
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final PublisherRepository publisherRepository;
     private final CategoryRepository categoryRepository;
+    private final TagRepository tagRepository;
+    private final FormatoRepository formatoRepository;
 
     // Iniettiamo tutti i repository necessari
     public BookImportService(BookRepository bookRepository,
             AuthorRepository authorRepository,
             PublisherRepository publisherRepository,
-            CategoryRepository categoryRepository) {
+            CategoryRepository categoryRepository,
+            TagRepository tagRepository,
+            FormatoRepository formatoRepository) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.publisherRepository = publisherRepository;
         this.categoryRepository = categoryRepository;
+        this.tagRepository = tagRepository;
+        this.formatoRepository = formatoRepository;
     }
 
     public void importFromCsv(InputStream inputStream) {
-        // Controlla se il database ha già dei libri
-        if (bookRepository.count() > 0) {
-            System.out.println("ℹ️ Il database contiene già dei libri. Salto l'importazione.");
-            return;
-        }
-
         List<Book> books = parseCsv(inputStream);
         if (!books.isEmpty()) {
-            System.out.println("⏳ Importazione di " + books.size() + " libri...");
-            bookRepository.saveAll(books);
-            System.out.println("✅ Importazione libri completata!");
+            log.info("Importazione di {} libri...", books.size());
+
+            if (formatoRepository.count() == 0) {
+                log.warn("Nessun formato disponibile, importazione libri saltata.");
+                return;
+            }
+
+            int count = 0;
+            int skipped = 0;
+            for (Book book : books) {
+                try {
+                    if (bookRepository.existsByIsbn13(book.getIsbn13())) {
+                        skipped++;
+                        continue;
+                    }
+                    bookRepository.save(book);
+                    count++;
+                    if (count % 10 == 0) {
+                        log.debug("Importati {} di {} libri...", count, books.size());
+                    }
+                } catch (Exception e) {
+                    log.error("Errore nell'importazione del libro '{}': {}", book.getTitolo(), e.getMessage(), e);
+                    throw e;
+                }
+            }
+
+            log.info("Importazione libri completata: {} libri caricati, {} già presenti.", count, skipped);
         }
     }
 
@@ -96,7 +127,6 @@ public class BookImportService {
                     book.setAnno_pubblicazione(parseToInt(v[4]));
                     book.setIsbn10(clean(v[5]));
                     book.setIsbn13(clean(v[6]));
-                    book.setFormati(clean(v[7]));
                     book.setPrezzo(parseToDouble(v[8]));
                     book.setPrezzo_originale(parseToDouble(v[9]));
                     book.setStock(parseToInt(v[10]));
@@ -104,7 +134,44 @@ public class BookImportService {
                     book.setValutazione_media(parseToDouble(v[12]));
                     book.setNumero_recensioni(parseToInt(v[13]));
                     // La categoria è già impostata sopra come relazione
-                    book.setTags(clean(v[15]));
+
+                    // Gestione forati tramite ID
+                    String formatoIdsString = clean(v[7]);
+                    if (formatoIdsString != null && !formatoIdsString.isEmpty()) {
+                        Set<Formato> formati = new HashSet<>();
+                        String[] formatoIdArray = formatoIdsString.split("\\|");
+                        for (String formatoIdStr : formatoIdArray) {
+                            try {
+                                Long formatoId = Long.parseLong(formatoIdStr.trim());
+                                Optional<Formato> formatoOpt = formatoRepository.findById(formatoId);
+                                if (formatoOpt.isPresent()) {
+                                    formati.add(formatoOpt.get());
+                                } else {
+                                    log.warn("Formato con ID {} non trovato, verrà ignorato.", formatoId);
+                                }
+                            } catch (NumberFormatException e) {
+                                log.warn("Valore formato non valido '{}', verrà ignorato.", formatoIdStr);
+                            }
+                        }
+                        book.setFormato(formati);
+                    }
+
+                    // Gestione tag tramite ID
+                    String tagIdsString = clean(v[15]);
+                    if (tagIdsString != null && !tagIdsString.isEmpty()) {
+                        Set<Tag> tags = new HashSet<>();
+                        String[] tagIdArray = tagIdsString.split("\\|");
+                        for (String tagIdStr : tagIdArray) {
+                            try {
+                                Long tagId = Long.parseLong(tagIdStr.trim());
+                                tagRepository.findById(tagId).ifPresent(tags::add);
+                            } catch (NumberFormatException e) {
+                                log.warn("Valore tag non valido '{}', verrà ignorato.", tagIdStr);
+                            }
+                        }
+                        book.setTag(tags);
+                    }
+
                     book.setDescrizione(clean(v[16]));
 
                     books.add(book);
