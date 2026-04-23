@@ -1,6 +1,5 @@
 package com.bookstore.demo.model;
 
-import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -12,11 +11,9 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Il nome è obbligatorio")
     @Column(nullable = false)
     private String nome;
 
-    @NotBlank(message = "Il cognome è obbligatorio")
     @Column(nullable = false)
     private String cognome;
 

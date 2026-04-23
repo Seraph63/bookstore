@@ -10,6 +10,7 @@ import com.bookstore.demo.repository.UserRepository;
 import com.bookstore.demo.model.User;
 import com.bookstore.demo.dto.auth.LoginRequest;
 import com.bookstore.demo.dto.auth.RegisterRequest;
+import jakarta.validation.Valid;
 
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest regRequest) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest regRequest) {
         // Verifica se l'email esiste già
         if (userRepository.findByEmail(regRequest.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Email già registrata"));
@@ -48,7 +49,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         // Ora puoi usare i getter della classe invece di .get("email")
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();

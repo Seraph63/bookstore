@@ -3,24 +3,16 @@ package com.bookstore.demo.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.hibernate.validator.constraints.URL;
-
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "libri")
 public class Book {
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @NotNull(message = "L'autore è obbligatorio")
     @JoinColumn(name = "autore_id", nullable = false)
     private Author autore;
 
-    @NotNull(message = "L'editore è obbligatorio")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "editore_id", nullable = false)
     private Publisher editore;
@@ -29,24 +21,18 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Il titolo è obbligatorio")
     @Column(nullable = false)
     private String titolo;
 
     private String sottotitolo;
     private Integer anno_pubblicazione;
 
-    @NotBlank(message = "L'ISBN10 è obbligatorio")
     @Column(nullable = false, unique = true)
-    @Pattern(regexp = "^\\d{10}$", message = "ISBN10 deve essere formato da 10 cifre")
     private String isbn10;
 
     @Column(nullable = false, unique = true)
-    @Pattern(regexp = "^\\d{3}-\\d{10}$", message = "ISBN13 deve essere nel formato 978-xxxxxxxxxx")
     private String isbn13;
 
-    @NotNull(message = "Il prezzo è obbligatorio")
-    @DecimalMin(value = "0.01", message = "Il prezzo deve essere maggiore di zero")
     @Column(nullable = false)
     private Double prezzo;
 
@@ -54,7 +40,6 @@ public class Book {
     private Integer stock;
 
     @Column(length = 500)
-    @URL(message = "L'URL della copertina non è valido")
     private String copertinaUrl;
 
     private Double valutazione_media;

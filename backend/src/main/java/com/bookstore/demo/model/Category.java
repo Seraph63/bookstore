@@ -1,7 +1,6 @@
 package com.bookstore.demo.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -13,7 +12,6 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "La descrizione della categoria è obbligatoria")
     @Column(nullable = false, unique = true)
     private String descrizione;
 

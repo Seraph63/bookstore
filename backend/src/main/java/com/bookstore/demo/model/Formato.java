@@ -1,7 +1,6 @@
 package com.bookstore.demo.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -15,7 +14,6 @@ public class Formato {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "La descrizione del formato è obbligatoria")
     @Column(nullable = false, unique = true)
     private String descrizione;
 
