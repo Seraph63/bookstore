@@ -1,6 +1,6 @@
 package com.bookstore.demo.controller;
 
-import com.bookstore.demo.model.Publisher;
+import com.bookstore.demo.dto.publisher.PublisherResponse;
 import com.bookstore.demo.repository.PublisherRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
@@ -19,17 +19,23 @@ public class PublisherController {
     }
 
     @GetMapping("/publishers")
-    public List<Publisher> getAllPublishers() {
-        return publisherRepository.findAll();
+    public List<PublisherResponse> getAllPublishers() {
+        return publisherRepository.findAll().stream()
+                .map(PublisherResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("/admin/publishers")
-    public List<Publisher> getAllPublishersAdmin() {
-        return publisherRepository.findAll();
+    public List<PublisherResponse> getAllPublishersAdmin() {
+        return publisherRepository.findAll().stream()
+                .map(PublisherResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("/admin/publishers/{id}")
-    public Publisher getPublisherById(@PathVariable @NonNull Long id) {
-        return publisherRepository.findById(id).orElse(null);
+    public PublisherResponse getPublisherById(@PathVariable @NonNull Long id) {
+        return publisherRepository.findById(id)
+                .map(PublisherResponse::fromEntity)
+                .orElse(null);
     }
 }

@@ -17,6 +17,7 @@ import com.bookstore.demo.repository.CategoryRepository;
 import com.bookstore.demo.repository.FormatoRepository;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -210,6 +211,15 @@ public class BookService implements IBookService {
             throw new IllegalArgumentException("Libro con ID " + id + " non trovato");
         }
         bookRepository.deleteById(id);
+    }
+
+    public List<BookResponse> searchBooks(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return List.of();
+        }
+        return bookRepository.searchBooks(query).stream()
+                .map(this::convertToResponse)
+                .toList();
     }
 
     // Metodo di utilità per convertire Book -> BookResponse

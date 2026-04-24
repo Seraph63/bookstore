@@ -1,6 +1,6 @@
 package com.bookstore.demo.controller;
 
-import com.bookstore.demo.model.Author;
+import com.bookstore.demo.dto.author.AuthorResponse;
 import com.bookstore.demo.repository.AuthorRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
@@ -19,17 +19,23 @@ public class AuthorController {
     }
 
     @GetMapping("/authors")
-    public List<Author> getAllAuthors() {
-        return authorRepository.findAll();
+    public List<AuthorResponse> getAllAuthors() {
+        return authorRepository.findAll().stream()
+                .map(AuthorResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("/admin/authors")
-    public List<Author> getAllAuthorsAdmin() {
-        return authorRepository.findAll();
+    public List<AuthorResponse> getAllAuthorsAdmin() {
+        return authorRepository.findAll().stream()
+                .map(AuthorResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("/admin/authors/{id}")
-    public Author getAuthorById(@PathVariable @NonNull Long id) {
-        return authorRepository.findById(id).orElse(null);
+    public AuthorResponse getAuthorById(@PathVariable @NonNull Long id) {
+        return authorRepository.findById(id)
+                .map(AuthorResponse::fromEntity)
+                .orElse(null);
     }
 }

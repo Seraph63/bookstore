@@ -1,5 +1,6 @@
 package com.bookstore.demo.controller;
 
+import com.bookstore.demo.dto.order.OrderResponse;
 import com.bookstore.demo.model.Order;
 import com.bookstore.demo.repository.BookRepository;
 import com.bookstore.demo.repository.OrderItemRepository;
@@ -29,8 +30,11 @@ public class OrderController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<Order>> getOrders(@PathVariable Long userId) {
-        List<Order> orders = orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+    public ResponseEntity<List<OrderResponse>> getOrders(@PathVariable Long userId) {
+        List<OrderResponse> orders = orderRepository.findByUserIdOrderByCreatedAtDesc(userId)
+                .stream()
+                .map(OrderResponse::fromEntity)
+                .toList();
         return ResponseEntity.ok(orders);
     }
 
@@ -81,7 +85,7 @@ public class OrderController {
             order.setTotale(nuovoTotale);
             orderRepository.save(order);
 
-            return ResponseEntity.ok(order);
+            return ResponseEntity.ok(OrderResponse.fromEntity(order));
         }).orElse(ResponseEntity.notFound().build());
     }
 
@@ -109,7 +113,7 @@ public class OrderController {
                         .sum();
                 order.setTotale(nuovoTotale);
                 orderRepository.save(order);
-                return ResponseEntity.ok(order);
+                return ResponseEntity.ok(OrderResponse.fromEntity(order));
             }
         }).orElse(ResponseEntity.notFound().build());
     }

@@ -1,6 +1,6 @@
 package com.bookstore.demo.controller;
 
-import com.bookstore.demo.model.Tag;
+import com.bookstore.demo.dto.tag.TagResponse;
 import com.bookstore.demo.repository.TagRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -21,15 +21,18 @@ public class TagController {
 
     // GET /api/tag - Lista tutti i tag
     @GetMapping
-    public List<Tag> getAllTag() {
-        return TagRepository.findAll();
+    public List<TagResponse> getAllTag() {
+        return TagRepository.findAll().stream()
+                .map(TagResponse::fromEntity)
+                .toList();
     }
 
     // GET /api/tag/{id} - Dettaglio singolo tag
     @GetMapping("/{id}")
-    public ResponseEntity<Tag> getTagById(@PathVariable @NonNull Long id) {
+    public ResponseEntity<TagResponse> getTagById(@PathVariable @NonNull Long id) {
         return TagRepository.findById(id)
-                .map(tag -> ResponseEntity.ok().body(tag))
+                .map(TagResponse::fromEntity)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 }

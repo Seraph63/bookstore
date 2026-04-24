@@ -3,7 +3,6 @@ package com.bookstore.demo.controller;
 import com.bookstore.demo.dto.book.BookCreateRequest;
 import com.bookstore.demo.dto.book.BookUpdateRequest;
 import com.bookstore.demo.dto.book.BookResponse;
-import com.bookstore.demo.model.Book;
 import com.bookstore.demo.repository.BookRepository;
 import com.bookstore.demo.service.IBookService;
 
@@ -24,11 +23,9 @@ import org.springframework.lang.NonNull;
 @CrossOrigin(origins = "*")
 public class BookController {
 
-    private final BookRepository bookRepository;
     private final IBookService bookService;
 
     public BookController(BookRepository bookRepository, IBookService bookService) {
-        this.bookRepository = bookRepository;
         this.bookService = bookService;
     }
 
@@ -54,11 +51,8 @@ public class BookController {
 
     // GET /api/books/search?q=... - Ricerca e suggerimenti
     @GetMapping("/search")
-    public List<Book> search(@RequestParam("q") String query) {
-        if (query == null || query.trim().isEmpty()) {
-            return List.of();
-        }
-        return bookRepository.searchBooks(query);
+    public List<BookResponse> search(@RequestParam("q") String query) {
+        return bookService.searchBooks(query);
     }
 
     // CREATE - POST /api/books

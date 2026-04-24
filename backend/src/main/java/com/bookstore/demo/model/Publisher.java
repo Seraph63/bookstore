@@ -1,7 +1,6 @@
 package com.bookstore.demo.model;
 
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,7 +17,6 @@ public class Publisher {
     private String sede;
 
     @OneToMany(mappedBy = "editore")
-    @JsonIgnore
     private List<Book> books;
 
     public Publisher() {

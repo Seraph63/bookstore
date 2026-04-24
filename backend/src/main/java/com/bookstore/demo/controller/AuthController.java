@@ -10,6 +10,7 @@ import com.bookstore.demo.repository.UserRepository;
 import com.bookstore.demo.model.User;
 import com.bookstore.demo.dto.auth.LoginRequest;
 import com.bookstore.demo.dto.auth.RegisterRequest;
+import com.bookstore.demo.dto.user.UserResponse;
 import jakarta.validation.Valid;
 
 import java.util.Map;
@@ -45,7 +46,7 @@ public class AuthController {
 
         userRepository.save(newUser);
 
-        return ResponseEntity.ok(newUser);
+        return ResponseEntity.ok(UserResponse.fromEntity(newUser));
     }
 
     @PostMapping("/login")
@@ -57,7 +58,7 @@ public class AuthController {
         return userRepository.findByEmail(email)
                 .map(user -> {
                     if (passwordEncoder.matches(password, user.getPassword())) {
-                        return ResponseEntity.ok(user);
+                        return ResponseEntity.ok(UserResponse.fromEntity(user));
                     }
                     return ResponseEntity.status(401).body(Map.of("error", "Password errata"));
                 })

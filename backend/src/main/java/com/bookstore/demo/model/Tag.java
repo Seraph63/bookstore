@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import java.util.Set;
 import java.util.HashSet;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 @Table(name = "tags")
 public class Tag {
@@ -19,7 +17,6 @@ public class Tag {
 
     // Relazione molti-a-molti con Book
     @ManyToMany(mappedBy = "tag", fetch = FetchType.LAZY)
-    @JsonIgnore
     private Set<Book> libri = new HashSet<>();
 
     public Tag() {

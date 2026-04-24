@@ -2,7 +2,6 @@ package com.bookstore.demo.model;
 
 import jakarta.persistence.*;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "categorie")
@@ -16,7 +15,6 @@ public class Category {
     private String descrizione;
 
     @OneToMany(mappedBy = "categoria")
-    @JsonIgnore
     private List<Book> books;
 
     public Category() {

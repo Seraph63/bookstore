@@ -1,14 +1,17 @@
 package com.bookstore.demo.controller;
 
 import com.bookstore.demo.dto.cart.AddToCartRequest;
+import com.bookstore.demo.dto.cart.CartResponse;
+import com.bookstore.demo.dto.cart.UpdateQuantityRequest;
+import com.bookstore.demo.dto.order.OrderResponse;
 import com.bookstore.demo.model.Cart;
 import com.bookstore.demo.model.Order;
-import com.bookstore.demo.dto.cart.UpdateQuantityRequest;
 import com.bookstore.demo.service.ICartService;
 import com.bookstore.demo.service.ICheckoutService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -28,16 +31,16 @@ public class CartController {
     public ResponseEntity<?> getCart(@PathVariable Long userId) {
         Cart cart = cartService.getCart(userId);
         if (cart == null) {
-            return ResponseEntity.ok(Map.of("items", java.util.Collections.emptyList()));
+            return ResponseEntity.ok(Map.of("items", Collections.emptyList()));
         }
-        return ResponseEntity.ok(cart);
+        return ResponseEntity.ok(CartResponse.fromEntity(cart));
     }
 
     @PostMapping("/{userId}/items")
     public ResponseEntity<?> addItem(@PathVariable Long userId, @RequestBody AddToCartRequest request) {
         try {
             Cart cart = cartService.addItem(userId, request.getBookId(), request.getQuantita());
-            return ResponseEntity.ok(cart);
+            return ResponseEntity.ok(CartResponse.fromEntity(cart));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
@@ -49,7 +52,7 @@ public class CartController {
             @RequestBody UpdateQuantityRequest request) {
         try {
             Cart cart = cartService.updateItemQuantity(userId, bookId, request.getQuantita());
-            return ResponseEntity.ok(cart);
+            return ResponseEntity.ok(CartResponse.fromEntity(cart));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
@@ -60,7 +63,7 @@ public class CartController {
             @PathVariable Long bookId) {
         try {
             Cart cart = cartService.removeItem(userId, bookId);
-            return ResponseEntity.ok(cart);
+            return ResponseEntity.ok(CartResponse.fromEntity(cart));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
@@ -76,7 +79,7 @@ public class CartController {
     public ResponseEntity<?> checkout(@PathVariable Long userId) {
         try {
             Order order = checkoutService.checkout(userId);
-            return ResponseEntity.ok(order);
+            return ResponseEntity.ok(OrderResponse.fromEntity(order));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }

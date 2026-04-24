@@ -1,6 +1,6 @@
 package com.bookstore.demo.controller;
 
-import com.bookstore.demo.model.Category;
+import com.bookstore.demo.dto.category.CategoryResponse;
 import com.bookstore.demo.repository.CategoryRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -21,15 +21,18 @@ public class CategoryController {
 
     // GET /api/categories - Lista tutte le categorie
     @GetMapping
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryResponse> getAllCategories() {
+        return categoryRepository.findAll().stream()
+                .map(CategoryResponse::fromEntity)
+                .toList();
     }
 
     // GET /api/categories/{id} - Dettaglio singola categoria
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable @NonNull Long id) {
+    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable @NonNull Long id) {
         return categoryRepository.findById(id)
-                .map(category -> ResponseEntity.ok().body(category))
+                .map(CategoryResponse::fromEntity)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 }

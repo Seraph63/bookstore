@@ -2,6 +2,7 @@ package com.bookstore.demo.controller;
 
 import com.bookstore.demo.model.User;
 import com.bookstore.demo.service.UserService;
+import com.bookstore.demo.dto.user.UserResponse;
 
 import java.util.List;
 
@@ -26,13 +27,16 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public List<UserResponse> getAllUsers() {
+        return userService.getAllUsers().stream()
+                .map(UserResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable @NonNull Long id) {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable @NonNull Long id) {
         return userService.getUserById(id)
+                .map(UserResponse::fromEntity)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -41,7 +45,7 @@ public class UserController {
     public ResponseEntity<?> createUser(@RequestBody User user) {
         try {
             User createdUser = userService.createUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+            return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.fromEntity(createdUser));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -52,7 +56,7 @@ public class UserController {
         try {
             log.debug("Aggiornamento utente {}: username='{}'", id, userDetails.getUsername());
             User updatedUser = userService.updateUser(id, userDetails);
-            return ResponseEntity.ok(updatedUser);
+            return ResponseEntity.ok(UserResponse.fromEntity(updatedUser));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -72,7 +76,7 @@ public class UserController {
     public ResponseEntity<?> toggleUserActive(@PathVariable @NonNull Long id) {
         try {
             User updatedUser = userService.toggleUserActive(id);
-            return ResponseEntity.ok(updatedUser);
+            return ResponseEntity.ok(UserResponse.fromEntity(updatedUser));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

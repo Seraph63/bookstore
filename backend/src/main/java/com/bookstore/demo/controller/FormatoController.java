@@ -1,6 +1,6 @@
 package com.bookstore.demo.controller;
 
-import com.bookstore.demo.model.Formato;
+import com.bookstore.demo.dto.formato.FormatoResponse;
 import com.bookstore.demo.repository.FormatoRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -21,15 +21,18 @@ public class FormatoController {
 
     // GET /api/formati - Lista tutti i formato
     @GetMapping
-    public List<Formato> getAllFormato() {
-        return formatoRepository.findAll();
+    public List<FormatoResponse> getAllFormato() {
+        return formatoRepository.findAll().stream()
+                .map(FormatoResponse::fromEntity)
+                .toList();
     }
 
     // GET /api/formati/{id} - Dettaglio singolo formato
     @GetMapping("/{id}")
-    public ResponseEntity<Formato> getFormatoById(@PathVariable @NonNull Long id) {
+    public ResponseEntity<FormatoResponse> getFormatoById(@PathVariable @NonNull Long id) {
         return formatoRepository.findById(id)
-                .map(formato -> ResponseEntity.ok().body(formato))
+                .map(FormatoResponse::fromEntity)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 }

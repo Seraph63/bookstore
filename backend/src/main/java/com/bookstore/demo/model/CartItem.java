@@ -1,6 +1,5 @@
 package com.bookstore.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,7 +14,6 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name = "carrello_id", nullable = false)
-    @JsonIgnore
     private Cart cart;
 
     @ManyToOne(fetch = FetchType.EAGER)
