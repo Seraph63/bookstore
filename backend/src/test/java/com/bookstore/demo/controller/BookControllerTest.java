@@ -1,4 +1,4 @@
-﻿package com.bookstore.demo.controller;
+package com.bookstore.demo.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -23,9 +23,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.bookstore.demo.dto.book.BookResponse;
-import com.bookstore.demo.model.Author;
-import com.bookstore.demo.model.Book;
-import com.bookstore.demo.model.Publisher;
 import com.bookstore.demo.repository.BookRepository;
 import com.bookstore.demo.service.IBookService;
 
@@ -65,25 +62,6 @@ public class BookControllerTest {
                 response.setTags("Fantasy, Avventura"); // Tags per test
                 response.setPercentualeSconto(20.0);
                 return response;
-        }
-
-        private Book createSampleBook() {
-                Book book = new Book();
-                book.setId(1L);
-                book.setTitolo("Il nome della rosa");
-
-                Author author = new Author();
-                author.setId(1L);
-                author.setNome("Umberto");
-                author.setCognome("Eco");
-                book.setAutore(author);
-
-                Publisher publisher = new Publisher();
-                publisher.setId(1L);
-                publisher.setNome("Bompiani");
-                book.setEditore(publisher);
-
-                return book;
         }
 
         @Test
@@ -142,9 +120,9 @@ public class BookControllerTest {
         @Test
         void testSearchBooks() throws Exception {
                 // Arrange
-                Book book1 = createSampleBook();
-                List<Book> mockResults = Arrays.asList(book1);
-                when(bookRepository.searchBooks("tolkien")).thenReturn(mockResults);
+                BookResponse book1 = createSampleBookResponse();
+                List<BookResponse> mockResults = Arrays.asList(book1);
+                when(bookService.searchBooks("tolkien")).thenReturn(mockResults);
 
                 // Act & Assert
                 mockMvc.perform(get("/api/books/search")

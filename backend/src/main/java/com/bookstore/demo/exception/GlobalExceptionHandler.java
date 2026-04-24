@@ -2,35 +2,37 @@ package com.bookstore.demo.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 1. GESTIONE ERRORI DI VALIDAZIONE (@Valid)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    // Gestisce gli errori di validazione o logica (es. quelli lanciati in
+    // BookService)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
+            IllegalArgumentException ex, WebRequest request) {
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", ""));
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    // 2. GESTIONE DUPLICATI (DataIntegrityViolationException)
-    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
-    public ResponseEntity<Map<String, String>> handleConflict(
-            org.springframework.dao.DataIntegrityViolationException ex) {
-        Map<String, String> errors = new HashMap<>();
-        // Nota: Qui potresti analizzare il messaggio per essere più specifico
-        errors.put("error", "Esiste già un record con questi dati (Duplicato)");
-        return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
+    // Gestore generico per tutte le altre eccezioni non previste
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGlobalException(
+            Exception ex, WebRequest request) {
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Si è verificato un errore imprevisto lato server.",
+                request.getDescription(false).replace("uri=", ""));
+
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
