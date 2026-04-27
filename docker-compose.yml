@@ -19,7 +19,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./backend/src:/app/src          # Mappa il codice sorgente per hot reload
+      - ./backend:/app                  # Mappa l'intera cartella per permettere a Maven di leggere pom e src
       - ./backend/pom.xml:/app/pom.xml  # Mappa il pom per nuove dipendenze
       - ./backend/src/main/resources/books.csv:/app/src/main/resources/books.csv # Per il tuo CSV
     environment:
@@ -42,11 +42,12 @@ services:
       - ./frontend:/app
       - /app/node_modules
       - /app/.next
-    command: npm run dev -- --webpack
     environment:
       - NEXT_PUBLIC_API_URL=http://api:8080/api
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
+    # Forza l'uso di Webpack in Next.js 16 per compatibilità con le configurazioni esistenti
+    command: npx next dev -H 0.0.0.0 --webpack
 
 volumes:
   pgdata:

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -127,11 +128,11 @@ public class BookImportService {
                     book.setAnno_pubblicazione(parseToInt(v[4]));
                     book.setIsbn10(clean(v[5]));
                     book.setIsbn13(clean(v[6]));
-                    book.setPrezzo(parseToDouble(v[8]));
-                    book.setPrezzo_originale(parseToDouble(v[9]));
+                    book.setPrezzo(parseToBigDecimal(v[8]).doubleValue());
+                    book.setPrezzo_originale(parseToBigDecimal(v[9]).doubleValue());
                     book.setStock(parseToInt(v[10]));
                     book.setCopertinaUrl(clean(v[11])); // Ora usa il setter corretto
-                    book.setValutazione_media(parseToDouble(v[12]));
+                    book.setValutazione_media(parseToDouble(v[12])); // La valutazione può restare Double
                     book.setNumero_recensioni(parseToInt(v[13]));
                     // La categoria è già impostata sopra come relazione
 
@@ -208,11 +209,19 @@ public class BookImportService {
         }
     }
 
-    private Double parseToDouble(String value) {
+    private double parseToDouble(String value) {
         try {
             return Double.parseDouble(clean(value).replace(",", "."));
         } catch (Exception e) {
             return 0.0;
+        }
+    }
+
+    private BigDecimal parseToBigDecimal(String value) {
+        try {
+            return new BigDecimal(clean(value).replace(",", "."));
+        } catch (Exception e) {
+            return BigDecimal.ZERO;
         }
     }
 }

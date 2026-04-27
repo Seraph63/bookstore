@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // Recuperiamo un cookie di sessione (o un flag)
   // Nota: Il localStorage non funziona nel middleware perché è lato server
   const isAuthenticated = request.cookies.get('auth_session');

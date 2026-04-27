@@ -45,7 +45,7 @@ public class ImportController {
             bookImportService.importFromCsv(booksFile.getInputStream());
 
             // 3. QUARTO PASSO: Importazione Utenti
-            userImportService.importFromCsv(booksFile.getInputStream());
+            userImportService.importFromCsv(usersFile.getInputStream());
             return ResponseEntity.ok("Importazione completata con successo in ordine sequenziale!");
 
         } catch (Exception e) {

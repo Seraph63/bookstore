@@ -6,6 +6,7 @@ import com.bookstore.demo.repository.CartRepository;
 import com.bookstore.demo.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
 
 import java.util.ArrayList;
 
@@ -33,7 +34,7 @@ public class CheckoutService implements ICheckoutService {
         }
 
         // Ri-verifica stock e calcola totale
-        double totale = 0;
+        BigDecimal totale = BigDecimal.ZERO;
         for (CartItem cartItem : cart.getItems()) {
 
             Book book = bookRepository.findById(cartItem.getBook().getId())
@@ -47,13 +48,15 @@ public class CheckoutService implements ICheckoutService {
                                 ", richiesti: " + cartItem.getQuantita());
             }
 
-            totale += book.getPrezzo() * cartItem.getQuantita();
+            BigDecimal rigaTotale = BigDecimal.valueOf(book.getPrezzo())
+                    .multiply(BigDecimal.valueOf(cartItem.getQuantita()));
+            totale = totale.add(rigaTotale);
         }
 
         // Crea ordine
         Order order = new Order();
         order.setUser(cart.getUser());
-        order.setTotale(totale);
+        order.setTotale(totale.doubleValue());
         order.setStato("COMPLETATO");
         order.setItems(new ArrayList<>());
 

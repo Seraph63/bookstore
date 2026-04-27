@@ -1,15 +1,15 @@
-import { config } from './middleware';
+import { config } from './proxy';
 
 // NextRequest richiede la Web API Request non disponibile in jsdom.
-// Testiamo la logica del middleware mockando completamente next/server.
+// Testiamo la logica del proxy mockando completamente next/server.
 
 const mockRedirect = jest.fn((url: URL) => ({ type: 'redirect', url: url.toString() }));
 const mockNext = jest.fn(() => ({ type: 'next' }));
 
 jest.mock('next/server', () => ({
   NextResponse: {
-    redirect: (...args: any[]) => mockRedirect(...args),
-    next: (...args: any[]) => mockNext(...args),
+    redirect: mockRedirect,
+    next: mockNext,
   },
 }));
 
@@ -25,18 +25,18 @@ function createMockRequest(pathname: string, hasCookie: boolean) {
   };
 }
 
-// Importiamo il middleware DOPO il mock di next/server
+// Importiamo il proxy DOPO il mock di next/server
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { middleware } = require('./middleware');
+const { proxy } = require('./proxy');
 
-describe('middleware', () => {
+describe('proxy', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   test('redirect a /login se utente non autenticato su /', () => {
     const req = createMockRequest('/', false);
-    middleware(req);
+    proxy(req);
 
     expect(mockRedirect).toHaveBeenCalled();
     const redirectUrl = mockRedirect.mock.calls[0][0].toString();
@@ -45,7 +45,7 @@ describe('middleware', () => {
 
   test('redirect a /login se utente non autenticato su /profile', () => {
     const req = createMockRequest('/profile', false);
-    middleware(req);
+    proxy(req);
 
     expect(mockRedirect).toHaveBeenCalled();
     const redirectUrl = mockRedirect.mock.calls[0][0].toString();
@@ -54,7 +54,7 @@ describe('middleware', () => {
 
   test('prosegue normalmente se utente non autenticato è già su /login', () => {
     const req = createMockRequest('/login', false);
-    middleware(req);
+    proxy(req);
 
     expect(mockNext).toHaveBeenCalled();
     expect(mockRedirect).not.toHaveBeenCalled();
@@ -62,7 +62,7 @@ describe('middleware', () => {
 
   test('redirect a / se utente autenticato va su /login', () => {
     const req = createMockRequest('/login', true);
-    middleware(req);
+    proxy(req);
 
     expect(mockRedirect).toHaveBeenCalled();
     const redirectUrl = mockRedirect.mock.calls[0][0].toString();
@@ -71,7 +71,7 @@ describe('middleware', () => {
 
   test('prosegue normalmente se utente autenticato su /', () => {
     const req = createMockRequest('/', true);
-    middleware(req);
+    proxy(req);
 
     expect(mockNext).toHaveBeenCalled();
   });

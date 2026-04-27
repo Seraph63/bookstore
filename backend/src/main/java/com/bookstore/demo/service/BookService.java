@@ -19,6 +19,8 @@ import com.bookstore.demo.repository.FormatoRepository;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -189,7 +191,7 @@ public class BookService implements IBookService {
         book.setAnno_pubblicazione(request.getAnnoPubblicazione());
         book.setIsbn10(request.getIsbn10());
         book.setIsbn13(request.getIsbn13());
-        book.setFormato(formati); // Ora usa il Set di Formato
+        book.setFormato(formati);
         book.setPrezzo(request.getPrezzo().doubleValue());
         book.setPrezzo_originale(
                 request.getPrezzoOriginale() != null ? request.getPrezzoOriginale().doubleValue() : null);
@@ -271,9 +273,17 @@ public class BookService implements IBookService {
         response.setDescrizione(book.getDescrizione());
 
         // Campi calcolati
-        if (book.getPrezzo_originale() != null && book.getPrezzo() < book.getPrezzo_originale()) {
-            double sconto = ((book.getPrezzo_originale() - book.getPrezzo()) / book.getPrezzo_originale()) * 100;
-            response.setPercentualeSconto(Math.round(sconto * 100.0) / 100.0);
+        if (book.getPrezzo_originale() != null
+                && BigDecimal.valueOf(book.getPrezzo_originale()).compareTo(new BigDecimal("0.01")) > 0
+                && book.getPrezzo() != null
+                && BigDecimal.valueOf(book.getPrezzo()).compareTo(BigDecimal.valueOf(book.getPrezzo_originale())) < 0) {
+
+            BigDecimal prezzo = BigDecimal.valueOf(book.getPrezzo());
+            BigDecimal originale = BigDecimal.valueOf(book.getPrezzo_originale());
+            BigDecimal sconto = originale.subtract(prezzo)
+                    .multiply(new BigDecimal("100"))
+                    .divide(originale, 2, RoundingMode.HALF_UP);
+            response.setPercentualeSconto(sconto.doubleValue());
         }
 
         return response;

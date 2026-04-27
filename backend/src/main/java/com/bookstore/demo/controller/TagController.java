@@ -13,16 +13,16 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class TagController {
 
-    private final TagRepository TagRepository;
+    private final TagRepository tagRepository;
 
-    public TagController(TagRepository TagRepository) {
-        this.TagRepository = TagRepository;
+    public TagController(TagRepository tagRepository) {
+        this.tagRepository = tagRepository;
     }
 
     // GET /api/tag - Lista tutti i tag
     @GetMapping
     public List<TagResponse> getAllTag() {
-        return TagRepository.findAll().stream()
+        return tagRepository.findAll().stream()
                 .map(TagResponse::fromEntity)
                 .toList();
     }
@@ -30,7 +30,7 @@ public class TagController {
     // GET /api/tag/{id} - Dettaglio singolo tag
     @GetMapping("/{id}")
     public ResponseEntity<TagResponse> getTagById(@PathVariable @NonNull Long id) {
-        return TagRepository.findById(id)
+        return tagRepository.findById(id)
                 .map(TagResponse::fromEntity)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

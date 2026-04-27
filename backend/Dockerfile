@@ -1,16 +1,12 @@
-# Usa un'immagine con Maven e JDK già pronti
-FROM maven:3.9.6-eclipse-temurin-21-jammy
+# Utilizziamo un'immagine che include sia Maven che JDK 25
+# Eclipse Temurin è lo standard attuale per le immagini Java
+FROM maven:3.9-eclipse-temurin-25
 
-# Cartella di lavoro nel container
 WORKDIR /app
 
-# Copiamo il pom.xml per scaricare le dipendenze (ottimizza la cache)
+# Copiamo i file necessari per la risoluzione delle dipendenze
 COPY pom.xml .
-RUN mvn dependency:go-offline
+RUN mvn dependency:go-offline -B
 
-# Copiamo il codice sorgente
 COPY src ./src
-
-# Comando per avviare Spring Boot direttamente dal codice
-# Questo evita il problema del jarfile mancante
-CMD ["mvn", "spring-boot:run"]
+EXPOSE 8080
