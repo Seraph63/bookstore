@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { getAuthHeaders } from '@/lib/auth';
 import { toast } from 'sonner';
 
 interface BookFormProps {
@@ -261,9 +262,7 @@ export default function BookForm({ mode, bookId, initialData }: BookFormProps) {
 
       const response = await fetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(formData),
       });
 

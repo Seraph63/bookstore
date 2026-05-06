@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { getAuthHeaders } from '@/lib/auth';
 
 interface EditProfileFormProps {
   initialData?: {
@@ -42,9 +43,7 @@ export default function EditProfileForm({ initialData }: EditProfileFormProps) {
     try {
       const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           nome: formData.nome,
           cognome: formData.cognome,

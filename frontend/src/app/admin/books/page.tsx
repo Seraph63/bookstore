@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
+import { getAuthHeaders } from '@/lib/auth';
 import BooksStats from '@/components/admin/BooksStats';
 import BooksTable from '@/components/admin/BooksTable';
 
@@ -61,6 +62,7 @@ export default function AdminBooksPage() {
   const handleDelete = async (bookId: number): Promise<void> => {
     const response = await fetch(`http://localhost:8080/api/books/${bookId}`, {
       method: 'DELETE',
+      headers: getAuthHeaders(),
     });
 
     if (!response.ok) {

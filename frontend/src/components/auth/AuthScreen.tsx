@@ -41,6 +41,8 @@ export default function AuthScreen({ onLoginSuccess, onGuestLogin }: AuthProps) 
       const data = await res.json();
 
       if (res.ok) {
+        // Salva le credenziali per le chiamate successive con Authorization: Basic
+        localStorage.setItem('credentials', JSON.stringify({ email, password }));
         onLoginSuccess(data);
       } else {
         // Gestione errore duplicato o errori generici dal backend

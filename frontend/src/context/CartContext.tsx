@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react';
 import { toast } from 'sonner';
+import { getAuthHeaders } from '@/lib/auth';
 
 const API_BASE = 'http://localhost:8080/api/cart';
 
@@ -39,6 +40,8 @@ function getUserId(): number | null {
   if (!saved) return null;
   const user = JSON.parse(saved);
   if (user.isGuest) return null;
+  // Se non ci sono credenziali salvate non possiamo autenticarci: tratta come guest
+  if (!localStorage.getItem('credentials')) return null;
   return user.id ?? null;
 }
 
@@ -52,7 +55,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/${userId}`);
+      const res = await fetch(`${API_BASE}/${userId}`, {
+        headers: getAuthHeaders(),
+      });
       if (!res.ok) {
         console.error("Errore caricamento carrello:", res.status, res.statusText);
         return;
@@ -76,7 +81,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const res = await fetch(`${API_BASE}/${userId}/items`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ bookId, quantita }),
       });
 
@@ -100,7 +105,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const res = await fetch(`${API_BASE}/${userId}/items/${bookId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ quantita }),
       });
 
@@ -123,6 +128,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const res = await fetch(`${API_BASE}/${userId}/items/${bookId}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
 
       if (res.ok) {
@@ -144,6 +150,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const res = await fetch(`${API_BASE}/${userId}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
 
       if (res.ok) {
@@ -162,6 +169,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const res = await fetch(`${API_BASE}/${userId}/checkout`, {
         method: 'POST',
+        headers: getAuthHeaders(),
       });
 
       if (res.ok) {

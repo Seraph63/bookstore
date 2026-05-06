@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
+import { getAuthHeaders } from '@/lib/auth';
 import UsersStats from '@/components/admin/UsersStats';
 import UsersTable from '@/components/admin/UsersTable';
 
@@ -31,7 +32,9 @@ export default function AdminUsersPage() {
     try {
       setLoading(true);
       setError('');
-      const response = await fetch('http://localhost:8080/api/users');
+      const response = await fetch('http://localhost:8080/api/users', {
+        headers: getAuthHeaders(),
+      });
       if (!response.ok) {
         throw new Error('Errore caricamento utenti');
       }
@@ -47,6 +50,7 @@ export default function AdminUsersPage() {
   const handleDelete = async (userId: number): Promise<void> => {
     const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
       method: 'DELETE',
+      headers: getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -64,9 +68,7 @@ export default function AdminUsersPage() {
     try {
       const response = await fetch(`http://localhost:8080/api/users/${userId}/toggle-active`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ attivo: !isActive }),
       });
 

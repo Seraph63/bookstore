@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeftIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
+import { getAuthHeaders } from '@/lib/auth';
 
 interface User {
   id: number;
@@ -51,7 +52,9 @@ export default function EditUserPage() {
   const fetchUser = async () => {
     try {
       setLoadingUser(true);
-      const response = await fetch(`http://localhost:8080/api/users/${userId}`);
+      const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+        headers: getAuthHeaders(),
+      });
       if (!response.ok) {
         throw new Error('Utente non trovato');
       }
@@ -93,9 +96,7 @@ export default function EditUserPage() {
 
       const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(requestData),
       });
 

@@ -27,6 +27,8 @@ export default function LoginPage() {
   // Gestione Accesso Ospite
   const handleGuestLogin = () => {
     document.cookie = "auth_session=true; path=/; max-age=86400; SameSite=Lax";
+    // Gli ospiti non hanno credenziali: rimuovi eventuali credenziali precedenti
+    localStorage.removeItem('credentials');
     localStorage.setItem('user', JSON.stringify({ 
       nome: "Ospite", 
       email: "guest@example.com", 

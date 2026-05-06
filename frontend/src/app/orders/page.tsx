@@ -4,6 +4,7 @@ import Navbar from '@/components/layout/Navbar';
 import { ArrowLeftIcon, ShoppingBagIcon, PlusIcon, MinusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { getAuthHeaders } from '@/lib/auth';
 
 interface OrderItem {
   id: number;
@@ -40,7 +41,9 @@ export default function OrdersPage() {
 
   const fetchOrders = async (userId: number) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/orders/${userId}`);
+      const res = await fetch(`http://localhost:8080/api/orders/${userId}`, {
+        headers: getAuthHeaders(),
+      });
       if (res.ok) {
         const data = await res.json();
         setOrders(data);
@@ -73,7 +76,7 @@ export default function OrdersPage() {
     try {
       const res = await fetch(`http://localhost:8080/api/orders/items/${itemId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ quantita: newQuantity }),
       });
       if (res.ok) {
@@ -93,6 +96,7 @@ export default function OrdersPage() {
     try {
       const res = await fetch(`http://localhost:8080/api/orders/items/${itemId}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
       if (res.ok) {
         const data = await res.json();

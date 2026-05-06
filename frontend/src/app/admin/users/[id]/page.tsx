@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { PencilSquareIcon, TrashIcon, ArrowLeftIcon, UserIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
+import { getAuthHeaders } from '@/lib/auth';
 
 interface User {
   id: number;
@@ -35,7 +36,9 @@ export default function UserDetailPage() {
     try {
       setLoading(true);
       setError('');
-      const response = await fetch(`http://localhost:8080/api/users/${userId}`);
+      const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+        headers: getAuthHeaders(),
+      });
       if (!response.ok) {
         throw new Error('Utente non trovato');
       }
@@ -57,6 +60,7 @@ export default function UserDetailPage() {
       setDeleting(true);
       const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
 
       if (!response.ok) {
